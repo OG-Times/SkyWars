@@ -1,9 +1,9 @@
-package fun.ogtimes.skywars.spigot.database2.types;
+package fun.ogtimes.skywars.spigot.database.types;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.arena.Arena;
 import fun.ogtimes.skywars.spigot.config.ConfigManager;
-import fun.ogtimes.skywars.spigot.database2.DataSource;
+import fun.ogtimes.skywars.spigot.database.DataSource;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.server.Server;
 import fun.ogtimes.skywars.spigot.server.ServerManager;
@@ -20,7 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 

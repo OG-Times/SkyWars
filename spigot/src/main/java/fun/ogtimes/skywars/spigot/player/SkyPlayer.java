@@ -9,7 +9,7 @@ import fun.ogtimes.skywars.spigot.arena.Arena;
 import fun.ogtimes.skywars.spigot.arena.ArenaBox;
 import fun.ogtimes.skywars.spigot.arena.chest.ChestType;
 import fun.ogtimes.skywars.spigot.arena.chest.ChestTypeManager;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.events.SkyPlayerSpectatorEvent;
 import fun.ogtimes.skywars.spigot.events.enums.SpectatorReason;
 import fun.ogtimes.skywars.spigot.kit.Kit;

@@ -2,7 +2,7 @@ package fun.ogtimes.skywars.spigot.server;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.arena.Arena;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;

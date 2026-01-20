@@ -9,7 +9,7 @@ import fun.ogtimes.skywars.spigot.box.BoxManager;
 import fun.ogtimes.skywars.spigot.commands.CmdExecutor;
 import fun.ogtimes.skywars.spigot.commands.user.CmdOthers;
 import fun.ogtimes.skywars.spigot.config.ConfigManager;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.events.EventsManager;
 import fun.ogtimes.skywars.spigot.events.enums.ArenaLeaveCause;
 import fun.ogtimes.skywars.spigot.kit.KitManager;

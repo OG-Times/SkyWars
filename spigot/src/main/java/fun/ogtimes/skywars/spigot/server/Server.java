@@ -2,7 +2,7 @@ package fun.ogtimes.skywars.spigot.server;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.arena.ArenaState;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.events.SkySignUpdateEvent;
 import fun.ogtimes.skywars.spigot.events.enums.SkySignUpdateCause;
 import fun.ogtimes.skywars.spigot.utils.Game;

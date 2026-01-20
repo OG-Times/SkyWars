@@ -1,11 +1,10 @@
 package fun.ogtimes.skywars.spigot.server;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.Bukkit;
 

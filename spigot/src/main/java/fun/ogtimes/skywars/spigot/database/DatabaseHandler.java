@@ -1,8 +1,8 @@
-package fun.ogtimes.skywars.spigot.database2;
+package fun.ogtimes.skywars.spigot.database;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
-import fun.ogtimes.skywars.spigot.database2.types.MySQL;
-import fun.ogtimes.skywars.spigot.database2.types.SQLite;
+import fun.ogtimes.skywars.spigot.database.types.MySQL;
+import fun.ogtimes.skywars.spigot.database.types.SQLite;
 
 import java.sql.SQLException;
 

@@ -1,7 +1,7 @@
 package fun.ogtimes.skywars.spigot.api;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import java.util.List;
 import java.util.Map.Entry;

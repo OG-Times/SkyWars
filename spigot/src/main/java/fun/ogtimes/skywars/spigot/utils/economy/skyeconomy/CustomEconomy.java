@@ -1,7 +1,7 @@
 package fun.ogtimes.skywars.spigot.utils.economy.skyeconomy;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
-import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.utils.economy.SkyEconomy;
 import fun.ogtimes.skywars.spigot.utils.economy.SkyEconomyManager;
