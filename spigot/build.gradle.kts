@@ -16,5 +16,5 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
     compileOnly("com.zaxxer:HikariCP:7.0.2")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
+    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.5")
 }
