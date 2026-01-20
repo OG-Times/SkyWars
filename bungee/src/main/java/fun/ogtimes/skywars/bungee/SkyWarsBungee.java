@@ -33,6 +33,7 @@ public class SkyWarsBungee extends Plugin implements Listener {
     public void onEnable() {
         plugin = this;
 
+        getLogger().severe("Bungeecord is highly deprecated and will not receive updates or support in the future on this fork. Please switch to Velocity.");
         try {
             ConfigurationProvider provider = ConfigurationProvider.getProvider(YamlConfiguration.class);
             configuration = provider.load(loadResource(this, "config.yml"));

@@ -22,6 +22,7 @@ allprojects {
         maven("https://repo.extendedclip.com/releases/")
         maven("https://repo.lunarclient.dev")
         maven("https://jitpack.io")
+        maven("https://repo.codemc.io/repository/maven-public/")
     }
 }
 

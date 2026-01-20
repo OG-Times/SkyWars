@@ -1,0 +1,515 @@
+package fun.ogtimes.skywars.spigot.player;
+
+import fun.ogtimes.skywars.spigot.SkyWars;
+import fun.ogtimes.skywars.spigot.abilities.Ability;
+import fun.ogtimes.skywars.spigot.abilities.AbilityLevel;
+import fun.ogtimes.skywars.spigot.abilities.AbilityManager;
+import fun.ogtimes.skywars.spigot.abilities.AbilityType;
+import fun.ogtimes.skywars.spigot.arena.Arena;
+import fun.ogtimes.skywars.spigot.arena.ArenaBox;
+import fun.ogtimes.skywars.spigot.arena.chest.ChestType;
+import fun.ogtimes.skywars.spigot.arena.chest.ChestTypeManager;
+import fun.ogtimes.skywars.spigot.database2.DatabaseHandler;
+import fun.ogtimes.skywars.spigot.events.SkyPlayerSpectatorEvent;
+import fun.ogtimes.skywars.spigot.events.enums.SpectatorReason;
+import fun.ogtimes.skywars.spigot.kit.Kit;
+import fun.ogtimes.skywars.spigot.utils.Utils;
+import fun.ogtimes.skywars.spigot.utils.economy.SkyEconomyManager;
+import fun.ogtimes.skywars.spigot.utils.economy.skyeconomy.CustomEconomy;
+import fun.ogtimes.skywars.spigot.utils.sky.SkyData;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.UUID;
+import java.util.Map.Entry;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class SkyPlayer extends SkyData {
+    private String name;
+    private String uid;
+    private UUID uniqueId;
+    private String url;
+    private Arena arena;
+    private Kit kit;
+    private ArenaBox box;
+    private String trail;
+    private String boxsection;
+    private final HashSet<String> owned_kits = new HashSet<>();
+    private final HashMap<AbilityType, AbilityLevel> ownedAbilityByType = new HashMap<>();
+    private final HashSet<AbilityType> disabledAbilities = new HashSet<>();
+    private Location arenaSpawn;
+    private boolean spectating;
+    private int wins = 0;
+    private int kills = 0;
+    private int deaths = 0;
+    private int played = 0;
+    private int arrowShot = 0;
+    private int arrowHit = 0;
+    private int blocksBroken = 0;
+    private int blocksPlaced = 0;
+    private int distanceWalked = 0;
+    private int timePlayed = 0;
+    private double coins = 0.0D;
+    private Date localTimePlayed = null;
+    private ItemStack[] armourContents = null;
+    private ItemStack[] inventoryContents = null;
+    private Integer xplevel = 0;
+    private float exp = 0.0F;
+
+    public SkyPlayer(String var1, UUID var2) {
+        this.name = var1;
+        this.uniqueId = var2;
+        this.addData("upload_data", false);
+        this.load();
+    }
+
+    public Player getPlayer() {
+        return Bukkit.getPlayer(this.uniqueId) != null ? Bukkit.getPlayer(this.uniqueId) : Bukkit.getPlayer(this.name);
+    }
+
+    public Location getArenaSpawn() {
+        return this.getArena() != null ? this.arenaSpawn : null;
+    }
+
+    public void addWins(int var1) {
+        this.setWins(this.getWins() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addKills(int var1) {
+        this.setKills(this.getKills() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addDeaths(int var1) {
+        this.setDeaths(this.getDeaths() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addPlayed(int var1) {
+        this.setPlayed(this.getPlayed() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addArrowShot(int var1) {
+        this.setArrowShot(this.getArrowShot() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addArrowHit(int var1) {
+        this.setArrowHit(this.getArrowHit() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addBlocksBroken(int var1) {
+        this.setBlocksBroken(this.getBlocksBroken() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addBlocksPlaced(int var1) {
+        this.setBlocksPlaced(this.getBlocksPlaced() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addDistanceWalked(int var1) {
+        this.setDistanceWalked(this.getDistanceWalked() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void addTimePlayed(int var1) {
+        this.setTimePlayed(this.getTimePlayed() + var1);
+        if (var1 > 0) {
+            this.addData("upload_data", true);
+        }
+
+    }
+
+    public void setSpectating(boolean var1, SpectatorReason var2) {
+        this.spectating = var1;
+        if (var2 != null) {
+            SkyPlayerSpectatorEvent var3 = new SkyPlayerSpectatorEvent(this, this.getArena(), var1, var2);
+            Bukkit.getServer().getPluginManager().callEvent(var3);
+        }
+
+    }
+
+    public boolean isInArena() {
+        return this.arena != null;
+    }
+
+    public boolean hasKit() {
+        return this.kit != null;
+    }
+
+    public boolean hasBox() {
+        return this.box != null;
+    }
+
+    public boolean hasTrail() {
+        return this.trail != null && !this.trail.isEmpty() && !this.trail.equals("none");
+    }
+
+    public void teleport(Location var1) {
+        Player var2 = this.getPlayer();
+        if (var2 != null) {
+            this.getPlayer().teleport(var1);
+        }
+
+    }
+
+    public boolean hasPermissions(String var1) {
+        return this.getPlayer().hasPermission(var1);
+    }
+
+    public void sendMessage(String var1) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            var1 = PlaceholderAPI.setPlaceholders(this.getPlayer(), var1);
+        }
+
+        if (var1 != null && !var1.isEmpty()) {
+            Player var2 = this.getPlayer();
+            if (var2 != null) {
+                var2.sendMessage(ChatColor.translateAlternateColorCodes('&', Utils.color(var1)));
+            }
+        }
+
+    }
+
+    public void sendMessage(String var1, Object... var2) {
+        this.sendMessage(String.format(var1, var2));
+    }
+
+    public void clearInventory(boolean var1) {
+        Player var2 = this.getPlayer();
+        if (var2 != null) {
+            if (SkyWars.getPlugin().getConfig().getBoolean("options.saveInventory") && var1) {
+                this.armourContents = var2.getInventory().getArmorContents();
+                this.inventoryContents = var2.getInventory().getContents();
+                this.xplevel = var2.getLevel();
+                this.exp = var2.getExp();
+            }
+
+            var2.getInventory().setArmorContents((ItemStack[])null);
+            var2.getInventory().clear();
+            var2.getInventory().setContents(new ItemStack[0]);
+
+            for (PotionEffect var4 : var2.getActivePotionEffects()) {
+                var2.removePotionEffect(var4.getType());
+            }
+
+            var2.setHealth(var2.getMaxHealth());
+
+            var2.setFoodLevel(20);
+            var2.setExp(0.0F);
+            var2.setLevel(0);
+            var2.setFlying(false);
+            var2.setAllowFlight(false);
+            this.updateInventory();
+        }
+    }
+
+    public void resetInventory() {
+        this.getPlayer().getInventory().setArmorContents(null);
+        this.getPlayer().getInventory().clear();
+        if (SkyWars.getPlugin().getConfig().getBoolean("options.saveInventory")) {
+            if (this.inventoryContents != null && this.inventoryContents.length > 0 && this.inventoryContents.length <= this.getPlayer().getInventory().getSize() + 1) {
+                this.getPlayer().getInventory().setContents(this.inventoryContents);
+            }
+
+            if (this.armourContents != null) {
+                this.getPlayer().getInventory().setArmorContents(this.armourContents);
+            }
+
+            this.getPlayer().setLevel(this.xplevel);
+            this.getPlayer().setExp(this.exp);
+            this.updateInventory();
+            this.armourContents = null;
+            this.inventoryContents = null;
+            this.xplevel = 0;
+            this.exp = 0.0F;
+        }
+
+    }
+
+    public void resetVotes() {
+        if (this.hasData("voted_chest")) {
+            ChestType[] chestTypes = ChestTypeManager.getChestTypes();
+
+            for (ChestType chestType : chestTypes) {
+                if (this.hasData("voted_chest_" + chestType.getName())) {
+                    this.getArena().addData("vote_chest_" + chestType.getName(), this.getArena().getInt("vote_chest_" + chestType.getName()) - 1);
+                    this.removeData("voted_chest_" + chestType.getName());
+                }
+            }
+
+            this.removeData("voted_chest");
+        }
+
+        if (this.hasData("voted_time")) {
+            if (this.hasData("voted_time_day")) {
+                this.getArena().addData("vote_time_day", this.getArena().getInt("vote_time_day") - 1);
+                this.removeData("voted_time_day");
+            }
+
+            if (this.hasData("voted_time_night")) {
+                this.getArena().addData("vote_time_night", this.getArena().getInt("vote_time_night") - 1);
+                this.removeData("voted_time_night");
+            }
+
+            if (this.hasData("voted_time_sunset")) {
+                this.getArena().addData("vote_time_sunset", this.getArena().getInt("vote_time_sunset") - 1);
+                this.removeData("voted_time_sunset");
+            }
+
+            this.removeData("voted_time");
+        }
+
+    }
+
+    public void updateInventory() {
+        this.getPlayer().updateInventory();
+    }
+
+    public double getCoins() {
+        return SkyEconomyManager.getCoins(this.getPlayer());
+    }
+
+    public double getCoins2() {
+        return this.coins;
+    }
+
+    public void load() {
+        this.loadData();
+    }
+
+    public void loadData() {
+        DatabaseHandler.getDS().loadPlayerData(this);
+        if (CustomEconomy.isCustom()) {
+            this.coins = DatabaseHandler.getDS().getCoins(this);
+        }
+
+    }
+
+    public void upload(boolean var1) {
+        if (var1) {
+            this.uploadData();
+        } else {
+            this.uploadAsyncData();
+        }
+
+    }
+
+    public void uploadAsyncData() {
+        if (this.hasData("upload_data") && this.getBoolean("upload_data")) {
+            (new BukkitRunnable() {
+                public void run() {
+                    DatabaseHandler.getDS().uploadPlayerData(SkyPlayer.this);
+                }
+            }).runTaskAsynchronously(SkyWars.getPlugin());
+        }
+
+    }
+
+    public void uploadData() {
+        if (this.hasData("upload_data") && this.getBoolean("upload_data")) {
+            DatabaseHandler.getDS().uploadPlayerData(this);
+        }
+
+    }
+
+    public String convertKitsToString() {
+        String var1 = "";
+
+        String var3;
+        for(Iterator<String> var2 = this.owned_kits.iterator(); var2.hasNext(); var1 = var1 + var3 + ",") {
+            var3 = var2.next();
+        }
+
+        if (var1 != null && var1.endsWith(",")) {
+            var1.substring(0, var1.length() - 1);
+        }
+
+        return var1;
+    }
+
+    public void setBoxSection(String var1, boolean var2) {
+        this.boxsection = var1;
+    }
+
+    public String getBoxSection() {
+        return this.boxsection;
+    }
+
+    public int getBoxItem(String var1) {
+        return SkyWars.boxes.getInt("boxes." + var1 + ".item");
+    }
+
+    public int getBoxData(String var1) {
+        return SkyWars.boxes.getInt("boxes." + var1 + ".data");
+    }
+
+    public boolean hasKit(Kit var1) {
+        return var1 != null && this.owned_kits != null && this.owned_kits.contains(var1.getName());
+    }
+
+    public void addKit(Kit var1) {
+        if (!this.hasKit(var1)) {
+            this.owned_kits.add(var1.getName());
+        }
+
+    }
+
+    public void distanceWalkedConvert() {
+        double var1 = this.getDouble("local_distance");
+        int var3 = (int)Math.round(var1);
+        this.addDistanceWalked(var3);
+        this.removeData("local_distance");
+    }
+
+    public void playedTimeStart() {
+        this.localTimePlayed = new Date();
+    }
+
+    public void playedTimeEnd() {
+        if (this.localTimePlayed != null) {
+            Date var1 = new Date();
+            long var2 = var1.getTime() - this.localTimePlayed.getTime();
+            int var4 = (int)(var2 / 1000L);
+            this.addTimePlayed(var4);
+            this.localTimePlayed = null;
+        }
+
+    }
+
+    public boolean isAbilityDisabled(AbilityType var1) {
+        return this.disabledAbilities.contains(var1);
+    }
+
+    public void addAbilityDisabled(AbilityType var1) {
+        if (!this.disabledAbilities.contains(var1)) {
+            this.disabledAbilities.add(var1);
+        }
+
+        if (!this.hasAbility(var1)) {
+            this.ownedAbilityByType.put(var1, null);
+        }
+
+        this.addData("upload_data", true);
+    }
+
+    public void removeAbilityDisabled(AbilityType var1) {
+        if (this.disabledAbilities.contains(var1)) {
+            this.disabledAbilities.remove(var1);
+        }
+
+        this.addData("upload_data", true);
+    }
+
+    public boolean hasAbility(AbilityType var1) {
+        return this.ownedAbilityByType.get(var1) == null ? false : this.ownedAbilityByType.containsKey(var1);
+    }
+
+    public AbilityLevel getAbilityLevel(AbilityType var1) {
+        return !this.ownedAbilityByType.containsKey(var1) ? null : this.ownedAbilityByType.get(var1);
+    }
+
+    public void setAbility(AbilityType var1, AbilityLevel var2) {
+        this.ownedAbilityByType.put(var1, var2);
+    }
+
+    public void addAbilityLevel(AbilityType var1) {
+        if (this.hasAbility(var1)) {
+            if (this.ownedAbilityByType.get(var1).getLevel() == 8) {
+                return;
+            }
+
+            this.ownedAbilityByType.put(var1, AbilityManager.getAbilityByType(var1).getLevel(this.ownedAbilityByType.get(var1).getLevel() + 1));
+        } else {
+            this.ownedAbilityByType.put(var1, AbilityManager.getAbilityByType(var1).getLevel(1));
+        }
+
+    }
+
+    public void serializeAbilities(String var1) {
+        if (var1 != null && !var1.isEmpty()) {
+            String[] var2 = var1.split(";");
+            String[] var3 = var2;
+            int var4 = var2.length;
+
+            for(int var5 = 0; var5 < var4; ++var5) {
+                String var6 = var3[var5];
+                String[] var7 = var6.split(",");
+                Ability var8 = AbilityManager.getAbility(var7[0]);
+                AbilityLevel var9 = null;
+                if (var7[1] != "0") {
+                    var9 = var8.getLevel(Integer.parseInt(var7[1]));
+                }
+
+                if (var7[2].equals("1")) {
+                    this.addAbilityDisabled(var8.getType());
+                }
+
+                this.setAbility(var8.getType(), var9);
+            }
+        }
+
+    }
+
+    public String deserializeAbilities() {
+        StringBuilder var1 = new StringBuilder();
+
+        for (Entry<AbilityType, AbilityLevel> entry : this.ownedAbilityByType.entrySet()) {
+            if (entry.getValue() == null) {
+                var1.append(AbilityManager.getAbilityByType(entry.getKey()).getName()).append(",0,").append(this.isAbilityDisabled(entry.getKey()) ? "1" : "0").append(";");
+            } else {
+                var1.append(AbilityManager.getAbilityByType(entry.getKey()).getName()).append(",").append(entry.getValue().getLevel()).append(",").append(this.isAbilityDisabled(entry.getKey()) ? "1" : "0").append(";");
+            }
+        }
+
+        if (var1 != null && var1.toString().endsWith(";")) {
+            var1.substring(0, var1.length() - 1);
+        }
+
+        return var1.toString();
+    }
+}

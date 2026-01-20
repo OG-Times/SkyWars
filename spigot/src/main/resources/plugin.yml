@@ -1,5 +1,5 @@
 name: SkyWars
-main: ak.CookLoco.SkyWars.SkyWars
+main: fun.ogtimes.skywars.spigot.SkyWars
 version: 1.10.3
 author: CookLoco
 softdepend: [HolographicDisplays,PlaceholderAPI,LeaderHeads,Vault,PlayerPoints,Craftconomy3,Coins]
