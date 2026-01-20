@@ -25,6 +25,7 @@ import ak.CookLoco.SkyWars.utils.ItemBuilder;
 import ak.CookLoco.SkyWars.utils.LocationUtil;
 import ak.CookLoco.SkyWars.utils.Messages;
 import ak.CookLoco.SkyWars.utils.RandomFirework;
+import ak.CookLoco.SkyWars.utils.economy.SkyEconomyManager;
 import ak.CookLoco.SkyWars.utils.title.Title;
 import java.io.File;
 import java.util.ArrayList;
@@ -359,6 +360,7 @@ public class Arena extends Game {
       if (this.getState() != ArenaState.ENDING) {
          this.clearItems();
          this.broadcast(String.format(SkyWars.getMessage(Messages.GAME_FINISH_BROADCAST_WINNER), var1.getName(), this.name));
+         SkyEconomyManager.addCoins(var1.getPlayer(), (double)SkyWars.getPlugin().getConfig().getInt("reward.win"), true);
          this.executeWinnerCommands(ConfigManager.main.getBoolean("reward.wincmd.enabled"), var1);
          var1.addWins(1);
          var1.clearInventory(false);

@@ -52,7 +52,7 @@ public class LoginListener implements Listener {
       long var6 = var4 - var2;
       if (var6 < 1500L) {
          var1.setKickMessage("Try later... the server is loading");
-         var1.setResult(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER);
+         var1.setResult(PlayerLoginEvent.Result.KICK_OTHER);
       }
 
    }

@@ -21,6 +21,7 @@ allprojects {
         maven("https://repo.viaversion.com")
         maven("https://repo.extendedclip.com/releases/")
         maven("https://repo.lunarclient.dev")
+        maven("https://jitpack.io")
     }
 }
 

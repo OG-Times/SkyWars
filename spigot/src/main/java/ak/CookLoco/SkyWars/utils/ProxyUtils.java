@@ -20,7 +20,7 @@ public class ProxyUtils {
             player.sendPluginMessage(SkyWars.getPlugin(), "BungeeCord", outputStream.toByteArray());
             outputStream.close();
             dataOutputStream.close();
-        } catch (Exception var5) {
+        } catch (Exception ex) {
             player.sendMessage(ChatColor.GOLD + "Error: Couldn't sent you to " + ChatColor.RED + server);
         }
 

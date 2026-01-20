@@ -15,9 +15,14 @@ import ak.CookLoco.SkyWars.events.enums.SpectatorReason;
 import ak.CookLoco.SkyWars.kit.Kit;
 import ak.CookLoco.SkyWars.utils.Utils;
 import ak.CookLoco.SkyWars.utils.Utils19;
+import ak.CookLoco.SkyWars.utils.economy.SkyEconomyManager;
+import ak.CookLoco.SkyWars.utils.economy.skyeconomy.CustomEconomy;
 import ak.CookLoco.SkyWars.utils.sky.SkyData;
-
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import lombok.Data;
@@ -310,12 +315,24 @@ public class SkyPlayer extends SkyData {
         this.getPlayer().updateInventory();
     }
 
+    public double getCoins() {
+        return SkyEconomyManager.getCoins(this.getPlayer());
+    }
+
+    public double getCoins2() {
+        return this.coins;
+    }
+
     public void load() {
         this.loadData();
     }
 
     public void loadData() {
         DatabaseHandler.getDS().loadPlayerData(this);
+        if (CustomEconomy.isCustom()) {
+            this.coins = DatabaseHandler.getDS().getCoins(this);
+        }
+
     }
 
     public void upload(boolean var1) {
@@ -486,11 +503,11 @@ public class SkyPlayer extends SkyData {
     public String deserializeAbilities() {
         StringBuilder var1 = new StringBuilder();
 
-        for (Entry<AbilityType, AbilityLevel> abilityTypeAbilityLevelEntry : this.ownedAbilityByType.entrySet()) {
-            if (((Entry<?, ?>) abilityTypeAbilityLevelEntry).getValue() == null) {
-                var1.append(AbilityManager.getAbilityByType((AbilityType) ((Entry<?, ?>) abilityTypeAbilityLevelEntry).getKey()).getName()).append(",0,").append(this.isAbilityDisabled((AbilityType) ((Entry) abilityTypeAbilityLevelEntry).getKey()) ? "1" : "0").append(";");
+        for (Entry<AbilityType, AbilityLevel> entry : this.ownedAbilityByType.entrySet()) {
+            if (entry.getValue() == null) {
+                var1.append(AbilityManager.getAbilityByType(entry.getKey()).getName()).append(",0,").append(this.isAbilityDisabled(entry.getKey()) ? "1" : "0").append(";");
             } else {
-                var1.append(AbilityManager.getAbilityByType((AbilityType) ((Entry<?, ?>) abilityTypeAbilityLevelEntry).getKey()).getName()).append(",").append(((AbilityLevel) ((Entry) abilityTypeAbilityLevelEntry).getValue()).getLevel()).append(",").append(this.isAbilityDisabled((AbilityType) ((Entry) abilityTypeAbilityLevelEntry).getKey()) ? "1" : "0").append(";");
+                var1.append(AbilityManager.getAbilityByType(entry.getKey()).getName()).append(",").append(entry.getValue().getLevel()).append(",").append(this.isAbilityDisabled(entry.getKey()) ? "1" : "0").append(";");
             }
         }
 
