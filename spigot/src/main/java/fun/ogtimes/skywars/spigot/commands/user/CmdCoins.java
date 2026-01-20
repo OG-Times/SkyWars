@@ -11,12 +11,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdCoins implements BaseCommand {
-    public void onCommand(CommandSender var1, String[] var2) {
+    public void onCommand(CommandSender sender, String[] args) {
         Player var3 = null;
         SkyPlayer var4 = null;
         boolean var5 = false;
-        if (var1 instanceof Player) {
-            var3 = (Player)var1;
+        if (sender instanceof Player) {
+            var3 = (Player) sender;
             var4 = SkyWars.getSkyPlayer(var3);
             if (var4 == null) {
                 return;
@@ -25,19 +25,19 @@ public class CmdCoins implements BaseCommand {
             var5 = true;
         }
 
-        if (!var1.hasPermission(this.getPermission())) {
-            var1.sendMessage("§cYou don't have permission!");
-        } else if (var2.length == 0) {
+        if (!sender.hasPermission(this.getPermission())) {
+            sender.sendMessage("§cYou don't have permission!");
+        } else if (args.length == 0) {
             if (var5) {
                 double var12 = var4.getCoins();
                 var4.sendMessage("&aCoins: &e" + var12);
             } else {
-                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', this.help(var1)));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.help(sender)));
             }
 
         } else {
-            if (var2.length >= 1 && var1.hasPermission("skywars.admin.coins")) {
-                String var6 = var2[0].toLowerCase();
+            if (args.length >= 1 && sender.hasPermission("skywars.admin.coins")) {
+                String var6 = args[0].toLowerCase();
                 byte var7 = -1;
                 switch(var6.hashCode()) {
                     case -934610812:
@@ -58,34 +58,34 @@ public class CmdCoins implements BaseCommand {
                 int var13;
                 switch(var7) {
                     case 0:
-                        if (var2.length == 1) {
-                            var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins add <amount> [PlayerName]"));
+                        if (args.length == 1) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins add <amount> [PlayerName]"));
                             return;
                         }
 
-                        if (var2.length == 2) {
+                        if (args.length == 2) {
                             if (var5) {
-                                var13 = Integer.parseInt(var2[1]);
+                                var13 = Integer.parseInt(args[1]);
                                 SkyEconomyManager.addCoins(var4.getPlayer(), var13, false);
                             } else {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins add <amount> [PlayerName]"));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins add <amount> [PlayerName]"));
                             }
 
                             return;
                         }
 
-                        if (var2.length == 3) {
-                            var8 = var2[2];
+                        if (args.length == 3) {
+                            var8 = args[2];
                             var9 = Bukkit.getPlayer(var8);
-                            var10 = Integer.parseInt(var2[1]);
+                            var10 = Integer.parseInt(args[1]);
                             if (var9 == null) {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
                                 return;
                             }
 
                             var11 = SkyWars.getSkyPlayer(var9);
                             if (var11 == null) {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
                                 return;
                             }
 
@@ -94,34 +94,34 @@ public class CmdCoins implements BaseCommand {
                         }
                         break;
                     case 1:
-                        if (var2.length == 1) {
-                            var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins remove <amount> [PlayerName]"));
+                        if (args.length == 1) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins remove <amount> [PlayerName]"));
                             return;
                         }
 
-                        if (var2.length == 2) {
+                        if (args.length == 2) {
                             if (var5) {
-                                var13 = Integer.parseInt(var2[1]);
+                                var13 = Integer.parseInt(args[1]);
                                 SkyEconomyManager.removeCoins(var4.getPlayer(), var13);
                             } else {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins remove <amount> [PlayerName]"));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins remove <amount> [PlayerName]"));
                             }
 
                             return;
                         }
 
-                        if (var2.length == 3) {
-                            var8 = var2[2];
+                        if (args.length == 3) {
+                            var8 = args[2];
                             var9 = Bukkit.getPlayer(var8);
-                            var10 = Integer.parseInt(var2[1]);
+                            var10 = Integer.parseInt(args[1]);
                             if (var9 == null) {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
                                 return;
                             }
 
                             var11 = SkyWars.getSkyPlayer(var9);
                             if (var11 == null) {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + var8 + " isn't online or not exists"));
                                 return;
                             }
 
@@ -133,13 +133,13 @@ public class CmdCoins implements BaseCommand {
         }
     }
 
-    public String help(CommandSender var1) {
+    public String help(CommandSender sender) {
         String var2 = "&a/sw coins &a- &bget coins \n";
-        if (var1.hasPermission("skywars.admin.coins")) {
+        if (sender.hasPermission("skywars.admin.coins")) {
             var2 = var2 + "&a/sw coins &eadd <amount> [name] &a- &badd coins yourself/other\n&a/sw coins &eremove <amount> [name] &a- &bremove coins yourself/other";
         }
 
-        return var1.hasPermission(this.getPermission()) ? var2 : "";
+        return sender.hasPermission(this.getPermission()) ? var2 : "";
     }
 
     public String getPermission() {
@@ -150,7 +150,7 @@ public class CmdCoins implements BaseCommand {
         return true;
     }
 
-    public List<String> onTabComplete(CommandSender var1, String[] var2) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
         return null;
     }
 }

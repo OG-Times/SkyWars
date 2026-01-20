@@ -10,14 +10,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdOpen implements BaseCommand {
-   public void onCommand(CommandSender var1, String[] var2) {
-      if (!(var1 instanceof Player var3)) {
-         var1.sendMessage("Only for Players");
+   public void onCommand(CommandSender sender, String[] args) {
+      if (!(sender instanceof Player var3)) {
+         sender.sendMessage("Only for Players");
       } else {
-          if (var2.length != 1) {
+          if (args.length != 1) {
             var3.sendMessage("§cUsage: /sw open lshop");
          } else {
-            String var4 = var2[0];
+            String var4 = args[0];
             byte var5 = -1;
              if (var4.hashCode() == 103269730) {
                  if (var4.equals("lshop")) {
@@ -38,9 +38,9 @@ public class CmdOpen implements BaseCommand {
       }
    }
 
-   public String help(CommandSender var1) {
+   public String help(CommandSender sender) {
       String var2 = "&a/sw &eopen lshop &a- &bOpen Lobby Kit Shop Inventory";
-      return var1.hasPermission(this.getPermission()) ? var2 : "";
+      return sender.hasPermission(this.getPermission()) ? var2 : "";
    }
 
    public String getPermission() {
@@ -51,8 +51,8 @@ public class CmdOpen implements BaseCommand {
       return false;
    }
 
-   public List<String> onTabComplete(CommandSender var1, String[] var2) {
-      if (var2.length >= 1) {
+   public List<String> onTabComplete(CommandSender sender, String[] args) {
+      if (args.length >= 1) {
          ArrayList var3 = new ArrayList();
          var3.add("lshop");
          return var3;

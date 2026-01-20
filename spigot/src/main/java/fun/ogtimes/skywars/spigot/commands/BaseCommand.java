@@ -4,11 +4,11 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public interface BaseCommand {
-   void onCommand(CommandSender var1, String[] var2);
+   void onCommand(CommandSender sender, String[] args);
 
-   List<String> onTabComplete(CommandSender var1, String[] var2);
+   List<String> onTabComplete(CommandSender sender, String[] args);
 
-   String help(CommandSender var1);
+   String help(CommandSender sender);
 
    String getPermission();
 

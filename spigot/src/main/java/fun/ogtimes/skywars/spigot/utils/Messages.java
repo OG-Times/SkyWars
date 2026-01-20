@@ -135,12 +135,20 @@ public enum Messages {
    MOTD_INGAME("motd.ingame"),
    MOTD_ENDING("motd.ending"),
    MOTD_LOADING("motd.loading"),
-   MOTD_FULL("motd.full");
+   MOTD_FULL("motd.full"),
+
+   // OGTimes custom messages
+
+   AGAIN("again"),
+   LEAVE("leave"),
+
+   PLAY_AGAIN_1("play.again.line1"),
+   PLAY_AGAIN_2("play.again.line2");
 
    private final String reference;
 
-   Messages(String var3) {
-      this.reference = var3;
+   Messages(String reference) {
+      this.reference = reference;
    }
 
    public String toString() {

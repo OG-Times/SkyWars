@@ -35,29 +35,28 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ArenaListener implements Listener {
-    public static boolean checkWinner(Arena var0) {
-        if (var0.getAlivePlayers() <= 1) {
-            if (var0.getAlivePlayers() == 0) {
-                var0.end(true);
-                return true;
+    public static boolean checkWinner(Arena arena) {
+        if (arena.getAlivePlayers() <= 1) {
+            if (arena.getAlivePlayers() == 0) {
+                arena.end(true);
             } else {
-                SkyPlayer var1 = var0.getAlivePlayer().getFirst();
-                if (var1 != null) {
-                    Player var2 = var1.getPlayer();
-                    if (var2 != null) {
-                        Location var3 = var2.getLocation();
-                        if (var3 != null) {
-                            var2.playSound(var3, Sound.valueOf("ORB_PICKUP"), 1.0F, 1.0F);
+                SkyPlayer skyPlayer = arena.getAlivePlayer().getFirst();
+                if (skyPlayer != null) {
+                    Player player = skyPlayer.getPlayer();
+                    if (player != null) {
+                        Location location = player.getLocation();
+                        if (location != null) {
+                            player.playSound(location, Sound.valueOf("ORB_PICKUP"), 1.0F, 1.0F);
                         }
                     }
 
-                    var0.end(var1);
+                    arena.end(skyPlayer);
                 } else {
-                    var0.end(true);
+                    arena.end(true);
                 }
 
-                return true;
             }
+            return true;
         } else {
             return false;
         }

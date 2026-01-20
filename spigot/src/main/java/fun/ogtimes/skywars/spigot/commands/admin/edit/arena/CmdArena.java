@@ -20,19 +20,19 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class CmdArena implements BaseCommand {
-    public void onCommand(CommandSender var1, String[] var2) {
+    public void onCommand(CommandSender sender, String[] args) {
         Player var3 = null;
-        if (!(var1 instanceof Player)) {
-            var1.sendMessage("You aren't a player!");
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("You aren't a player!");
         } else {
-            var3 = (Player)var1;
+            var3 = (Player) sender;
             if (!var3.hasPermission(this.getPermission())) {
                 var3.sendMessage("§cYou do not have permissions!");
-            } else if (var2.length == 0) {
-                this.helpDefault(var1);
+            } else if (args.length == 0) {
+                this.helpDefault(sender);
             } else {
-                if (var2.length >= 1) {
-                    String var4 = var2[0].toLowerCase();
+                if (args.length >= 1) {
+                    String var4 = args[0].toLowerCase();
                     byte var5 = -1;
                     switch(var4.hashCode()) {
                         case -1352294148:
@@ -77,11 +77,11 @@ public class CmdArena implements BaseCommand {
                     int var10;
                     switch(var5) {
                         case 0:
-                            if (!var1.hasPermission("skywars.admin.arena.load")) {
+                            if (!sender.hasPermission("skywars.admin.arena.load")) {
                                 return;
                             }
 
-                            if (var2.length == 1) {
+                            if (args.length == 1) {
                                 var3.sendMessage("§cUsage: /sw arena load <world>");
                                 StringBuilder var17 = new StringBuilder();
 
@@ -92,9 +92,9 @@ public class CmdArena implements BaseCommand {
                                 var3.sendMessage(String.format("§cWorlds Loaded List: %s", var17.toString().replaceFirst(", ", "")));
                             }
 
-                            if (var2.length == 2) {
+                            if (args.length == 2) {
                                 File var18 = new File(SkyWars.maps);
-                                String var22 = var2[1];
+                                String var22 = args[1];
                                 if (var18.exists() && var18.isDirectory()) {
                                     File[] var23 = var18.listFiles();
                                     int var27 = var23.length;
@@ -125,16 +125,16 @@ public class CmdArena implements BaseCommand {
                             }
                             break;
                         case 1:
-                            if (!var1.hasPermission("skywars.admin.arena.create")) {
+                            if (!sender.hasPermission("skywars.admin.arena.create")) {
                                 return;
                             }
 
-                            if (var2.length == 1) {
+                            if (args.length == 1) {
                                 var3.sendMessage("§cUsage: /sw arena create <arena_name>");
                             }
 
-                            if (var2.length == 2) {
-                                var6 = var2[1];
+                            if (args.length == 2) {
+                                var6 = args[1];
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 != null) {
                                     var3.sendMessage("§cThis arena already exists!");
@@ -146,17 +146,17 @@ public class CmdArena implements BaseCommand {
                             }
                             break;
                         case 2:
-                            if (!var1.hasPermission("skywars.admin.arena.spawn")) {
+                            if (!sender.hasPermission("skywars.admin.arena.spawn")) {
                                 return;
                             }
 
-                            if (var2.length == 1) {
+                            if (args.length == 1) {
                                 var3.sendMessage("§a/sw arena §espawn §dadd §a- §bAdd spawn point");
                                 var3.sendMessage("§a/sw arena §espawn §dremove §9[#] §a- §bRemove the latest or specific spawn point");
                                 var3.sendMessage("§a/sw arena §espawn §dspect §a- §bSet spectator spawn point");
                             }
 
-                            if (var2.length >= 2) {
+                            if (args.length >= 2) {
                                 var6 = var3.getWorld().getName();
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 == null) {
@@ -170,7 +170,7 @@ public class CmdArena implements BaseCommand {
                                 }
 
                                 List var19 = var7.getConfig().getStringList("spawnpoints");
-                                String var25 = var2[1].toLowerCase();
+                                String var25 = args[1].toLowerCase();
                                 byte var26 = -1;
                                 switch(var25.hashCode()) {
                                     case -934610812:
@@ -203,8 +203,8 @@ public class CmdArena implements BaseCommand {
                                         }
 
                                         int var11 = var19.size();
-                                        if (var2.length >= 3) {
-                                            var11 = Integer.parseInt(var2[2]);
+                                        if (args.length >= 3) {
+                                            var11 = Integer.parseInt(args[2]);
                                         }
 
                                         var19.remove(var11 - 1);
@@ -225,16 +225,16 @@ public class CmdArena implements BaseCommand {
                             }
                             break;
                         case 3:
-                            if (!var1.hasPermission("skywars.admin.arena.set")) {
+                            if (!sender.hasPermission("skywars.admin.arena.set")) {
                                 return;
                             }
 
-                            if (var2.length == 1) {
+                            if (args.length == 1) {
                                 var3.sendMessage("§a/sw arena §eset §dmax §9<amount> §a- §bSet maximum players in arena");
                                 var3.sendMessage("§a/sw arena §eset §dmin §9<amount> §a- §bSet minimum players in arena");
                             }
 
-                            if (var2.length >= 2) {
+                            if (args.length >= 2) {
                                 var6 = var3.getWorld().getName();
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 == null) {
@@ -247,7 +247,7 @@ public class CmdArena implements BaseCommand {
                                     return;
                                 }
 
-                                var8 = var2[1].toLowerCase();
+                                var8 = args[1].toLowerCase();
                                 byte var24 = -1;
                                 switch(var8.hashCode()) {
                                     case 107876:
@@ -263,12 +263,12 @@ public class CmdArena implements BaseCommand {
 
                                 switch(var24) {
                                     case 0:
-                                        if (var2.length == 2) {
+                                        if (args.length == 2) {
                                             var3.sendMessage("§a/sw arena §eset §dmax §9<amount> §a- §bSet maximum players in arena");
                                         }
 
-                                        if (var2.length == 3) {
-                                            var10 = Integer.parseInt(var2[2]);
+                                        if (args.length == 3) {
+                                            var10 = Integer.parseInt(args[2]);
                                             var7.getConfig().set("max_players", var10);
                                             var7.getConfig().save();
                                             var3.sendMessage("§aMaximum players set to " + var10 + " in " + var6);
@@ -276,12 +276,12 @@ public class CmdArena implements BaseCommand {
 
                                         return;
                                     case 1:
-                                        if (var2.length == 2) {
+                                        if (args.length == 2) {
                                             var3.sendMessage("§a/sw arena §eset §dmin §9<amount> §a- §bSet minimum players in arena");
                                         }
 
-                                        if (var2.length == 3) {
-                                            var10 = Integer.parseInt(var2[2]);
+                                        if (args.length == 3) {
+                                            var10 = Integer.parseInt(args[2]);
                                             if (var10 <= 1) {
                                                 var3.sendMessage("§cThere isn't recommended set minimum player to " + var10 + ", this could cause the game start after one player join the match (and if is alone will win)");
                                             }
@@ -301,12 +301,12 @@ public class CmdArena implements BaseCommand {
                             }
                             break;
                         case 4:
-                            if (!var1.hasPermission("skywars.admin.arena.disable")) {
+                            if (!sender.hasPermission("skywars.admin.arena.disable")) {
                                 return;
                             }
 
-                            if (var2.length >= 2) {
-                                var6 = var2[1];
+                            if (args.length >= 2) {
+                                var6 = args[1];
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 != null) {
                                     if (var7.isDisabled()) {
@@ -327,12 +327,12 @@ public class CmdArena implements BaseCommand {
                             var3.sendMessage("§a/sw arena §edisable §d<arena_name> §a- §bDisable an arena to edit it");
                             return;
                         case 5:
-                            if (!var1.hasPermission("skywars.admin.arena.reload")) {
+                            if (!sender.hasPermission("skywars.admin.arena.reload")) {
                                 return;
                             }
 
-                            if (var2.length >= 2) {
-                                var6 = var2[1];
+                            if (args.length >= 2) {
+                                var6 = args[1];
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 != null) {
                                     var7.setDisabled(false);
@@ -348,12 +348,12 @@ public class CmdArena implements BaseCommand {
                             var3.sendMessage("§a/sw arena §ereload §d<arena_name> §a- §bReload an arena and enable it");
                             return;
                         case 6:
-                            if (!var1.hasPermission("skywars.admin.arena.save")) {
+                            if (!sender.hasPermission("skywars.admin.arena.save")) {
                                 return;
                             }
 
-                            if (var2.length >= 2) {
-                                var6 = var2[1];
+                            if (args.length >= 2) {
+                                var6 = args[1];
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 == null) {
                                     var3.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
@@ -386,7 +386,7 @@ public class CmdArena implements BaseCommand {
                             var3.sendMessage("§a/sw arena §esave §d<arena_name> §a- §bSave an arena world");
                             return;
                         default:
-                            this.helpDefault(var1);
+                            this.helpDefault(sender);
                     }
                 }
 
@@ -394,9 +394,9 @@ public class CmdArena implements BaseCommand {
         }
     }
 
-    public String help(CommandSender var1) {
+    public String help(CommandSender sender) {
         String var2 = "&a/sw arena - &bFor more help about arena commands";
-        return var1.hasPermission(this.getPermission()) ? var2 : "";
+        return sender.hasPermission(this.getPermission()) ? var2 : "";
     }
 
     public String getPermission() {
@@ -433,8 +433,8 @@ public class CmdArena implements BaseCommand {
         return lines;
     }
 
-    public List<String> onTabComplete(CommandSender var1, String[] var2) {
-        if (!var1.hasPermission(this.getPermission())) {
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (!sender.hasPermission(this.getPermission())) {
             return null;
         } else {
             Iterator var7;
@@ -443,7 +443,7 @@ public class CmdArena implements BaseCommand {
             String[] var12;
             ArrayList var13;
             ArrayList var14;
-            if (var2.length == 1) {
+            if (args.length == 1) {
                 var10 = new HashMap();
                 var10.put("load", "&a/sw arena &eload &a- &bFor more help about load worlds");
                 var10.put("create", "&a/sw arena &ecreate &a- &bFor more help about create arena");
@@ -455,25 +455,25 @@ public class CmdArena implements BaseCommand {
                 var12 = new String[]{"load", "create", "spawn", "set", "disable", "reload", "save"};
                 var13 = new ArrayList(Arrays.asList(var12));
                 var14 = new ArrayList();
-                StringUtil.copyPartialMatches(var2[0], var13, var14);
+                StringUtil.copyPartialMatches(args[0], var13, var14);
                 Collections.sort(var14);
-                var1.sendMessage("--------------------------------------------");
+                sender.sendMessage("--------------------------------------------");
                 var7 = var10.entrySet().iterator();
 
                 while(var7.hasNext()) {
                     var8 = (Entry)var7.next();
-                    if (var14.contains(var8.getKey()) && var1.hasPermission("skywars.admin.arena." + var8.getKey())) {
-                        var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
+                    if (var14.contains(var8.getKey()) && sender.hasPermission("skywars.admin.arena." + var8.getKey())) {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
                     }
                 }
 
-                var1.sendMessage("--------------------------------------------");
+                sender.sendMessage("--------------------------------------------");
                 return var14;
             } else {
-                if (var2.length > 1 && var2.length < 4) {
+                if (args.length > 1 && args.length < 4) {
                     ArrayList var4;
-                    if (var2[0].equalsIgnoreCase("load")) {
-                        if (!var1.hasPermission("skywars.admin.arena.load")) {
+                    if (args[0].equalsIgnoreCase("load")) {
+                        if (!sender.hasPermission("skywars.admin.arena.load")) {
                             return null;
                         }
 
@@ -495,10 +495,10 @@ public class CmdArena implements BaseCommand {
                             var4.remove(var19.getName());
                         }
 
-                        var1.sendMessage("--------------------------------------------");
-                        var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWorlds available to load (&b" + var4.size() + "&a):"));
-                        var1.sendMessage("--------------------------------------------");
-                        StringUtil.copyPartialMatches(var2[1], var4, var13);
+                        sender.sendMessage("--------------------------------------------");
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWorlds available to load (&b" + var4.size() + "&a):"));
+                        sender.sendMessage("--------------------------------------------");
+                        StringUtil.copyPartialMatches(args[1], var4, var13);
                         Collections.sort(var13);
                         return var13;
                     }
@@ -506,8 +506,8 @@ public class CmdArena implements BaseCommand {
                     ArrayList var3;
                     Iterator var5;
                     Arena var6;
-                    if (var2[0].equalsIgnoreCase("create")) {
-                        if (!var1.hasPermission("skywars.admin.arena.create")) {
+                    if (args[0].equalsIgnoreCase("create")) {
+                        if (!sender.hasPermission("skywars.admin.arena.create")) {
                             return null;
                         }
 
@@ -527,16 +527,16 @@ public class CmdArena implements BaseCommand {
                             var3.remove(var6.getName());
                         }
 
-                        var1.sendMessage("--------------------------------------------");
-                        var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aPossible arenas available to create (&b" + var3.size() + "&a):"));
-                        var1.sendMessage("--------------------------------------------");
-                        StringUtil.copyPartialMatches(var2[1], var3, var4);
+                        sender.sendMessage("--------------------------------------------");
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aPossible arenas available to create (&b" + var3.size() + "&a):"));
+                        sender.sendMessage("--------------------------------------------");
+                        StringUtil.copyPartialMatches(args[1], var3, var4);
                         Collections.sort(var4);
                         return var4;
                     }
 
-                    if (var2[0].equalsIgnoreCase("spawn")) {
-                        if (!var1.hasPermission("skywars.admin.arena.spawn")) {
+                    if (args[0].equalsIgnoreCase("spawn")) {
+                        if (!sender.hasPermission("skywars.admin.arena.spawn")) {
                             return null;
                         } else {
                             var10 = new HashMap();
@@ -546,25 +546,25 @@ public class CmdArena implements BaseCommand {
                             var12 = new String[]{"add", "remove", "spect"};
                             var13 = new ArrayList(Arrays.asList(var12));
                             var14 = new ArrayList();
-                            StringUtil.copyPartialMatches(var2[1], var13, var14);
+                            StringUtil.copyPartialMatches(args[1], var13, var14);
                             Collections.sort(var14);
-                            var1.sendMessage("--------------------------------------------");
+                            sender.sendMessage("--------------------------------------------");
                             var7 = var10.entrySet().iterator();
 
                             while(var7.hasNext()) {
                                 var8 = (Entry)var7.next();
                                 if (var14.contains(var8.getKey())) {
-                                    var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
+                                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
                                 }
                             }
 
-                            var1.sendMessage("--------------------------------------------");
+                            sender.sendMessage("--------------------------------------------");
                             return var14;
                         }
                     }
 
-                    if (var2[0].equalsIgnoreCase("set")) {
-                        if (!var1.hasPermission("skywars.admin.arena.set")) {
+                    if (args[0].equalsIgnoreCase("set")) {
+                        if (!sender.hasPermission("skywars.admin.arena.set")) {
                             return null;
                         }
 
@@ -574,24 +574,24 @@ public class CmdArena implements BaseCommand {
                         var12 = new String[]{"max", "min"};
                         var13 = new ArrayList(Arrays.asList(var12));
                         var14 = new ArrayList();
-                        StringUtil.copyPartialMatches(var2[1], var13, var14);
+                        StringUtil.copyPartialMatches(args[1], var13, var14);
                         Collections.sort(var14);
-                        var1.sendMessage("--------------------------------------------");
+                        sender.sendMessage("--------------------------------------------");
                         var7 = var10.entrySet().iterator();
 
                         while(var7.hasNext()) {
                             var8 = (Entry)var7.next();
                             if (var14.contains(var8.getKey())) {
-                                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
                             }
                         }
 
-                        var1.sendMessage("--------------------------------------------");
+                        sender.sendMessage("--------------------------------------------");
                         return var14;
                     }
 
-                    if (var2[0].equalsIgnoreCase("disable") || var2[0].equalsIgnoreCase("reload") || var2[0].equalsIgnoreCase("save")) {
-                        if (!var1.hasPermission("skywars.admin.arena." + var2[0])) {
+                    if (args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("save")) {
+                        if (!sender.hasPermission("skywars.admin.arena." + args[0])) {
                             return null;
                         }
 
@@ -604,8 +604,8 @@ public class CmdArena implements BaseCommand {
                             var3.add(var6.getName());
                         }
 
-                        var1.sendMessage("--------------------------------------------");
-                        StringUtil.copyPartialMatches(var2[1], var3, var4);
+                        sender.sendMessage("--------------------------------------------");
+                        StringUtil.copyPartialMatches(args[1], var3, var4);
                         Collections.sort(var4);
                         return var4;
                     }
