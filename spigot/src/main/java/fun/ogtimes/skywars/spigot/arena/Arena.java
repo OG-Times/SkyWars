@@ -512,30 +512,29 @@ public class Arena extends Game {
             return this.chest;
         } else {
             this.selectedChest.clear();
-            ChestType[] var1 = ChestTypeManager.getChestTypes();
-            int var2 = var1.length;
+            ChestType[] chestTypes = ChestTypeManager.getChestTypes();
 
-            for (ChestType var4 : var1) {
-                this.selectedChest.add("vote_chest_" + var4.getName());
+            for (ChestType chestType : chestTypes) {
+                this.selectedChest.add("vote_chest_" + chestType.getName());
             }
 
             int var5 = -1;
-            String var6 = null;
+            String chest = null;
 
-            for (String var8 : this.selectedChest) {
-                if (this.getInt(var8) > var5) {
-                    var5 = this.getInt(var8);
-                    var6 = var8.replace("vote_chest_", "");
+            for (String stringChest : this.selectedChest) {
+                if (this.getInt(stringChest) > var5) {
+                    var5 = this.getInt(stringChest);
+                    chest = stringChest.replace("vote_chest_", "");
                 }
             }
 
             if (var5 <= 0) {
-                var6 = this.config.getString("chests.default");
+                chest = this.config.getString("chests.default");
             }
 
-            this.chest = var6;
+            this.chest = chest;
             this.chestSelected = true;
-            return var6;
+            return chest;
         }
     }
 
@@ -940,7 +939,7 @@ public class Arena extends Game {
         }
 
         this.fallDamage = false;
-        this.broadcast(String.format(SkyWars.getMessage(Messages.SELECTED_CHEST), this.getChest()));
+        this.broadcast(String.format(SkyWars.getMessage(Messages.SELECTED_CHEST), SkyWars.getMessage(Messages.valueOf("SELECTED_CHEST_" + this.getChest().toUpperCase()))));
         long var8 = this.getTime();
         if (var8 == 0L) {
             this.broadcast(String.format(SkyWars.getMessage(Messages.SELECTED_TIME), SkyWars.getMessage(Messages.SELECTED_TIME_DAY)));
