@@ -12,14 +12,14 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class MenuListener implements Listener {
-    public static HashMap<String, HashMap<String, Menu>> menus = new HashMap();
+    public static final HashMap<String, HashMap<String, Menu>> menus = new HashMap<>();
 
     public static HashMap<String, Menu> getPlayerMenus(Player var0) {
-        return menus.containsKey(var0.getName()) ? (HashMap)menus.get(var0.getName()) : new HashMap();
+        return menus.containsKey(var0.getName()) ? menus.get(var0.getName()) : new HashMap();
     }
 
     public static Menu getPlayerMenu(Player var0, String var1) {
-        return (Menu)getPlayerMenus(var0).getOrDefault(var1, null);
+        return getPlayerMenus(var0).getOrDefault(var1, null);
     }
 
     @EventHandler
@@ -34,10 +34,8 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent var1) {
-        Iterator var2 = getPlayerMenus((Player)var1.getPlayer()).values().iterator();
 
-        while(var2.hasNext()) {
-            Menu var3 = (Menu)var2.next();
+        for (Menu var3 : getPlayerMenus((Player) var1.getPlayer()).values()) {
             if (var1.getInventory().getTitle().equals(var3.getInventory().getTitle())) {
                 var3.onOpen(var1);
             }
@@ -47,10 +45,8 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent var1) {
-        Iterator var2 = getPlayerMenus((Player)var1.getPlayer()).values().iterator();
 
-        while(var2.hasNext()) {
-            Menu var3 = (Menu)var2.next();
+        for (Menu var3 : getPlayerMenus((Player) var1.getPlayer()).values()) {
             if (var1.getInventory().getTitle().equals(var3.getInventory().getTitle())) {
                 var3.onClose(var1);
             }
@@ -60,10 +56,8 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent var1) {
-        Iterator var2 = getPlayerMenus((Player)var1.getWhoClicked()).values().iterator();
 
-        while(var2.hasNext()) {
-            Menu var3 = (Menu)var2.next();
+        for (Menu var3 : getPlayerMenus((Player) var1.getWhoClicked()).values()) {
             if (var1.getInventory().getTitle().equals(var3.getInventory().getTitle()) && var1.getCurrentItem() != null) {
                 var1.setCancelled(true);
                 var3.onClick(var1);

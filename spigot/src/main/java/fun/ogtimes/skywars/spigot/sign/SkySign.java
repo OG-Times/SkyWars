@@ -5,6 +5,8 @@ import fun.ogtimes.skywars.spigot.arena.ArenaManager;
 import fun.ogtimes.skywars.spigot.server.ServerManager;
 import fun.ogtimes.skywars.spigot.utils.Game;
 import fun.ogtimes.skywars.spigot.utils.LocationUtil;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,8 +14,13 @@ import org.bukkit.block.Sign;
 
 public class SkySign {
    private final String location;
+   @Setter
+   @Getter
    private boolean rotation;
+   @Setter
+   @Getter
    private boolean updating;
+   @Getter
    private Game game;
 
    public SkySign(String var1) {
@@ -39,11 +46,7 @@ public class SkySign {
       return LocationUtil.getLocation(this.location);
    }
 
-   public Game getGame() {
-      return this.game;
-   }
-
-   public void setGame(String var1) {
+    public void setGame(String var1) {
       if (SkyWars.isMultiArenaMode()) {
          this.game = ArenaManager.getGame(var1);
       }
@@ -54,19 +57,4 @@ public class SkySign {
 
    }
 
-   public boolean isRotation() {
-      return this.rotation;
-   }
-
-   public void setRotation(boolean var1) {
-      this.rotation = var1;
-   }
-
-   public boolean isUpdating() {
-      return this.updating;
-   }
-
-   public void setUpdating(boolean var1) {
-      this.updating = var1;
-   }
 }

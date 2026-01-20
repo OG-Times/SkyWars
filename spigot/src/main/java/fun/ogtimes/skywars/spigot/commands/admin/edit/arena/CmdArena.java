@@ -8,12 +8,7 @@ import fun.ogtimes.skywars.spigot.utils.LocationUtil;
 import fun.ogtimes.skywars.spigot.utils.ZipDir;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,21 +17,19 @@ import org.bukkit.WorldCreator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class CmdArena implements BaseCommand {
-    public boolean onCommand(CommandSender var1, String[] var2) {
+    public void onCommand(CommandSender var1, String[] var2) {
         Player var3 = null;
         if (!(var1 instanceof Player)) {
             var1.sendMessage("You aren't a player!");
-            return true;
         } else {
             var3 = (Player)var1;
             if (!var3.hasPermission(this.getPermission())) {
                 var3.sendMessage("§cYou do not have permissions!");
-                return true;
             } else if (var2.length == 0) {
                 this.helpDefault(var1);
-                return true;
             } else {
                 if (var2.length >= 1) {
                     String var4 = var2[0].toLowerCase();
@@ -85,16 +78,14 @@ public class CmdArena implements BaseCommand {
                     switch(var5) {
                         case 0:
                             if (!var1.hasPermission("skywars.admin.arena.load")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length == 1) {
                                 var3.sendMessage("§cUsage: /sw arena load <world>");
                                 StringBuilder var17 = new StringBuilder();
-                                Iterator var20 = Bukkit.getWorlds().iterator();
 
-                                while(var20.hasNext()) {
-                                    World var21 = (World)var20.next();
+                                for (World var21 : Bukkit.getWorlds()) {
                                     var17.append(", ").append(var21.getName());
                                 }
 
@@ -135,7 +126,7 @@ public class CmdArena implements BaseCommand {
                             break;
                         case 1:
                             if (!var1.hasPermission("skywars.admin.arena.create")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length == 1) {
@@ -147,7 +138,7 @@ public class CmdArena implements BaseCommand {
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 != null) {
                                     var3.sendMessage("§cThis arena already exists!");
-                                    return false;
+                                    return;
                                 }
 
                                 new Arena(var6, true);
@@ -156,7 +147,7 @@ public class CmdArena implements BaseCommand {
                             break;
                         case 2:
                             if (!var1.hasPermission("skywars.admin.arena.spawn")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length == 1) {
@@ -170,12 +161,12 @@ public class CmdArena implements BaseCommand {
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 == null) {
                                     var3.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
-                                    return false;
+                                    return;
                                 }
 
                                 if (!var7.isDisabled()) {
                                     var3.sendMessage("§cYou can't edit an arena if it is not disabled");
-                                    return false;
+                                    return;
                                 }
 
                                 List var19 = var7.getConfig().getStringList("spawnpoints");
@@ -204,11 +195,11 @@ public class CmdArena implements BaseCommand {
                                         var7.getConfig().set("spawnpoints", var19);
                                         var7.getConfig().save();
                                         var3.sendMessage("§aSpawn added (" + var19.size() + ")");
-                                        return true;
+                                        return;
                                     case 1:
                                         if (var19.isEmpty()) {
                                             var3.sendMessage("§cThis arena don't have spawn points");
-                                            return false;
+                                            return;
                                         }
 
                                         int var11 = var19.size();
@@ -220,12 +211,12 @@ public class CmdArena implements BaseCommand {
                                         var7.getConfig().set("spawnpoints", var19);
                                         var7.getConfig().save();
                                         var3.sendMessage("§aSpawn #" + var11 + " removed");
-                                        return true;
+                                        return;
                                     case 2:
                                         var7.getConfig().set("spectator_spawn", LocationUtil.getString(var3.getLocation(), true));
                                         var7.getConfig().save();
                                         var3.sendMessage("§aSpectator spawn set");
-                                        return true;
+                                        return;
                                     default:
                                         var3.sendMessage("§a/sw arena §espawn §dadd §a- §bAdd spawn point");
                                         var3.sendMessage("§a/sw arena §espawn §dremove §9[#] §a- §bRemove the latest or specific spawn point");
@@ -235,7 +226,7 @@ public class CmdArena implements BaseCommand {
                             break;
                         case 3:
                             if (!var1.hasPermission("skywars.admin.arena.set")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length == 1) {
@@ -248,12 +239,12 @@ public class CmdArena implements BaseCommand {
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 == null) {
                                     var3.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
-                                    return false;
+                                    return;
                                 }
 
                                 if (!var7.isDisabled()) {
                                     var3.sendMessage("§cYou can't edit an arena if it is not disabled");
-                                    return false;
+                                    return;
                                 }
 
                                 var8 = var2[1].toLowerCase();
@@ -283,7 +274,7 @@ public class CmdArena implements BaseCommand {
                                             var3.sendMessage("§aMaximum players set to " + var10 + " in " + var6);
                                         }
 
-                                        return true;
+                                        return;
                                     case 1:
                                         if (var2.length == 2) {
                                             var3.sendMessage("§a/sw arena §eset §dmin §9<amount> §a- §bSet minimum players in arena");
@@ -298,20 +289,20 @@ public class CmdArena implements BaseCommand {
                                             var7.getConfig().set("min_players", var10);
                                             var7.getConfig().save();
                                             var3.sendMessage("§aMinimun players set to " + var10 + " in " + var6);
-                                            return true;
+                                            return;
                                         }
 
-                                        return false;
+                                        return;
                                     default:
                                         var3.sendMessage("§a/sw arena §eset §dmax §9<amount> §a- §bSet maximum players in arena");
                                         var3.sendMessage("§a/sw arena §eset §dmin §9<amount> §a- §bSet minimum players in arena");
-                                        return true;
+                                        return;
                                 }
                             }
                             break;
                         case 4:
                             if (!var1.hasPermission("skywars.admin.arena.disable")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length >= 2) {
@@ -320,24 +311,24 @@ public class CmdArena implements BaseCommand {
                                 if (var7 != null) {
                                     if (var7.isDisabled()) {
                                         var3.sendMessage("§cThe arena is already disabled");
-                                        return false;
+                                        return;
                                     }
 
                                     var7.setDisabled(true);
                                     var7.restart();
                                     var3.sendMessage("§a" + var6 + " has been disabled and now you can edit it");
-                                    return true;
+                                    return;
                                 }
 
                                 var3.sendMessage("§cThe arena doesn't exists");
-                                return false;
+                                return;
                             }
 
                             var3.sendMessage("§a/sw arena §edisable §d<arena_name> §a- §bDisable an arena to edit it");
-                            return false;
+                            return;
                         case 5:
                             if (!var1.hasPermission("skywars.admin.arena.reload")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length >= 2) {
@@ -347,18 +338,18 @@ public class CmdArena implements BaseCommand {
                                     var7.setDisabled(false);
                                     var7.restart();
                                     var3.sendMessage("§a" + var6 + " has been reloaded" + (var7.isDisabled() ? " §aand now is enabled" : ""));
-                                    return true;
+                                    return;
                                 }
 
                                 var3.sendMessage("§cThe arena doesn't exists");
-                                return false;
+                                return;
                             }
 
                             var3.sendMessage("§a/sw arena §ereload §d<arena_name> §a- §bReload an arena and enable it");
-                            return false;
+                            return;
                         case 6:
                             if (!var1.hasPermission("skywars.admin.arena.save")) {
-                                return false;
+                                return;
                             }
 
                             if (var2.length >= 2) {
@@ -366,12 +357,12 @@ public class CmdArena implements BaseCommand {
                                 var7 = ArenaManager.getGame(var6);
                                 if (var7 == null) {
                                     var3.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
-                                    return false;
+                                    return;
                                 }
 
                                 if (!var7.isDisabled()) {
                                     var3.sendMessage("§cYou can't save an arena if it is not disabled");
-                                    return false;
+                                    return;
                                 }
 
                                 var7.getWorld().save();
@@ -389,17 +380,16 @@ public class CmdArena implements BaseCommand {
                                 }
 
                                 var3.sendMessage("§a" + var6 + " has been saved in maps folder");
-                                return true;
+                                return;
                             }
 
                             var3.sendMessage("§a/sw arena §esave §d<arena_name> §a- §bSave an arena world");
-                            return false;
+                            return;
                         default:
                             this.helpDefault(var1);
                     }
                 }
 
-                return true;
             }
         }
     }
@@ -418,25 +408,29 @@ public class CmdArena implements BaseCommand {
     }
 
     public void helpDefault(CommandSender var1) {
-        HashMap var2 = new HashMap();
-        var2.put("load", "&a/sw arena &eload &a- &bLoad new arena world");
-        var2.put("create", "&a/sw arena &ecreate &a- &bCreate new arena");
-        var2.put("spawn", "&a/sw arena &espawn &a- &bAdd or remove spawn points");
-        var2.put("set", "&a/sw arena &eset &a- &bSet arena configuration");
-        var2.put("disable", "&a/sw arena &edisable &a- &bDisable an arena to edit it");
-        var2.put("reload", "&a/sw arena &ereload &a- &bReload an arena and enable it");
-        var2.put("save", "&a/sw arena &esave &a- &bSave an arena world");
+        Map<String, String> helpMessage = getHelpMessage();
         var1.sendMessage("------------ §a[SkyWars Arena Help] §f------------");
-        Iterator var3 = var2.entrySet().iterator();
 
-        while(var3.hasNext()) {
-            Entry var4 = (Entry)var3.next();
-            if (var1.hasPermission("skywars.admin.arena." + (String)var4.getKey())) {
-                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var4.getValue()));
+        for (Entry<String, String> stringStringEntry : helpMessage.entrySet()) {
+            Entry var4 = stringStringEntry;
+            if (var1.hasPermission("skywars.admin.arena." + var4.getKey())) {
+                var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) var4.getValue()));
             }
         }
 
         var1.sendMessage("--------------------------------------------");
+    }
+
+    private static @NotNull Map<String, String> getHelpMessage() {
+        Map<String, String> lines = new HashMap<>();
+        lines.put("load", "&a/sw arena &eload &a- &bLoad new arena world");
+        lines.put("create", "&a/sw arena &ecreate &a- &bCreate new arena");
+        lines.put("spawn", "&a/sw arena &espawn &a- &bAdd or remove spawn points");
+        lines.put("set", "&a/sw arena &eset &a- &bSet arena configuration");
+        lines.put("disable", "&a/sw arena &edisable &a- &bDisable an arena to edit it");
+        lines.put("reload", "&a/sw arena &ereload &a- &bReload an arena and enable it");
+        lines.put("save", "&a/sw arena &esave &a- &bSave an arena world");
+        return lines;
     }
 
     public List<String> onTabComplete(CommandSender var1, String[] var2) {
@@ -468,7 +462,7 @@ public class CmdArena implements BaseCommand {
 
                 while(var7.hasNext()) {
                     var8 = (Entry)var7.next();
-                    if (var14.contains(var8.getKey()) && var1.hasPermission("skywars.admin.arena." + (String)var8.getKey())) {
+                    if (var14.contains(var8.getKey()) && var1.hasPermission("skywars.admin.arena." + var8.getKey())) {
                         var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
                     }
                 }
@@ -490,21 +484,15 @@ public class CmdArena implements BaseCommand {
                             File[] var16 = var11.listFiles();
                             int var17 = var16.length;
 
-                            for(int var20 = 0; var20 < var17; ++var20) {
-                                File var9 = var16[var20];
+                            for (File var9 : var16) {
                                 if (var9.isDirectory()) {
                                     var4.add(var9.getName());
                                 }
                             }
                         }
 
-                        Iterator var18 = Bukkit.getWorlds().iterator();
-
-                        while(var18.hasNext()) {
-                            World var19 = (World)var18.next();
-                            if (var4.contains(var19.getName())) {
-                                var4.remove(var19.getName());
-                            }
+                        for (World var19 : Bukkit.getWorlds()) {
+                            var4.remove(var19.getName());
                         }
 
                         var1.sendMessage("--------------------------------------------");
@@ -536,9 +524,7 @@ public class CmdArena implements BaseCommand {
 
                         while(var5.hasNext()) {
                             var6 = (Arena)var5.next();
-                            if (var3.contains(var6.getName())) {
-                                var3.remove(var6.getName());
-                            }
+                            var3.remove(var6.getName());
                         }
 
                         var1.sendMessage("--------------------------------------------");

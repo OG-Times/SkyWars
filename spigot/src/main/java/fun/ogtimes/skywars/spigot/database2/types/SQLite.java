@@ -79,7 +79,7 @@ public class SQLite extends DataSource {
       try {
          var5 = con.createStatement();
          DatabaseMetaData var6 = con.getMetaData();
-         var4 = var6.getColumns((String)null, (String)null, var1, var2);
+         var4 = var6.getColumns(null, null, var1, var2);
          if (!var4.next()) {
             var5.executeUpdate(String.format("ALTER TABLE %s ADD COLUMN %s %s;", var1, var2, var3));
          }

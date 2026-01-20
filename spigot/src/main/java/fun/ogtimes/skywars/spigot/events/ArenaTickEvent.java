@@ -1,22 +1,20 @@
 package fun.ogtimes.skywars.spigot.events;
 
 import fun.ogtimes.skywars.spigot.arena.Arena;
+import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Getter
 public class ArenaTickEvent extends Event {
    private static final HandlerList handlers = new HandlerList();
-   private Arena arena;
+   private final Arena arena;
 
    public ArenaTickEvent(Arena var1) {
       this.arena = var1;
    }
 
-   public Arena getArena() {
-      return this.arena;
-   }
-
-   public HandlerList getHandlers() {
+    public HandlerList getHandlers() {
       return handlers;
    }
 

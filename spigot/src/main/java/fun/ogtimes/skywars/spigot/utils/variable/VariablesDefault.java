@@ -45,14 +45,14 @@ public final class VariablesDefault implements VariableReplacer {
       vars = {"ARENA-EVENT-TITLE", "A-EVENT-TITLE"}
    )
    public String arenaCurrentEventTitleVar(SkyPlayer var1) {
-      return var1.isInArena() ? String.valueOf(((ArenaEvent)var1.getArena().getEvents().get(0)).getTitle()) : "NONE";
+      return var1.isInArena() ? String.valueOf(var1.getArena().getEvents().getFirst().getTitle()) : "NONE";
    }
 
    @Variable(
       vars = {"ARENA-EVENT-TIME", "A-EVENT-TIME"}
    )
    public String arenaCurrentEventTimeVar(SkyPlayer var1) {
-      return var1.isInArena() ? String.valueOf(((ArenaEvent)var1.getArena().getEvents().get(0)).getTime()) : "NONE";
+      return var1.isInArena() ? String.valueOf(var1.getArena().getEvents().getFirst().getTime()) : "NONE";
    }
 
    @Variable(
@@ -167,8 +167,7 @@ public final class VariablesDefault implements VariableReplacer {
          var14 = "";
       }
 
-      String var19 = SkyWars.getMessage(Messages.VARIABLE_TIMEPLAYED).replace("{SECONDS}", var12).replace("{MINUTES}", var14).replace("{HOURS}", var16).replace("{DAYS}", var18);
-      return var19;
+       return SkyWars.getMessage(Messages.VARIABLE_TIMEPLAYED).replace("{SECONDS}", var12).replace("{MINUTES}", var14).replace("{HOURS}", var16).replace("{DAYS}", var18);
    }
 
    @Variable(
@@ -176,7 +175,7 @@ public final class VariablesDefault implements VariableReplacer {
    )
    public String swKDRVar(SkyPlayer var1) {
       double var2 = (double)var1.getKills() / (double)var1.getDeaths();
-      return String.valueOf(String.format("%.2f", var2));
+      return String.format("%.2f", var2);
    }
 
    @Variable(

@@ -17,7 +17,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
 public class MenuShopCategory extends Menu {
-   private String section;
+   private final String section;
 
    public MenuShopCategory(Player var1, String var2) {
       super(var1, "shopCategory-" + var2, ConfigManager.shop.getString("submenus." + var2 + ".sub_name"), ConfigManager.shop.getInt("shop_size"));
@@ -36,44 +36,42 @@ public class MenuShopCategory extends Menu {
       if (var1.getCurrentItem() != null && var1.getCurrentItem().getType() != Material.AIR) {
          SkyPlayer var3 = SkyWars.getSkyPlayer(this.getPlayer());
          if (!MenuShop.executeSubMenuButtons(var2, var3)) {
-            Iterator var4 = ConfigManager.shop.getConfigurationSection("submenus." + this.section + ".content").getKeys(false).iterator();
 
-            while(var4.hasNext()) {
-               String var5 = (String)var4.next();
-               if (var2 == Integer.parseInt(var5) - 1) {
-                  String[] var6 = ConfigManager.shop.getString("submenus." + this.section + ".content." + var5 + ".item").split(",");
-                  Kit var7 = KitManager.getKit(var6[1]);
-                  if (var7 == null) {
-                     return;
-                  }
-
-                  if (!var3.hasKit(var7)) {
-                     if (SkyWars.getPlugin().getConfig().getBoolean("kit_permission") && !var3.hasPermissions("skywars.kit." + var7.getName().toLowerCase())) {
-                        var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_KIT));
-                        return;
+             for (String var5 : ConfigManager.shop.getConfigurationSection("submenus." + this.section + ".content").getKeys(false)) {
+                 if (var2 == Integer.parseInt(var5) - 1) {
+                     String[] var6 = ConfigManager.shop.getString("submenus." + this.section + ".content." + var5 + ".item").split(",");
+                     Kit var7 = KitManager.getKit(var6[1]);
+                     if (var7 == null) {
+                         return;
                      }
 
-                     if (var7.isFree()) {
-                        var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_PURCHASE_KIT), var7.getName().toLowerCase()));
-                        return;
+                     if (!var3.hasKit(var7)) {
+                         if (SkyWars.getPlugin().getConfig().getBoolean("kit_permission") && !var3.hasPermissions("skywars.kit." + var7.getName().toLowerCase())) {
+                             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_KIT));
+                             return;
+                         }
+
+                         if (var7.isFree()) {
+                             var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_PURCHASE_KIT), var7.getName().toLowerCase()));
+                             return;
+                         }
+
+                         if (var3.getCoins() >= (double) var7.getPrice()) {
+                             SkyEconomyManager.removeCoins(var3.getPlayer(), var7.getPrice());
+                             var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_PURCHASE_KIT), var7.getName().toLowerCase()));
+                             var3.addData("upload_data", true);
+                             var3.addKit(var7);
+                             var3.getPlayer().closeInventory();
+                             return;
+                         }
+
+                         var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDMONEY_KIT));
+                         return;
                      }
 
-                     if (var3.getCoins() >= (double)var7.getPrice()) {
-                        SkyEconomyManager.removeCoins(var3.getPlayer(), var7.getPrice());
-                        var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_PURCHASE_KIT), var7.getName().toLowerCase()));
-                        var3.addData("upload_data", true);
-                        var3.addKit(var7);
-                        var3.getPlayer().closeInventory();
-                        return;
-                     }
-
-                     var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDMONEY_KIT));
-                     return;
-                  }
-
-                  var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_ALREADY_KIT), var7.getName().toLowerCase()));
-               }
-            }
+                     var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_ALREADY_KIT), var7.getName().toLowerCase()));
+                 }
+             }
 
          }
       }
@@ -115,7 +113,7 @@ public class MenuShopCategory extends Menu {
       while(var2.hasNext()) {
          var3 = (String)var2.next();
          var4 = Integer.parseInt(var3) - 1;
-         this.setItem(var4, MenuShop.getItemRead("allsubmenus." + var3, ConfigManager.shop, true, (SkyPlayer)null));
+         this.setItem(var4, MenuShop.getItemRead("allsubmenus." + var3, ConfigManager.shop, true, null));
       }
 
    }

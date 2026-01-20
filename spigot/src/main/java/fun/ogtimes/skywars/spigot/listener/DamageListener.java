@@ -16,13 +16,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public class DamageListener implements Listener {
-   public static HashMap<UUID, UUID> lastDamage = new HashMap();
+   public static final HashMap<UUID, UUID> lastDamage = new HashMap<>();
 
    @EventHandler
    public void onPlayerDamage(EntityDamageEvent var1) {
-      if (var1.getEntity() instanceof Player) {
-         Player var2 = (Player)var1.getEntity();
-         SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
+      if (var1.getEntity() instanceof Player var2) {
+          SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
          if (var3 == null) {
             SkyWars.log("DamageListener.onPlayerDamage - null Player");
             return;
@@ -51,10 +50,8 @@ public class DamageListener implements Listener {
 
    @EventHandler
    public void onPlayerDamageByPlayer(EntityDamageByEntityEvent var1) {
-      if (var1.getEntity() instanceof Player && var1.getDamager() instanceof Player) {
-         Player var2 = (Player)var1.getEntity();
-         Player var3 = (Player)var1.getDamager();
-         SkyPlayer var4 = SkyWars.getSkyPlayer(var2);
+      if (var1.getEntity() instanceof Player var2 && var1.getDamager() instanceof Player var3) {
+          SkyPlayer var4 = SkyWars.getSkyPlayer(var2);
          SkyPlayer var5 = SkyWars.getSkyPlayer(var3);
          if (var4 == null) {
             SkyWars.log("DamageListener.onPlayerDamageByPlayer - null Player");
@@ -78,9 +75,7 @@ public class DamageListener implements Listener {
 
             if (var6.getState() == ArenaState.INGAME && !var4.isSpectating() && !var5.isSpectating()) {
                lastDamage.put(var2.getUniqueId(), var3.getUniqueId());
-               Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
-                  lastDamage.remove(var2.getUniqueId(), var3.getUniqueId());
-               }, 20L * (long)ConfigManager.main.getInt("options.combatLogTime"));
+               Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> lastDamage.remove(var2.getUniqueId(), var3.getUniqueId()), 20L * (long)ConfigManager.main.getInt("options.combatLogTime"));
             }
          } else if (SkyWars.getPlugin().getConfig().getBoolean("options.disablePvP-Outside-The-Arena")) {
             var1.setCancelled(true);

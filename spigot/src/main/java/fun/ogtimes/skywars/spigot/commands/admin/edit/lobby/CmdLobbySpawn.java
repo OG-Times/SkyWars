@@ -9,25 +9,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdLobbySpawn implements BaseCommand {
-   public boolean onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender var1, String[] var2) {
       Player var3 = null;
       if (!(var1 instanceof Player)) {
          var1.sendMessage("You aren't a player!");
-         return true;
       } else {
          var3 = (Player)var1;
          if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
-            return true;
          } else if (var2.length == 0) {
             SkyWars.getPlugin().getConfig().set("spawn", LocationUtil.getString(var3.getLocation(), true));
             ConfigManager.main.set("spawn", LocationUtil.getString(var3.getLocation(), true));
             ConfigManager.main.save();
             SkyWars.spawn = var3.getLocation();
             var3.sendMessage("§aLobby Spawn set");
-            return true;
          } else {
-            return true;
          }
       }
    }

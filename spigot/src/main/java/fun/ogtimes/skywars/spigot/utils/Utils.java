@@ -11,10 +11,9 @@ public class Utils {
       ChatColor[] var1 = ChatColor.values();
       int var2 = var1.length;
 
-      for(int var3 = 0; var3 < var2; ++var3) {
-         ChatColor var4 = var1[var3];
-         var0 = var0.replaceAll("\\[" + var4.getChar() + "\\]", var4.toString());
-      }
+       for (ChatColor var4 : var1) {
+           var0 = var0.replaceAll("\\[" + var4.getChar() + "\\]", var4.toString());
+       }
 
       return var0;
    }

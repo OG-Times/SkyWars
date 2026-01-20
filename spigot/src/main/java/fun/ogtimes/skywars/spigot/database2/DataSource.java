@@ -15,9 +15,9 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
 public abstract class DataSource {
-   public String TABLE_DATA = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.data");
-   public String TABLE_ECONOMY = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.economy");
-   public String TABLE_SERVER = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.servers");
+   public final String TABLE_DATA = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.data");
+   public final String TABLE_ECONOMY = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.economy");
+   public final String TABLE_SERVER = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.servers");
 
    protected DataSource() {
    }
@@ -28,7 +28,7 @@ public abstract class DataSource {
       if (var1 != null) {
          try {
             var1.close();
-         } catch (Exception var3) {
+         } catch (Exception ignored) {
          }
       }
 
@@ -69,12 +69,11 @@ public abstract class DataSource {
                Kit[] var6 = KitManager.getKits();
                int var7 = var6.length;
 
-               for(int var8 = 0; var8 < var7; ++var8) {
-                  Kit var9 = var6[var8];
-                  if (var5.contains(var9.getName())) {
-                     var2.addKit(var9);
-                  }
-               }
+                for (Kit var9 : var6) {
+                    if (var5.contains(var9.getName())) {
+                        var2.addKit(var9);
+                    }
+                }
             }
 
             if (var4.getString("last_colour") != null) {
@@ -212,7 +211,7 @@ public abstract class DataSource {
          var6 = var5.executeQuery();
 
          while(var6.next()) {
-            var4.add(new SimpleEntry(var6.getString("username"), var6.getInt(var2)));
+            var4.add(new SimpleEntry<>(var6.getString("username"), var6.getInt(var2)));
          }
       } catch (SQLException var11) {
          var11.printStackTrace();

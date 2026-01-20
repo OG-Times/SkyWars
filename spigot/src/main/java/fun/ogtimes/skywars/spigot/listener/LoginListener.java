@@ -81,8 +81,8 @@ public class LoginListener implements Listener {
         SkyPlayer var3 = new SkyPlayer(player.getName(), player.getUniqueId());
         SkyWars.skyPlayers.put(player.getName(), var3);
         SkyWars.skyPlayersUUID.put(player.getUniqueId(), var3);
-        if (SkyWars.isProxyMode() && ArenaManager.getGames().size() > 0) {
-            Arena var4 = (Arena)ArenaManager.getGames().iterator().next();
+        if (SkyWars.isProxyMode() && !ArenaManager.getGames().isEmpty()) {
+            Arena var4 = ArenaManager.getGames().iterator().next();
             if (var4 != null) {
                 var4.addPlayer(var3, ArenaJoinCause.LOGIN);
             } else {
@@ -120,7 +120,7 @@ public class LoginListener implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent var1) {
         if (!SkyWars.getPlugin().getConfig().getBoolean("options.leaveMessage")) {
-            var1.setQuitMessage((String)null);
+            var1.setQuitMessage(null);
         }
 
         Player var2 = var1.getPlayer();
@@ -130,7 +130,7 @@ public class LoginListener implements Listener {
             GameQueue.removePlayer(var3);
             if (var3.isInArena()) {
                 if (DamageListener.lastDamage.containsKey(var2.getUniqueId())) {
-                    Player var4 = Bukkit.getPlayer((UUID)DamageListener.lastDamage.get(var2.getUniqueId()));
+                    Player var4 = Bukkit.getPlayer(DamageListener.lastDamage.get(var2.getUniqueId()));
                     var2.damage(1000.0D, var4);
                     var3.addDeaths(1);
                 }
@@ -150,7 +150,7 @@ public class LoginListener implements Listener {
     @EventHandler
     public void onPlayerKick(PlayerKickEvent var1) {
         if (!SkyWars.getPlugin().getConfig().getBoolean("options.leaveMessage")) {
-            var1.setLeaveMessage((String)null);
+            var1.setLeaveMessage(null);
         }
 
         Player var2 = var1.getPlayer();
@@ -159,7 +159,7 @@ public class LoginListener implements Listener {
             GameQueue.removePlayer(var3);
             if (var3.isInArena()) {
                 if (DamageListener.lastDamage.containsKey(var2.getUniqueId())) {
-                    Player var4 = Bukkit.getPlayer((UUID)DamageListener.lastDamage.get(var2.getUniqueId()));
+                    Player var4 = Bukkit.getPlayer(DamageListener.lastDamage.get(var2.getUniqueId()));
                     var2.damage(1000.0D, var4);
                     var3.addDeaths(1);
                 }
@@ -181,7 +181,7 @@ public class LoginListener implements Listener {
     )
     public void disableJoinMessage(PlayerJoinEvent var1) {
         if (!SkyWars.getPlugin().getConfig().getBoolean("options.joinMessage")) {
-            var1.setJoinMessage((String)null);
+            var1.setJoinMessage(null);
         }
 
     }
@@ -191,7 +191,7 @@ public class LoginListener implements Listener {
     )
     public void disableQuitMessage(PlayerQuitEvent var1) {
         if (!SkyWars.getPlugin().getConfig().getBoolean("options.leaveMessage")) {
-            var1.setQuitMessage((String)null);
+            var1.setQuitMessage(null);
         }
 
     }

@@ -1,5 +1,10 @@
 package fun.ogtimes.skywars.spigot.abilities;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class AbilityLevel {
    private int level;
    private int chance;
@@ -15,43 +20,4 @@ public class AbilityLevel {
       this.setValue(var5);
    }
 
-   public int getLevel() {
-      return this.level;
-   }
-
-   public void setLevel(int var1) {
-      this.level = var1;
-   }
-
-   public int getChance() {
-      return this.chance;
-   }
-
-   public void setChance(int var1) {
-      this.chance = var1;
-   }
-
-   public int getPrice() {
-      return this.price;
-   }
-
-   public void setPrice(int var1) {
-      this.price = var1;
-   }
-
-   public int getValue() {
-      return this.value;
-   }
-
-   public void setValue(int var1) {
-      this.value = var1;
-   }
-
-   public boolean isHasvalue() {
-      return this.hasvalue;
-   }
-
-   public void setHasvalue(boolean var1) {
-      this.hasvalue = var1;
-   }
 }

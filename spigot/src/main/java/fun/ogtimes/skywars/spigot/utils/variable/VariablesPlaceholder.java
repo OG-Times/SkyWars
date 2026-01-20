@@ -7,7 +7,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
 public class VariablesPlaceholder extends PlaceholderExpansion {
-   private SkyWars plugin;
+   private final SkyWars plugin;
 
    public VariablesPlaceholder(SkyWars var1) {
       this.plugin = var1;
@@ -106,8 +106,7 @@ public class VariablesPlaceholder extends PlaceholderExpansion {
                var16 = "";
             }
 
-            String var21 = SkyWars.getMessage(Messages.VARIABLE_TIMEPLAYED).replace("{SECONDS}", var14).replace("{MINUTES}", var16).replace("{HOURS}", var18).replace("{DAYS}", var20);
-            return var21;
+             return SkyWars.getMessage(Messages.VARIABLE_TIMEPLAYED).replace("{SECONDS}", var14).replace("{MINUTES}", var16).replace("{HOURS}", var18).replace("{DAYS}", var20);
          } else if (var2.equals("glass")) {
             return SkyWars.boxes.getString("boxes." + var3.getBoxSection() + ".name");
          } else if (var2.equals("arena_name")) {

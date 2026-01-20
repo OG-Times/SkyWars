@@ -20,19 +20,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 public class CmdHologram implements BaseCommand {
-   public boolean onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender var1, String[] var2) {
       Player var3 = null;
       if (!(var1 instanceof Player)) {
          var1.sendMessage("You are not a player!");
-         return true;
       } else {
          var3 = (Player)var1;
          if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
-            return true;
          } else if (var2.length == 0) {
             this.helpDefault(var1);
-            return true;
          } else {
             if (var2.length >= 1) {
                ArrayList var4 = new ArrayList();
@@ -80,7 +77,7 @@ public class CmdHologram implements BaseCommand {
                   var4.addAll(ConfigManager.score.getStringList("hologram.locations"));
                   if (var4.isEmpty()) {
                      var3.sendMessage("§cThis server don't have hologram(s)");
-                     return true;
+                     return;
                   }
 
                   int var7;
@@ -118,7 +115,6 @@ public class CmdHologram implements BaseCommand {
                }
             }
 
-            return true;
          }
       }
    }
@@ -141,14 +137,13 @@ public class CmdHologram implements BaseCommand {
       var2.put("add", "&a/sw hologram &eadd &a- &bAdd new hologram");
       var2.put("remove", "&a/sw hologram &eremove &d[#] &a- &bRemove latest or specific hologram");
       var1.sendMessage("--------------------------------------------");
-      Iterator var3 = var2.entrySet().iterator();
 
-      while(var3.hasNext()) {
-         Entry var4 = (Entry)var3.next();
-         if (var1.hasPermission("skywars.admin.hologram." + (String)var4.getKey())) {
-            var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var4.getValue()));
-         }
-      }
+       for (Object object : var2.entrySet()) {
+           Entry var4 = (Entry) object;
+           if (var1.hasPermission("skywars.admin.hologram." + var4.getKey())) {
+               var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) var4.getValue()));
+           }
+       }
 
       var1.sendMessage("--------------------------------------------");
    }
@@ -166,14 +161,13 @@ public class CmdHologram implements BaseCommand {
          StringUtil.copyPartialMatches(var2[0], var5, var6);
          Collections.sort(var6);
          var1.sendMessage("--------------------------------------------");
-         Iterator var7 = var3.entrySet().iterator();
 
-         while(var7.hasNext()) {
-            Entry var8 = (Entry)var7.next();
-            if (var6.contains(var8.getKey()) && var1.hasPermission("skywars.admin.hologram." + (String)var8.getKey())) {
-               var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String)var8.getValue()));
-            }
-         }
+          for (Object object : var3.entrySet()) {
+              Entry var8 = (Entry) object;
+              if (var6.contains(var8.getKey()) && var1.hasPermission("skywars.admin.hologram." + var8.getKey())) {
+                  var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) var8.getValue()));
+              }
+          }
 
          var1.sendMessage("--------------------------------------------");
          return var6;

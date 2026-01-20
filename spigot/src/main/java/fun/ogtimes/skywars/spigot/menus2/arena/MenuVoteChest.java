@@ -33,29 +33,28 @@ public class MenuVoteChest extends Menu {
          ChestType[] var4 = ChestTypeManager.getChestTypes();
          int var5 = var4.length;
 
-         for(int var6 = 0; var6 < var5; ++var6) {
-            ChestType var7 = var4[var6];
-            if (var1.getCurrentItem().getType() == var7.getItem() && var1.getSlot() == var7.getSlot()) {
-               if (!var2.hasPermissions("skywars.vote.chest." + var7.getName())) {
-                  var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_CHEST));
-                  this.getPlayer().closeInventory();
-                  return;
-               }
+          for (ChestType var7 : var4) {
+              if (var1.getCurrentItem().getType() == var7.getItem() && var1.getSlot() == var7.getSlot()) {
+                  if (!var2.hasPermissions("skywars.vote.chest." + var7.getName())) {
+                      var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_CHEST));
+                      this.getPlayer().closeInventory();
+                      return;
+                  }
 
-               if (var2.hasData("voted_chest")) {
-                  var2.sendMessage(SkyWars.getMessage(Messages.VOTE_ONLY1));
-                  this.getPlayer().closeInventory();
-                  return;
-               }
+                  if (var2.hasData("voted_chest")) {
+                      var2.sendMessage(SkyWars.getMessage(Messages.VOTE_ONLY1));
+                      this.getPlayer().closeInventory();
+                      return;
+                  }
 
-               var2.addData("voted_chest", true);
-               var2.addData("voted_chest_" + var7.getName(), true);
-               var3.addData("vote_chest_" + var7.getName(), var3.getInt("vote_chest_" + var7.getName()) + 1);
-               this.getPlayer().sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_CHESTS_SUCCESSFUL), ChatColor.stripColor(var7.getTitle())));
-               var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_CHESTS), this.getPlayer().getName(), var7.getShortName(), var3.getInt("vote_chest_" + var7.getName())));
-               this.getPlayer().closeInventory();
-            }
-         }
+                  var2.addData("voted_chest", true);
+                  var2.addData("voted_chest_" + var7.getName(), true);
+                  var3.addData("vote_chest_" + var7.getName(), var3.getInt("vote_chest_" + var7.getName()) + 1);
+                  this.getPlayer().sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_CHESTS_SUCCESSFUL), ChatColor.stripColor(var7.getTitle())));
+                  var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_CHESTS), this.getPlayer().getName(), var7.getShortName(), var3.getInt("vote_chest_" + var7.getName())));
+                  this.getPlayer().closeInventory();
+              }
+          }
       }
 
    }
@@ -67,15 +66,14 @@ public class MenuVoteChest extends Menu {
          ChestType[] var3 = ChestTypeManager.getChestTypes();
          int var4 = var3.length;
 
-         for(int var5 = 0; var5 < var4; ++var5) {
-            ChestType var6 = var3[var5];
-            if (var2.getConfig().getStringList("chests.selectable").contains(var6.getName())) {
-               ItemBuilder var7 = new ItemBuilder(var6.getItem(), var6.getItemData());
-               var7.setTitle(var6.getTitle()).setLore(var6.getDescription());
-               var7.addLore(String.format(SkyWars.getMessage(Messages.VOTE_VOTES), var2.getInt("vote_chest_" + var6.getName())));
-               this.setItem(var6.getSlot(), var7);
-            }
-         }
+          for (ChestType var6 : var3) {
+              if (var2.getConfig().getStringList("chests.selectable").contains(var6.getName())) {
+                  ItemBuilder var7 = new ItemBuilder(var6.getItem(), var6.getItemData());
+                  var7.setTitle(var6.getTitle()).setLore(var6.getDescription());
+                  var7.addLore(String.format(SkyWars.getMessage(Messages.VOTE_VOTES), var2.getInt("vote_chest_" + var6.getName())));
+                  this.setItem(var6.getSlot(), var7);
+              }
+          }
       }
 
    }

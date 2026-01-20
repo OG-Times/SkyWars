@@ -49,7 +49,7 @@ public class ConfigManager {
       main.addDefault("item.settings", "2 DIAMOND");
       main.addDefault("item.vote", "3 EMPTY_MAP");
       main.addDefault("item.exit", "9 BED");
-      main.addDefault("menu.kits", (Object)null, "Kit Selector menu options");
+      main.addDefault("menu.kits", null, "Kit Selector menu options");
       main.addDefault("menu.kits.unavailable.enabled", false, "Enable or disable if should replace unavailable kit icon for some item (Default: false)");
       main.addDefault("menu.kits.unavailable.item", "STAINED_GLASS_PANE:14", "ITEM_NAME:DATA");
       main.addDefault("mode.plugin", "MultiArena", "Plugin Modes:", "      BungeeMode: Only one game per server (better performance)", "      MultiArena: Unlimited games per server (underperforming with many games)", "      Lobby: Only Lobby System for Bungee Servers (before SkyWarsLobby)");
@@ -433,9 +433,9 @@ public class ConfigManager {
       signs.addDefault("rotation", false, "Enable or disable rotation system (disabled by default)", "If rotation is enabled the sign will select a random arena available, that means that your server can have 30 arenas and only 10 signs", "and all arenas can be played without have one sign per arena");
       signs.addDefault("rotationDelay", 60, "Delay in ticks (20 Ticks = 1 Second) when the sign will search another game after being in-game (Only if rotation is enable)");
       signs.addDefault("change_block", true, "Enable or disable the change of the block depending of the arena state");
-      ArrayList var1 = Lists.newArrayList(new String[]{"&lSkyWars", "%state%", "&nMap: %map%", "&8%players%/%maxplayers%"});
+      ArrayList var1 = Lists.newArrayList("&lSkyWars", "%state%", "&nMap: %map%", "&8%players%/%maxplayers%");
       signs.addDefault("format.game", var1);
-      ArrayList var2 = Lists.newArrayList(new String[]{"&l----------", "SEARCHING", "GAMES", "&l----------"});
+      ArrayList var2 = Lists.newArrayList("&l----------", "SEARCHING", "GAMES", "&l----------");
       signs.addDefault("format.searching", var2);
       signs.addDefault("state", "", "The block that will be placed on the wall depending of the arena state (change_block must be enabled)", "Block Format: ITEM_NAME:DATA (If DATA is 0 you don't have to type it)");
       signs.addDefault("state.waiting", "STAINED_GLASS:5");
@@ -443,16 +443,14 @@ public class ConfigManager {
       signs.addDefault("state.full", "STAINED_GLASS:10");
       signs.addDefault("state.ingame", "STAINED_GLASS:14");
       signs.addDefault("state.searching", "STAINED_GLASS");
-      signs.addDefault("signs", new ArrayList());
+      signs.addDefault("signs", new ArrayList<>());
       signs.options().copyDefaults(true);
       signs.getEConfig().setNewLinePerKey(true);
-      Iterator var3 = signs.getConfigurationSection("state").getKeys(false).iterator();
 
-      while(var3.hasNext()) {
-         String var4 = (String)var3.next();
-         String var5 = signs.getString("state." + var4);
-         signs.set("state." + var4, Utils.readItem(var5).toString());
-      }
+       for (String var4 : signs.getConfigurationSection("state").getKeys(false)) {
+           String var5 = signs.getString("state." + var4);
+           signs.set("state." + var4, Utils.readItem(var5).toString());
+       }
 
       signs.save();
    }

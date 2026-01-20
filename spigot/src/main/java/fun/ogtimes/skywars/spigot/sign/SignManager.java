@@ -40,57 +40,52 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SignManager implements Listener {
-   private static final HashMap<String, SkySign> locationSign = new HashMap();
+   private static final HashMap<String, SkySign> locationSign = new HashMap<>();
 
    public static void loadSigns() {
       List var0 = ConfigManager.signs.getStringList("signs");
       var0.sort(Comparator.comparing(String::length).reversed());
-      Iterator var1 = var0.iterator();
 
-      while(var1.hasNext()) {
-         String var2 = (String)var1.next();
-         String[] var3 = var2.split(";");
-         String var4 = var3[0];
-         String var5 = null;
-         if (var3.length > 1 && var3[1] != null) {
-            var5 = var3[1];
-         }
+       for (Object object : var0) {
+           String var2 = (String) object;
+           String[] var3 = var2.split(";");
+           String var4 = var3[0];
+           String var5 = null;
+           if (var3.length > 1 && var3[1] != null) {
+               var5 = var3[1];
+           }
 
-         if (var5 == null) {
-            var5 = "";
-         }
+           if (var5 == null) {
+               var5 = "";
+           }
 
-         SkySign var6 = new SkySign(var4);
-         initSign(var4, var5, var6);
-      }
+           SkySign var6 = new SkySign(var4);
+           initSign(var4, var5, var6);
+       }
 
       SkyWars.log("SignManager#loadSigns - Signs loaded");
    }
 
    private static List<SkySign> getArenaSigns(String var0) {
       ArrayList var1 = new ArrayList();
-      Iterator var2 = locationSign.values().iterator();
 
-      while(var2.hasNext()) {
-         SkySign var3 = (SkySign)var2.next();
-         if (var3.getGame() != null && var3.getGame().getName().equals(var0)) {
-            var1.add(var3);
-         }
-      }
+       for (SkySign var3 : locationSign.values()) {
+           if (var3.getGame() != null && var3.getGame().getName().equals(var0)) {
+               var1.add(var3);
+           }
+       }
 
       return var1;
    }
 
    private static List<SkySign> getSearchingSigns() {
       ArrayList var0 = new ArrayList();
-      Iterator var1 = locationSign.values().iterator();
 
-      while(var1.hasNext()) {
-         SkySign var2 = (SkySign)var1.next();
-         if (var2.getGame() == null) {
-            var0.add(var2);
-         }
-      }
+       for (SkySign var2 : locationSign.values()) {
+           if (var2.getGame() == null) {
+               var0.add(var2);
+           }
+       }
 
       return var0;
    }
@@ -102,9 +97,7 @@ public class SignManager implements Listener {
       }
 
       locationSign.put(var0, var2);
-      Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
-         Bukkit.getServer().getPluginManager().callEvent(new SkySignUpdateEvent(var1, SkySignUpdateCause.STATE));
-      }, 5L);
+      Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> Bukkit.getServer().getPluginManager().callEvent(new SkySignUpdateEvent(var1, SkySignUpdateCause.STATE)), 5L);
    }
 
    public static Set<SkySign> getSigns() {
@@ -113,7 +106,7 @@ public class SignManager implements Listener {
 
    public static SkySign getSign(Location var0) {
       String var1 = LocationUtil.getString(var0, false);
-      return (SkySign)locationSign.get(var1);
+      return locationSign.get(var1);
    }
 
    private static Game[] getAvailableGames() {
@@ -142,14 +135,12 @@ public class SignManager implements Listener {
          } while(var3.isDisabled());
 
          int var4 = 0;
-         Iterator var5 = getArenaSigns(var3.getName()).iterator();
 
-         while(var5.hasNext()) {
-            SkySign var6 = (SkySign)var5.next();
-            if (var6.isRotation()) {
-               ++var4;
-            }
-         }
+          for (SkySign var6 : getArenaSigns(var3.getName())) {
+              if (var6.isRotation()) {
+                  ++var4;
+              }
+          }
 
          if (var4 == 0) {
             var0.add(var3);
@@ -175,14 +166,12 @@ public class SignManager implements Listener {
                }
 
                int var4 = 0;
-               Iterator var5 = locationSign.values().iterator();
 
-               while(var5.hasNext()) {
-                  SkySign var3 = (SkySign)var5.next();
-                  if (var3 != var0 && var0.getGame() != null && var3.getGame() == var0.getGame()) {
-                     ++var4;
-                  }
-               }
+                for (SkySign var3 : locationSign.values()) {
+                    if (var3 != var0 && var0.getGame() != null && var3.getGame() == var0.getGame()) {
+                        ++var4;
+                    }
+                }
 
                if (var4 >= 1) {
                   signFormatSearch(var0);
@@ -302,7 +291,7 @@ public class SignManager implements Listener {
             }
 
             if (var0.isRotation()) {
-               var0.setGame((String)null);
+               var0.setGame(null);
             }
 
             ItemStack var6 = Utils.readItem(ConfigManager.signs.getString("state.searching")).build();
@@ -376,15 +365,12 @@ public class SignManager implements Listener {
                var3 = "";
             }
 
-            Iterator var5 = locationSign.keySet().iterator();
-
-            while(var5.hasNext()) {
-               String var6 = (String)var5.next();
-               if (var6.equals(var4)) {
-                  var1.getPlayer().sendMessage("§cAlready contains a sign in this location");
-                  return;
-               }
-            }
+             for (String var6 : locationSign.keySet()) {
+                 if (var6.equals(var4)) {
+                     var1.getPlayer().sendMessage("§cAlready contains a sign in this location");
+                     return;
+                 }
+             }
 
             List var7 = ConfigManager.signs.getStringList("signs");
             var7.add(var4 + ";" + var3);
@@ -401,9 +387,8 @@ public class SignManager implements Listener {
 
    @EventHandler
    public void onSignClick(PlayerInteractEvent var1) {
-      if ((var1.getAction() == Action.RIGHT_CLICK_BLOCK || var1.getAction() == Action.RIGHT_CLICK_AIR) && var1.hasBlock() && var1.getClickedBlock().getState() instanceof Sign) {
-         Sign var2 = (Sign)var1.getClickedBlock().getState();
-         Location var3 = var2.getLocation();
+      if ((var1.getAction() == Action.RIGHT_CLICK_BLOCK || var1.getAction() == Action.RIGHT_CLICK_AIR) && var1.hasBlock() && var1.getClickedBlock().getState() instanceof Sign var2) {
+          Location var3 = var2.getLocation();
          SkySign var4 = getSign(var3);
          if (var4 == null) {
             return;

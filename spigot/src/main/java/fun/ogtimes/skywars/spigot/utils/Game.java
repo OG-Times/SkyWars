@@ -2,7 +2,11 @@ package fun.ogtimes.skywars.spigot.utils;
 
 import fun.ogtimes.skywars.spigot.arena.ArenaState;
 import fun.ogtimes.skywars.spigot.utils.sky.SkyData;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class Game extends SkyData {
    protected String name;
    protected String displayName;
@@ -23,55 +27,7 @@ public class Game extends SkyData {
 
    }
 
-   public String getName() {
-      return this.name;
-   }
-
-   public void setName(String var1) {
-      this.name = var1;
-   }
-
-   public String getDisplayName() {
-      return this.displayName;
-   }
-
-   public void setDisplayName(String var1) {
-      this.displayName = var1;
-   }
-
-   public int getAlivePlayers() {
-      return this.alivePlayers;
-   }
-
-   public void setAlivePlayers(int var1) {
-      this.alivePlayers = var1;
-   }
-
-   public int getMaxPlayers() {
-      return this.maxPlayers;
-   }
-
-   public void setMaxPlayers(int var1) {
-      this.maxPlayers = var1;
-   }
-
-   public boolean isLoading() {
-      return this.loading;
-   }
-
-   public void setLoading(boolean var1) {
-      this.loading = var1;
-   }
-
-   public ArenaState getState() {
-      return this.state;
-   }
-
-   public void setState(ArenaState var1) {
-      this.state = var1;
-   }
-
-   public boolean isDisabled() {
+    public boolean isDisabled() {
       return false;
    }
 

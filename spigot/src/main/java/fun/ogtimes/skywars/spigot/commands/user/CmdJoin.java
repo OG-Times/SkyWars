@@ -21,18 +21,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 public class CmdJoin implements BaseCommand {
-   public boolean onCommand(CommandSender var1, String[] var2) {
-      if (!(var1 instanceof Player)) {
+   public void onCommand(CommandSender var1, String[] var2) {
+      if (!(var1 instanceof Player var3)) {
          var1.sendMessage("You aren't a player!");
-         return true;
       } else {
-         Player var3 = (Player)var1;
-         SkyPlayer var4 = SkyWars.getSkyPlayer(var3);
+          SkyPlayer var4 = SkyWars.getSkyPlayer(var3);
          if (var4 == null) {
-            return false;
          } else if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
-            return true;
          } else {
             Arena var6;
             if (var2.length == 0) {
@@ -40,14 +36,14 @@ public class CmdJoin implements BaseCommand {
                   if (GameQueue.withoutGames()) {
                      GameQueue.addPlayer(var4);
                      var4.sendMessage("&cNo games available, you has been added to the queue");
-                     return true;
+                     return;
                   }
 
                   Game var5 = GameQueue.getJoinableGame();
                   if (var5 == null) {
                      GameQueue.addPlayer(var4);
                      var4.sendMessage("&cNo games available, you has been added to the queue");
-                     return true;
+                     return;
                   }
 
                   if (SkyWars.isMultiArenaMode()) {
@@ -57,36 +53,33 @@ public class CmdJoin implements BaseCommand {
                      ProxyUtils.teleToServer(var4.getPlayer(), "", var5.getName());
                   }
 
-                  return true;
                }
             } else if (var2.length == 1 && SkyWars.isMultiArenaMode() && !var4.isInArena()) {
                String var7 = var2[0];
                var6 = ArenaManager.getGame(var7);
                if (var6 == null) {
                   var4.sendMessage("&cThis arena doesn't exists");
-                  return false;
+                  return;
                }
 
                if (var6.getState() == ArenaState.INGAME && !var3.hasPermission("skywars.admin.spectate")) {
                   var4.sendMessage(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
-                  return false;
+                  return;
                }
 
                if (var6.getAlivePlayers() >= var6.getMaxPlayers() && !var3.hasPermission("skywars.admin.spectate")) {
                   var4.sendMessage(SkyWars.getMessage(Messages.GAME_FULL_MESSAGE));
-                  return false;
+                  return;
                }
 
                if (var6.isLoading()) {
                   var4.sendMessage(SkyWars.getMessage(Messages.GAME_LOADING));
-                  return false;
+                  return;
                }
 
                var6.addPlayer(var4, ArenaJoinCause.COMMAND);
-               return true;
             }
 
-            return true;
          }
       }
    }

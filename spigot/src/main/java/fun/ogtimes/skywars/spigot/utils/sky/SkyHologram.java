@@ -15,7 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class SkyHologram {
-    public static HashMap<SkyPlayer, Hologram> holos = new HashMap();
+    public static final HashMap<SkyPlayer, Hologram> holos = new HashMap<>();
 
     public static void createHologram(SkyPlayer var0) {
         if (SkyWars.holo && !SkyWars.getHoloLocations().isEmpty()) {

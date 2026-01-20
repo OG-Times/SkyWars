@@ -5,5 +5,5 @@ public enum SkySignUpdateCause {
    PLAYERS,
    LOADING,
    MAP,
-   ALL;
+   ALL
 }

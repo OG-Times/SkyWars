@@ -3,15 +3,19 @@ package fun.ogtimes.skywars.spigot.events;
 import fun.ogtimes.skywars.spigot.arena.Arena;
 import fun.ogtimes.skywars.spigot.events.enums.SpectatorReason;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
+import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class SkyPlayerSpectatorEvent extends Event {
    private static final HandlerList handlers = new HandlerList();
-   private SkyPlayer player;
-   private Arena game;
-   private boolean spectate;
-   private SpectatorReason reason;
+   @Getter
+   private final SkyPlayer player;
+   @Getter
+   private final Arena game;
+   private final boolean spectate;
+   @Getter
+   private final SpectatorReason reason;
 
    public SkyPlayerSpectatorEvent(SkyPlayer var1, Arena var2, boolean var3, SpectatorReason var4) {
       this.player = var1;
@@ -20,23 +24,11 @@ public class SkyPlayerSpectatorEvent extends Event {
       this.reason = var4;
    }
 
-   public SkyPlayer getPlayer() {
-      return this.player;
-   }
-
-   public Arena getGame() {
-      return this.game;
-   }
-
-   public boolean getSpectate() {
+    public boolean getSpectate() {
       return this.spectate;
    }
 
-   public SpectatorReason getReason() {
-      return this.reason;
-   }
-
-   public boolean isDeathReason() {
+    public boolean isDeathReason() {
       return this.reason == SpectatorReason.DEATH;
    }
 

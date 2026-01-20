@@ -34,9 +34,8 @@ public class InteractListener implements Listener {
          SkyWars.log("InteractListener.onInteract - null Player");
       } else {
          if (var1.getAction() == Action.RIGHT_CLICK_AIR || var1.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (var1.hasBlock() && var1.getClickedBlock().getState() instanceof Sign) {
-               Sign var4 = (Sign)var1.getClickedBlock().getState();
-               Location var5 = var4.getLocation();
+            if (var1.hasBlock() && var1.getClickedBlock().getState() instanceof Sign var4) {
+                Location var5 = var4.getLocation();
                SkySign var6 = SignManager.getSign(var5);
                if (var6 != null) {
                   return;

@@ -41,7 +41,7 @@ public class ArenaListener implements Listener {
                 var0.end(true);
                 return true;
             } else {
-                SkyPlayer var1 = (SkyPlayer)var0.getAlivePlayer().get(0);
+                SkyPlayer var1 = var0.getAlivePlayer().getFirst();
                 if (var1 != null) {
                     Player var2 = var1.getPlayer();
                     if (var2 != null) {
@@ -92,10 +92,7 @@ public class ArenaListener implements Listener {
                     return;
                 }
 
-                Iterator var5 = var3.getGlassBoxes().iterator();
-
-                while(var5.hasNext()) {
-                    ArenaBox var6 = (ArenaBox)var5.next();
+                for (ArenaBox var6 : var3.getGlassBoxes()) {
                     Location var7 = var6.getLocation();
                     if (var7.equals(var4)) {
                         SkyWars.log("Arena.addPlayer - Selected box - " + var7);
@@ -103,7 +100,7 @@ public class ArenaListener implements Listener {
                     }
                 }
 
-                SkyWars.log("Arena.addPlayer - " + var2.getName() + " is teleporting to " + var4.toString());
+                SkyWars.log("Arena.addPlayer - " + var2.getName() + " is teleporting to " + var4);
                 var3.setUsed(var4, true);
                 var2.setArenaSpawn(var4);
                 var2.teleport(var4);
@@ -147,10 +144,7 @@ public class ArenaListener implements Listener {
                 var2.getPlayer().setGameMode(GameMode.SURVIVAL);
             }
 
-            Iterator var10 = var3.getPlayers().iterator();
-
-            while(var10.hasNext()) {
-                SkyPlayer var12 = (SkyPlayer)var10.next();
+            for (SkyPlayer var12 : var3.getPlayers()) {
                 Player var14 = var12.getPlayer();
                 Player var16 = var2.getPlayer();
                 if (var14 != null && var16 != null && var12 != var2) {
@@ -300,10 +294,8 @@ public class ArenaListener implements Listener {
 
                 if (var2.getState() == ArenaState.STARTING) {
                     var2.start();
-                    Iterator var4 = var2.getPlayers().iterator();
 
-                    while(var4.hasNext()) {
-                        SkyPlayer var5 = (SkyPlayer)var4.next();
+                    for (SkyPlayer var5 : var2.getPlayers()) {
                         var5.getPlayer().setLevel(0);
                     }
 
@@ -348,7 +340,7 @@ public class ArenaListener implements Listener {
             var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_TIME_LEFT_MINUTES), var2 % 3600 / 60));
         }
 
-        if (var2 % 1 == 0 && (var2 == 10 || var2 <= 5) && var2 > 0) {
+        if ((var2 == 10 || var2 <= 5) && var2 > 0) {
             var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_TIME_LEFT_SECONDS), var2));
         }
 
@@ -363,10 +355,8 @@ public class ArenaListener implements Listener {
 
     private void countStart(Arena var1) {
         int var2 = var1.getStartCountdown();
-        Iterator var3 = var1.getPlayers().iterator();
 
-        while(var3.hasNext()) {
-            SkyPlayer var4 = (SkyPlayer)var3.next();
+        for (SkyPlayer var4 : var1.getPlayers()) {
             if (var2 >= 0) {
                 Player var5 = var4.getPlayer();
                 if (var5 != null) {
@@ -456,12 +446,12 @@ public class ArenaListener implements Listener {
     }
 
     private void countEvents(Arena var1) {
-        if (var1.getEvents().size() != 0 && var1.getConfig().getBoolean("options.events") && var1.getState() == ArenaState.INGAME) {
-            ArenaEvent var2 = (ArenaEvent)var1.getEvents().get(0);
+        if (!var1.getEvents().isEmpty() && var1.getConfig().getBoolean("options.events") && var1.getState() == ArenaState.INGAME) {
+            ArenaEvent var2 = var1.getEvents().getFirst();
             var2.setSeconds(var2.getSeconds() - 1);
             if (var2.getSeconds() <= 0) {
                 var2.playEvent(var1);
-                var1.getEvents().remove(0);
+                var1.getEvents().removeFirst();
             }
 
         }

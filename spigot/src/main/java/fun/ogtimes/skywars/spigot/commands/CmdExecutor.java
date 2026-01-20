@@ -27,20 +27,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 public class CmdExecutor implements CommandExecutor, TabCompleter {
-   private final HashMap<String, BaseCommand> commands = new HashMap();
-   private final List<String> cmds = new ArrayList();
+   private final HashMap<String, BaseCommand> commands = new HashMap<>();
+   private final List<String> cmds = new ArrayList<>();
 
    public CmdExecutor() {
       this.loadCommands();
       this.cmds.clear();
-      Iterator var1 = this.commands.keySet().iterator();
 
-      while(var1.hasNext()) {
-         String var2 = (String)var1.next();
-         if (!var2.equals("hide")) {
-            this.cmds.add(var2);
-         }
-      }
+       for (String var2 : this.commands.keySet()) {
+           if (!var2.equals("hide")) {
+               this.cmds.add(var2);
+           }
+       }
 
    }
 
@@ -75,24 +73,22 @@ public class CmdExecutor implements CommandExecutor, TabCompleter {
                return true;
             } else {
                String var5 = var4[0];
-               Vector var6 = new Vector();
-               var6.addAll(Arrays.asList(var4));
-               var6.remove(0);
-               var4 = (String[])((String[])var6.toArray(new String[0]));
+                Vector var6 = new Vector(Arrays.asList(var4));
+               var6.removeFirst();
+               var4 = (String[]) var6.toArray(new String[0]);
                if (!this.commands.containsKey(var5)) {
                   var1.sendMessage("This command doesnt exist");
-                  return true;
                } else {
                   try {
-                     ((BaseCommand)this.commands.get(var5)).onCommand(var1, var4);
+                     this.commands.get(var5).onCommand(var1, var4);
                   } catch (Exception var8) {
                      var8.printStackTrace();
                      var1.sendMessage("An error occured while executing the command. Check the console");
                      var1.sendMessage("Type /sw help for help");
                   }
 
-                  return true;
                }
+                return true;
             }
          } else {
             this.help(var1);
@@ -106,20 +102,18 @@ public class CmdExecutor implements CommandExecutor, TabCompleter {
    private void help(CommandSender var1) {
       String var2 = "---------- §8[§7SkyWars§8]§a " + SkyWars.getPlugin().getDescription().getVersion() + " §r----------";
       var1.sendMessage(var2);
-      Iterator var3 = this.commands.values().iterator();
 
-      while(var3.hasNext()) {
-         BaseCommand var4 = (BaseCommand)var3.next();
-         if (!var4.help(var1).isEmpty()) {
-            if (!(var1 instanceof Player)) {
-               if (var4.console()) {
-                  var1.sendMessage(ChatColor.translateAlternateColorCodes('&', var4.help(var1)));
+       for (BaseCommand var4 : this.commands.values()) {
+           if (!var4.help(var1).isEmpty()) {
+               if (!(var1 instanceof Player)) {
+                   if (var4.console()) {
+                       var1.sendMessage(ChatColor.translateAlternateColorCodes('&', var4.help(var1)));
+                   }
+               } else {
+                   var1.sendMessage(ChatColor.translateAlternateColorCodes('&', var4.help(var1)));
                }
-            } else {
-               var1.sendMessage(ChatColor.translateAlternateColorCodes('&', var4.help(var1)));
-            }
-         }
-      }
+           }
+       }
 
       var1.sendMessage("-----------------------------------");
    }
@@ -136,16 +130,16 @@ public class CmdExecutor implements CommandExecutor, TabCompleter {
          if (var4.length >= 2) {
             String var5 = var4[0];
             Vector var6 = new Vector(Arrays.asList(var4));
-            var6.remove(0);
+            var6.removeFirst();
             var4 = (String[])var6.toArray(new String[0]);
             if (!this.commands.containsKey(var5)) {
                var1.sendMessage("This command doesnt exist");
                return null;
             }
 
-            Object var7 = ((BaseCommand)this.commands.get(var5)).onTabComplete(var1, var4);
+            Object var7 = this.commands.get(var5).onTabComplete(var1, var4);
             if (var7 == null) {
-               var7 = new ArrayList();
+               var7 = new ArrayList<>();
             }
 
             return (List)var7;

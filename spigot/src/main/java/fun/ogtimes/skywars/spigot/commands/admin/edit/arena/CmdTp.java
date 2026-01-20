@@ -13,37 +13,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 public class CmdTp implements BaseCommand {
-   public boolean onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender var1, String[] var2) {
       Player var3 = null;
       if (!(var1 instanceof Player)) {
          var1.sendMessage("You aren't a player!");
-         return true;
       } else {
          var3 = (Player)var1;
          if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
-            return true;
          } else if (var2.length == 1) {
             World var7 = Bukkit.getWorld(var2[0]);
             if (var7 == null) {
                var3.sendMessage("§cThat world does not exist!");
-               return true;
             } else {
                var3.getPlayer().teleport(var7.getSpawnLocation());
-               return true;
             }
          } else {
             var3.sendMessage("§cUsage: /sw tp <world>");
             StringBuilder var4 = new StringBuilder();
-            Iterator var5 = Bukkit.getWorlds().iterator();
 
-            while(var5.hasNext()) {
-               World var6 = (World)var5.next();
-               var4.append(", ").append(var6.getName());
-            }
+             for (World var6 : Bukkit.getWorlds()) {
+                 var4.append(", ").append(var6.getName());
+             }
 
             var3.sendMessage(String.format("§cWorlds Loaded List: %s", var4.toString().replaceFirst(", ", "")));
-            return true;
          }
       }
    }
@@ -69,12 +62,10 @@ public class CmdTp implements BaseCommand {
       } else {
          ArrayList var3 = new ArrayList();
          ArrayList var4 = new ArrayList();
-         Iterator var5 = Bukkit.getWorlds().iterator();
 
-         while(var5.hasNext()) {
-            World var6 = (World)var5.next();
-            var3.add(var6.getName());
-         }
+          for (World var6 : Bukkit.getWorlds()) {
+              var3.add(var6.getName());
+          }
 
          var1.sendMessage("--------------------------------------------");
          var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWorlds loaded (&b" + var3.size() + "&a):"));

@@ -2,6 +2,9 @@ package fun.ogtimes.skywars.spigot.menus2;
 
 import fun.ogtimes.skywars.spigot.utils.ItemBuilder;
 import java.util.HashMap;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,15 +16,18 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class Menu {
-   private String menuId;
+   @Getter
+   private final String menuId;
    private Inventory inv;
-   private String player;
+   private final String player;
+   @Setter
+   @Getter
    private String back;
 
    public Menu(Player var1, String var2, String var3, int var4) {
       this.player = var1.getName();
       this.menuId = var2;
-      this.inv = Bukkit.createInventory((InventoryHolder)null, var4 * 9, ChatColor.translateAlternateColorCodes('&', var3));
+      this.inv = Bukkit.createInventory(null, var4 * 9, ChatColor.translateAlternateColorCodes('&', var3));
       this.setBack("none");
       HashMap var5 = MenuListener.getPlayerMenus(var1);
       var5.put(var2, this);
@@ -31,7 +37,7 @@ public abstract class Menu {
    public Menu(Player var1, String var2, String var3, int var4, String var5) {
       this.player = var1.getName();
       this.menuId = var2;
-      this.inv = Bukkit.createInventory((InventoryHolder)null, var4 * 9, ChatColor.translateAlternateColorCodes('&', var3));
+      this.inv = Bukkit.createInventory(null, var4 * 9, ChatColor.translateAlternateColorCodes('&', var3));
       this.setBack(var5);
       HashMap var6 = MenuListener.getPlayerMenus(var1);
       var6.put(var2, this);
@@ -39,7 +45,7 @@ public abstract class Menu {
    }
 
    public Menu addItem(ItemStack var1) {
-      this.inv.addItem(new ItemStack[]{var1});
+      this.inv.addItem(var1);
       return this;
    }
 
@@ -67,26 +73,14 @@ public abstract class Menu {
    }
 
    public void newInventoryName(String var1) {
-      this.inv = Bukkit.createInventory((InventoryHolder)null, this.inv.getSize(), var1);
+      this.inv = Bukkit.createInventory(null, this.inv.getSize(), var1);
    }
 
-   public String getMenuId() {
-      return this.menuId;
-   }
-
-   public Player getPlayer() {
+    public Player getPlayer() {
       return Bukkit.getPlayer(this.player);
    }
 
-   public String getBack() {
-      return this.back;
-   }
-
-   public void setBack(String var1) {
-      this.back = var1;
-   }
-
-   public void addFullLine(int var1, ItemBuilder var2) {
+    public void addFullLine(int var1, ItemBuilder var2) {
       var2.setTitle(" &r");
 
       for(int var3 = 1; var3 < 10; ++var3) {

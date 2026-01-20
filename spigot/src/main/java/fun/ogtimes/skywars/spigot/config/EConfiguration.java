@@ -1,5 +1,8 @@
 package fun.ogtimes.skywars.spigot.config;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -7,22 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 public class EConfiguration {
-   protected Map<String, List<String>> comments = new LinkedHashMap();
+   @Getter
+   protected final Map<String, List<String>> comments = new LinkedHashMap<>();
+   @Setter
    protected boolean newLinePerKey = false;
 
-   public Map<String, List<String>> getComments() {
-      return this.comments;
+    public List<String> getComments(String var1) {
+      return this.comments.containsKey(var1) ? new ArrayList(this.comments.get(var1)) : new ArrayList();
    }
 
-   public List<String> getComments(String var1) {
-      return this.comments.containsKey(var1) ? new ArrayList((Collection)this.comments.get(var1)) : new ArrayList();
-   }
-
-   public void setNewLinePerKey(boolean var1) {
-      this.newLinePerKey = var1;
-   }
-
-   public boolean shouldAddNewLinePerKey() {
+    public boolean shouldAddNewLinePerKey() {
       return this.newLinePerKey;
    }
 
@@ -34,7 +31,7 @@ public class EConfiguration {
 
             while(var5 < var1.size() - 1) {
                ++var5;
-               String var6 = (String)var1.get(var5);
+               String var6 = var1.get(var5);
                String var7 = this.trimPrefixSpaces(var6);
                if (!var7.startsWith("#")) {
                   if (var7.contains(":")) {
@@ -52,7 +49,7 @@ public class EConfiguration {
    public String getPathToKey(List<String> var1, int var2, String var3) {
       if (var1 != null && var2 >= 0 && var2 < var1.size() && var3 != null && !var3.startsWith("#") && var3.contains(":")) {
          int var4 = this.getPrefixSpaceCount(var3);
-         String var5 = this.trimPrefixSpaces(var3.substring(0, var3.indexOf(58)));
+         StringBuilder var5 = new StringBuilder(this.trimPrefixSpaces(var3.substring(0, var3.indexOf(58))));
          if (var4 > 0) {
             int var6 = var2;
             int var7 = -1;
@@ -65,22 +62,22 @@ public class EConfiguration {
                   do {
                      do {
                         do {
-                           if (var6 <= 0) {
-                              return var5;
+                           if (var6 == 0) {
+                              return var5.toString();
                            }
 
                            --var6;
-                           var9 = (String)var1.get(var6);
+                           var9 = var1.get(var6);
                            var10 = this.getPrefixSpaceCount(var9);
                            if (this.trim(var9).isEmpty()) {
-                              return var5;
+                              return var5.toString();
                            }
                         } while(this.trim(var9).startsWith("#"));
                      } while(var10 >= var4);
                   } while(!var9.contains(":"));
 
                   if (var10 <= 0 && var8) {
-                     return var5;
+                     return var5.toString();
                   }
 
                   if (var10 == 0) {
@@ -89,10 +86,10 @@ public class EConfiguration {
                } while(var7 != -1 && var10 >= var7);
 
                var7 = var10;
-               var5 = this.trimPrefixSpaces(var9.substring(0, var9.indexOf(":"))) + "." + var5;
+               var5.insert(0, this.trimPrefixSpaces(var9.substring(0, var9.indexOf(":"))) + ".");
             }
          } else {
-            return var5;
+            return var5.toString();
          }
       } else {
          return null;
@@ -105,14 +102,13 @@ public class EConfiguration {
          char[] var3 = var1.toCharArray();
          int var4 = var3.length;
 
-         for(int var5 = 0; var5 < var4; ++var5) {
-            char var6 = var3[var5];
-            if (var6 != ' ') {
-               break;
-            }
+          for (char var6 : var3) {
+              if (var6 != ' ') {
+                  break;
+              }
 
-            ++var2;
-         }
+              ++var2;
+          }
       }
 
       return var2;

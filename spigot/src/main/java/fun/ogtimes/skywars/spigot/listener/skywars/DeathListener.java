@@ -26,7 +26,7 @@ public class DeathListener implements Listener {
             if (!var1x.getName().equals(var2.getName())) {
                var2.addKills(1);
                var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_DEATH_PLAYER), var1x.getName(), var2.getName()));
-               SkyEconomyManager.addCoins(var2.getPlayer(), (double)SkyWars.getPlugin().getConfig().getInt("reward.kill"), true);
+               SkyEconomyManager.addCoins(var2.getPlayer(), SkyWars.getPlugin().getConfig().getInt("reward.kill"), true);
                var3.addKillStreak(var2);
             } else {
                var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER__DEATH_OTHER), var1x.getName()));
@@ -37,12 +37,8 @@ public class DeathListener implements Listener {
 
          var1x.sendMessage(SkyWars.getMessage(Messages.PLAYER_DEATH));
          var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYERS_REMAIN), var3.getAlivePlayers()));
-         Bukkit.getScheduler().runTask(SkyWars.getPlugin(), () -> {
-            ArenaListener.checkWinner(var3);
-         });
-         var3.getAlivePlayer().forEach((var0) -> {
-            SkyEconomyManager.addCoins(var0.getPlayer(), (double)SkyWars.getPlugin().getConfig().getInt("reward.death"), true);
-         });
+         Bukkit.getScheduler().runTask(SkyWars.getPlugin(), () -> ArenaListener.checkWinner(var3));
+         var3.getAlivePlayer().forEach((var0) -> SkyEconomyManager.addCoins(var0.getPlayer(), (double)SkyWars.getPlugin().getConfig().getInt("reward.death"), true));
       });
    }
 }

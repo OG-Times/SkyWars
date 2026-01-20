@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameQueue {
-   private static final List<SkyPlayer> queue_players = new ArrayList();
+   private static final List<SkyPlayer> queue_players = new ArrayList<>();
 
    public static void check() {
       (new BukkitRunnable() {
@@ -31,13 +31,13 @@ public class GameQueue {
                   Arena var2 = (Arena)var1;
 
                   for(int var3 = 0; var3 < var2.getAvailableSlots() && !GameQueue.inQueue().isEmpty(); ++var3) {
-                     SkyPlayer var4 = (SkyPlayer)GameQueue.inQueue().get(0);
+                     SkyPlayer var4 = GameQueue.inQueue().getFirst();
                      var2.addPlayer(var4, ArenaJoinCause.QUEUE);
-                     GameQueue.inQueue().remove(0);
+                     GameQueue.inQueue().removeFirst();
                   }
                } else if (SkyWars.isLobbyMode()) {
-                  ProxyUtils.teleToServer(((SkyPlayer)GameQueue.inQueue().get(0)).getPlayer(), "", var1.getName());
-                  GameQueue.inQueue().remove(0);
+                  ProxyUtils.teleToServer(GameQueue.inQueue().getFirst().getPlayer(), "", var1.getName());
+                  GameQueue.inQueue().removeFirst();
                }
             }
 
@@ -87,35 +87,33 @@ public class GameQueue {
       Game[] var1 = getJoinableGames();
       int var2 = var1.length;
 
-      for(int var3 = 0; var3 < var2; ++var3) {
-         Game var4 = var1[var3];
-         double var5 = (double)var4.getAlivePlayers() / (double)var4.getMaxPlayers();
-         if (var5 < 1.0D) {
-            var0.put(var4, var5);
-         }
-      }
+       for (Game var4 : var1) {
+           double var5 = (double) var4.getAlivePlayers() / (double) var4.getMaxPlayers();
+           if (var5 < 1.0D) {
+               var0.put(var4, var5);
+           }
+       }
 
       ArrayList var7 = new ArrayList();
       double var8 = 0.0D;
-      Iterator var9 = var0.entrySet().iterator();
 
-      while(var9.hasNext()) {
-         Entry var11 = (Entry)var9.next();
-         if ((Double)var11.getValue() == var8) {
-            var7.add(var11.getKey());
-         }
+       for (Object object : var0.entrySet()) {
+           Entry var11 = (Entry) object;
+           if ((Double) var11.getValue() == var8) {
+               var7.add(var11.getKey());
+           }
 
-         if ((Double)var11.getValue() > var8) {
-            var8 = (Double)var11.getValue();
-            var7.clear();
-            var7.add(var11.getKey());
-         }
-      }
+           if ((Double) var11.getValue() > var8) {
+               var8 = (Double) var11.getValue();
+               var7.clear();
+               var7.add(var11.getKey());
+           }
+       }
 
-      if (var7.size() == 0) {
+      if (var7.isEmpty()) {
          return null;
       } else if (var7.size() == 1) {
-         return (Game)var7.get(0);
+         return (Game)var7.getFirst();
       } else {
          int var10 = (new Random()).nextInt(var7.size());
          return (Game)var7.get(var10);

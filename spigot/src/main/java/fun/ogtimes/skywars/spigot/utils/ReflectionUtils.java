@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 public final class ReflectionUtils {
@@ -17,12 +19,11 @@ public final class ReflectionUtils {
       Constructor[] var3 = var0.getConstructors();
       int var4 = var3.length;
 
-      for(int var5 = 0; var5 < var4; ++var5) {
-         Constructor var6 = var3[var5];
-         if (DataType.compare(DataType.getPrimitive(var6.getParameterTypes()), var2)) {
-            return var6;
-         }
-      }
+       for (Constructor var6 : var3) {
+           if (DataType.compare(DataType.getPrimitive(var6.getParameterTypes()), var2)) {
+               return var6;
+           }
+       }
 
       throw new NoSuchMethodException("There is no such constructor in this class with the specified parameter types");
    }
@@ -44,12 +45,11 @@ public final class ReflectionUtils {
       Method[] var4 = var0.getMethods();
       int var5 = var4.length;
 
-      for(int var6 = 0; var6 < var5; ++var6) {
-         Method var7 = var4[var6];
-         if (var7.getName().equals(var1) && DataType.compare(DataType.getPrimitive(var7.getParameterTypes()), var3)) {
-            return var7;
-         }
-      }
+       for (Method var7 : var4) {
+           if (var7.getName().equals(var1) && DataType.compare(DataType.getPrimitive(var7.getParameterTypes()), var3)) {
+               return var7;
+           }
+       }
 
       throw new NoSuchMethodException("There is no such method in this class with the specified name and parameter types");
    }
@@ -104,7 +104,8 @@ public final class ReflectionUtils {
       setValue(var0, var0.getClass(), var1, var2, var3);
    }
 
-   public static enum DataType {
+   @Getter
+   public enum DataType {
       BYTE(Byte.TYPE, Byte.class),
       SHORT(Short.TYPE, Short.class),
       INTEGER(Integer.TYPE, Integer.class),
@@ -114,25 +115,17 @@ public final class ReflectionUtils {
       DOUBLE(Double.TYPE, Double.class),
       BOOLEAN(Boolean.TYPE, Boolean.class);
 
-      private static final Map<Class<?>, DataType> CLASS_MAP = new HashMap();
+      private static final Map<Class<?>, DataType> CLASS_MAP = new HashMap<>();
       private final Class<?> primitive;
       private final Class<?> reference;
 
-      private DataType(Class<?> var3, Class<?> var4) {
+      DataType(Class<?> var3, Class<?> var4) {
          this.primitive = var3;
          this.reference = var4;
       }
 
-      public Class<?> getPrimitive() {
-         return this.primitive;
-      }
-
-      public Class<?> getReference() {
-         return this.reference;
-      }
-
-      public static DataType fromClass(Class<?> var0) {
-         return (DataType)CLASS_MAP.get(var0);
+       public static DataType fromClass(Class<?> var0) {
+         return CLASS_MAP.get(var0);
       }
 
       public static Class<?> getPrimitive(Class<?> var0) {
@@ -209,16 +202,16 @@ public final class ReflectionUtils {
          DataType[] var0 = values();
          int var1 = var0.length;
 
-         for(int var2 = 0; var2 < var1; ++var2) {
-            DataType var3 = var0[var2];
-            CLASS_MAP.put(var3.primitive, var3);
-            CLASS_MAP.put(var3.reference, var3);
-         }
+          for (DataType var3 : var0) {
+              CLASS_MAP.put(var3.primitive, var3);
+              CLASS_MAP.put(var3.reference, var3);
+          }
 
       }
    }
 
-   public static enum PackageType {
+   @Getter
+   public enum PackageType {
       MINECRAFT_SERVER("net.minecraft.server." + getServerVersion()),
       CRAFTBUKKIT("org.bukkit.craftbukkit." + getServerVersion()),
       CRAFTBUKKIT_BLOCK(CRAFTBUKKIT, "block"),
@@ -242,19 +235,15 @@ public final class ReflectionUtils {
 
       private final String path;
 
-      private PackageType(String var3) {
+      PackageType(String var3) {
          this.path = var3;
       }
 
-      private PackageType(PackageType var3, String var4) {
+      PackageType(PackageType var3, String var4) {
          this(var3 + "." + var4);
       }
 
-      public String getPath() {
-         return this.path;
-      }
-
-      public Class<?> getClass(String var1) throws ClassNotFoundException {
+       public Class<?> getClass(String var1) throws ClassNotFoundException {
          return Class.forName(this + "." + var1);
       }
 

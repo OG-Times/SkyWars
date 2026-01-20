@@ -36,8 +36,7 @@ public class AbilitiesListener implements Listener {
         if (var3 == null) {
             SkyWars.logError("Unable to get the ability, something is wrong with " + var2 + " (maybe was deleted)");
         } else if (AbilityManager.getEnabledAbilitiesList().contains(var3.getName())) {
-            if (var1.getEntity() instanceof Player) {
-                Player var4 = (Player)var1.getEntity();
+            if (var1.getEntity() instanceof Player var4) {
                 SkyPlayer var5 = SkyWars.getSkyPlayer(var4);
                 if (var5 == null) {
                     return;
@@ -46,8 +45,8 @@ public class AbilitiesListener implements Listener {
                 if (var5.isInArena() && !var5.isSpectating()) {
                     Arena var6 = var5.getArena();
                     if (var6.getState() == ArenaState.INGAME && var6.isAbilitiesEnabled() && var5.hasAbility(var2) && !var5.isAbilityDisabled(var2) && this.getChance() < (double)var5.getAbilityLevel(var2).getChance()) {
-                        Arrow var7 = (Arrow)var4.launchProjectile(Arrow.class);
-                        Arrow var8 = (Arrow)var4.launchProjectile(Arrow.class);
+                        Arrow var7 = var4.launchProjectile(Arrow.class);
+                        Arrow var8 = var4.launchProjectile(Arrow.class);
                         var7.setCustomName("ArrowKeyName-1920");
                         var8.setCustomName("ArrowKeyName-1920");
                         Arrow var9 = (Arrow)var1.getProjectile();
@@ -72,8 +71,7 @@ public class AbilitiesListener implements Listener {
 
     @EventHandler
     public void onTripleArrowHit(ProjectileHitEvent var1) {
-        if (var1.getEntity() instanceof Arrow) {
-            Arrow var2 = (Arrow)var1.getEntity();
+        if (var1.getEntity() instanceof Arrow var2) {
             if (var2.getCustomName() == null || var2.getCustomName().isEmpty()) {
                 return;
             }
@@ -92,8 +90,7 @@ public class AbilitiesListener implements Listener {
         if (var3 == null) {
             SkyWars.logError("Unable to get the ability, something is wrong with " + var2 + " (maybe was deleted)");
         } else if (AbilityManager.getEnabledAbilitiesList().contains(var3.getName())) {
-            if (var1.getDamager() instanceof Player && var1.getEntity() instanceof Player) {
-                Player var4 = (Player)var1.getEntity();
+            if (var1.getDamager() instanceof Player && var1.getEntity() instanceof Player var4) {
                 SkyPlayer var5 = SkyWars.getSkyPlayer(var4);
                 if (var5 == null) {
                     return;
@@ -117,8 +114,7 @@ public class AbilitiesListener implements Listener {
         if (var3 == null) {
             SkyWars.logError("Unable to get the ability, something is wrong with " + var2 + " (maybe was deleted)");
         } else if (AbilityManager.getEnabledAbilitiesList().contains(var3.getName())) {
-            if (var1.getCause() == DamageCause.FALL && var1.getEntity() instanceof Player) {
-                Player var4 = (Player)var1.getEntity();
+            if (var1.getCause() == DamageCause.FALL && var1.getEntity() instanceof Player var4) {
                 SkyPlayer var5 = SkyWars.getSkyPlayer(var4);
                 if (var5 == null) {
                     return;
@@ -142,8 +138,7 @@ public class AbilitiesListener implements Listener {
         if (var3 == null) {
             SkyWars.logError("Unable to get the ability, something is wrong with " + var2 + " (maybe was deleted)");
         } else if (AbilityManager.getEnabledAbilitiesList().contains(var3.getName())) {
-            if (var1.getDamager() instanceof Player && var1.getEntity() instanceof Player) {
-                Player var4 = (Player)var1.getDamager();
+            if (var1.getDamager() instanceof Player var4 && var1.getEntity() instanceof Player) {
                 SkyPlayer var5 = SkyWars.getSkyPlayer(var4);
                 if (var5 == null) {
                     return;
@@ -167,8 +162,7 @@ public class AbilitiesListener implements Listener {
         if (var3 == null) {
             SkyWars.logError("Unable to get the ability, something is wrong with " + var2 + " (maybe was deleted)");
         } else if (AbilityManager.getEnabledAbilitiesList().contains(var3.getName())) {
-            if (var1.getCause() == DamageCause.PROJECTILE && var1.getEntity() instanceof Player && var1.getDamager() instanceof Arrow) {
-                Player var4 = (Player)var1.getEntity();
+            if (var1.getCause() == DamageCause.PROJECTILE && var1.getEntity() instanceof Player var4 && var1.getDamager() instanceof Arrow) {
                 SkyPlayer var5 = SkyWars.getSkyPlayer(var4);
                 if (var5 == null) {
                     return;
@@ -205,13 +199,11 @@ public class AbilitiesListener implements Listener {
                 if (var6.isInArena() && !var6.isSpectating()) {
                     Arena var7 = var6.getArena();
                     if (var7.getState() == ArenaState.INGAME && var7.isAbilitiesEnabled() && var6.hasAbility(var2) && !var6.isAbilityDisabled(var2) && this.getChance() < (double)var6.getAbilityLevel(var2).getChance()) {
-                        Iterator var8 = this.getOres().iterator();
 
-                        while(var8.hasNext()) {
-                            Material var9 = (Material)var8.next();
+                        for (Material var9 : this.getOres()) {
                             if (var1.getBlock().getType() == var9) {
                                 if (var9 == Material.LAPIS_ORE) {
-                                    var1.getBlock().getWorld().dropItemNaturally(var1.getBlock().getLocation(), new ItemStack(this.getOreDrop(var9), 1, (short)4));
+                                    var1.getBlock().getWorld().dropItemNaturally(var1.getBlock().getLocation(), new ItemStack(this.getOreDrop(var9), 1, (short) 4));
                                 } else {
                                     var1.getBlock().getWorld().dropItemNaturally(var1.getBlock().getLocation(), new ItemStack(this.getOreDrop(var9), 1));
                                 }
@@ -280,8 +272,7 @@ public class AbilitiesListener implements Listener {
         if (var3 == null) {
             SkyWars.logError("Unable to get the ability, something is wrong with " + var2 + " (maybe was deleted)");
         } else if (AbilityManager.getEnabledAbilitiesList().contains(var3.getName())) {
-            if ((var1.getCause() == DamageCause.FIRE || var1.getCause() == DamageCause.FIRE_TICK || var1.getCause() == DamageCause.LAVA) && var1.getEntity() instanceof Player) {
-                Player var4 = (Player)var1.getEntity();
+            if ((var1.getCause() == DamageCause.FIRE || var1.getCause() == DamageCause.FIRE_TICK || var1.getCause() == DamageCause.LAVA) && var1.getEntity() instanceof Player var4) {
                 SkyPlayer var5 = SkyWars.getSkyPlayer(var4);
                 if (var5 == null) {
                     return;
@@ -363,6 +354,6 @@ public class AbilitiesListener implements Listener {
 
     private ItemStack getRandomTreasure() {
         int var1 = (new Random()).nextInt(AbilityManager.treasureItems.size());
-        return ((RandomItem)AbilityManager.treasureItems.get(var1)).getItem().build();
+        return AbilityManager.treasureItems.get(var1).getItem().build();
     }
 }

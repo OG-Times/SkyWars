@@ -4,5 +4,5 @@ public enum ArenaJoinCause {
    LOGIN,
    COMMAND,
    SIGN,
-   QUEUE;
+   QUEUE
 }

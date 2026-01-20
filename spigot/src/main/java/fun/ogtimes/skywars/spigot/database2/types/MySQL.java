@@ -150,7 +150,7 @@ public class MySQL extends DataSource {
                 statement.executeUpdate(String.format("CREATE TABLE IF NOT EXISTS %s (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, uuid VARCHAR(40) UNIQUE, username VARCHAR(32), money DOUBLE(20,2) NOT NULL DEFAULT '0', KEY sweconomy_username_idx (username(32))) ENGINE=InnoDB;", this.TABLE_ECONOMY));
                 statement.close();
                 this.addColumn(this.TABLE_ECONOMY, "uuid", "VARCHAR(40)", "id");
-                var4 = var18.getColumns((String)null, (String)null, this.TABLE_ECONOMY, "money");
+                var4 = var18.getColumns(null, null, this.TABLE_ECONOMY, "money");
                 if (var4.next()) {
                     int var19 = var4.getInt("DATA_TYPE");
                     if (var19 == 4) {
@@ -200,7 +200,7 @@ public class MySQL extends DataSource {
             try {
                 var6 = var7.createStatement();
                 DatabaseMetaData var9 = var7.getMetaData();
-                var5 = var9.getColumns((String)null, (String)null, var1, var2);
+                var5 = var9.getColumns(null, null, var1, var2);
                 if (!var5.next()) {
                     var6.executeUpdate(String.format("ALTER TABLE %s ADD COLUMN %s %s AFTER %s;", var1, var2, var3, var4));
                 }
@@ -518,7 +518,7 @@ public class MySQL extends DataSource {
             return var5;
         } catch (SQLException var17) {
             var17.printStackTrace();
-            return new ArrayList();
+            return new ArrayList<>();
         }
     }
 
@@ -567,10 +567,9 @@ public class MySQL extends DataSource {
                                     var2.close();
                                     var2 = var6.prepareStatement(String.format("UPDATE %s SET uuid=?, kits=?, wins=?, kills=?, deaths=?, played=?, arrow_shot=?, arrow_hit=?, blocks_broken=?, blocks_placed=?, time_played=?, distance_walked=? WHERE username=?", this.TABLE_DATA));
                                     StringBuilder var47 = new StringBuilder();
-                                    Iterator var48 = var20.iterator();
 
-                                    while(var48.hasNext()) {
-                                        String var49 = (String)var48.next();
+                                    for (Object object : var20) {
+                                        String var49 = (String) object;
                                         var47.append(var49).append(",");
                                     }
 
@@ -611,11 +610,10 @@ public class MySQL extends DataSource {
                         } while(var21.isEmpty());
 
                         String[] var22 = var21.split(",");
-                        String[] var23 = var22;
                         int var24 = var22.length;
 
                         for(int var25 = 0; var25 < var24; ++var25) {
-                            String var26 = var23[var25];
+                            String var26 = var22[var25];
                             if (!var20.contains(var26)) {
                                 var20.add(var26);
                             }

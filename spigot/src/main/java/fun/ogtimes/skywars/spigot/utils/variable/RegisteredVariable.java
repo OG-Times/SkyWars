@@ -1,12 +1,16 @@
 package fun.ogtimes.skywars.spigot.utils.variable;
 
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
+import lombok.Getter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class RegisteredVariable {
    private final Method method;
+   @Getter
    private final Variable variable;
+   @Getter
    private final int replacer;
 
    public RegisteredVariable(Method var1, Variable var2, int var3) {
@@ -24,11 +28,4 @@ public class RegisteredVariable {
       }
    }
 
-   public Variable getVariable() {
-      return this.variable;
-   }
-
-   public int getReplacer() {
-      return this.replacer;
-   }
 }

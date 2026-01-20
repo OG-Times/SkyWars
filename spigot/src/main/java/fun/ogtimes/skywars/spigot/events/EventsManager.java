@@ -27,13 +27,11 @@ public class EventsManager implements Listener {
       if (var3 != null) {
          if (var3.isInArena()) {
             Arena var6 = var3.getArena();
-            var1.setDeathMessage((String)null);
+            var1.setDeathMessage(null);
             var3.setSpectating(true, SpectatorReason.DEATH);
             if (SkyWars.is18orHigher()) {
                var2.setHealth(var2.getMaxHealth());
-               Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
-                  var2.spigot().respawn();
-               }, 1L);
+               Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> var2.spigot().respawn(), 1L);
             }
 
             SkyPlayerDeathEvent var7 = new SkyPlayerDeathEvent(var3, var5, var6, var1);

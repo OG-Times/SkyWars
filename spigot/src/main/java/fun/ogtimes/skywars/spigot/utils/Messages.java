@@ -137,9 +137,9 @@ public enum Messages {
    MOTD_LOADING("motd.loading"),
    MOTD_FULL("motd.full");
 
-   private String reference;
+   private final String reference;
 
-   private Messages(String var3) {
+   Messages(String var3) {
       this.reference = var3;
    }
 

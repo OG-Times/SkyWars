@@ -29,35 +29,33 @@ public class SkyScoreboard {
 
                int var5;
                for(var5 = 0; var5 < ConfigManager.score.getStringList("game.lines").size(); ++var5) {
-                  String var6 = (String)ConfigManager.score.getStringList("game.lines").get(var5);
+                  String var6 = ConfigManager.score.getStringList("game.lines").get(var5);
                   if (var6 != null && var0.getArena() != null && var0.getArena().getState() != null) {
                      if (var6.contains("<a-ingame>") && var0.getArena().getState() != ArenaState.INGAME) {
                         var4.add(var6);
-                     } else if (var6.contains("<a-events>") && (!var0.getArena().getConfig().getBoolean("options.events") || var0.getArena().getEvents().size() == 0)) {
+                     } else if (var6.contains("<a-events>") && (!var0.getArena().getConfig().getBoolean("options.events") || var0.getArena().getEvents().isEmpty())) {
                         var4.add(var6);
                      }
                   }
                }
 
                var5 = ConfigManager.score.getStringList("game.lines").size() - var4.size();
-               Iterator var17 = ConfigManager.score.getStringList("game.lines").iterator();
 
-               while(var17.hasNext()) {
-                  String var7 = (String)var17.next();
-                  if (!var4.contains(var7)) {
-                     String var8 = var7;
+                for (String var7 : ConfigManager.score.getStringList("game.lines")) {
+                    if (!var4.contains(var7)) {
+                        String var8 = var7;
 
-                     try {
-                        var8 = SkyWars.variableManager.replaceText(var0, var7).replace("<a-ingame>", "").replace("<a-events>", "");
-                     } catch (NullPointerException var14) {
-                        SkyWars.logError("Error while replacing some variable in Game Scoreboard: '" + var7 + "'");
-                     }
+                        try {
+                            var8 = SkyWars.variableManager.replaceText(var0, var7).replace("<a-ingame>", "").replace("<a-events>", "");
+                        } catch (NullPointerException var14) {
+                            SkyWars.logError("Error while replacing some variable in Game Scoreboard: '" + var7 + "'");
+                        }
 
-                     String var9 = ChatColor.translateAlternateColorCodes('&', var8);
-                     var2.put(fixDuplicates(var2, var9), var5);
-                     --var5;
-                  }
-               }
+                        String var9 = ChatColor.translateAlternateColorCodes('&', var8);
+                        var2.put(fixDuplicates(var2, var9), var5);
+                        --var5;
+                    }
+                }
 
                BoardAPI.scoredSidebar(var1, var3, var2);
             } else if ((SkyWars.isMultiArenaMode() || SkyWars.isLobbyMode()) && ConfigManager.score.getBoolean("lobby.enabled")) {

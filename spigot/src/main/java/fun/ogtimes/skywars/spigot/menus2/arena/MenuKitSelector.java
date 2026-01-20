@@ -35,12 +35,11 @@ public class MenuKitSelector extends Menu {
          Kit[] var4 = KitManager.getKits();
          int var5 = var4.length;
 
-         for(int var6 = 0; var6 < var5; ++var6) {
-            Kit var7 = var4[var6];
-            if (var7.getSlot() == var1.getSlot()) {
-               var3 = var7;
-            }
-         }
+          for (Kit var7 : var4) {
+              if (var7.getSlot() == var1.getSlot()) {
+                  var3 = var7;
+              }
+          }
 
          if (var3 == null) {
             Console.debugWarn("MenuKitSelect.onClick - " + this.getPlayer().getName() + " has selected a NULL Kit");
@@ -82,25 +81,24 @@ public class MenuKitSelector extends Menu {
       Kit[] var1 = KitManager.getKits();
       int var2 = var1.length;
 
-      for(int var3 = 0; var3 < var2; ++var3) {
-         Kit var4 = var1[var3];
-         ItemBuilder var5 = var4.getIcon().setHideFlags(true).clone();
-         SkyPlayer var6 = SkyWars.getSkyPlayer(this.getPlayer());
-         if (var6.hasKit(var4)) {
-            var5.setTitle(String.format(SkyWars.getMessage(Messages.KIT_NAME_PURCHASED), var4.getName()));
-         } else if (ConfigManager.main.getBoolean("menu.kits.unavailable.enabled") && !var4.isFree()) {
-            ItemBuilder var7 = Utils.readItem(ConfigManager.main.getString("menu.kits.unavailable.item"));
-            var5.setType(var7.getType());
-            var5.setData(var7.getData());
-            var5.setGlow(false);
-         }
+       for (Kit var4 : var1) {
+           ItemBuilder var5 = var4.getIcon().setHideFlags(true).clone();
+           SkyPlayer var6 = SkyWars.getSkyPlayer(this.getPlayer());
+           if (var6.hasKit(var4)) {
+               var5.setTitle(String.format(SkyWars.getMessage(Messages.KIT_NAME_PURCHASED), var4.getName()));
+           } else if (ConfigManager.main.getBoolean("menu.kits.unavailable.enabled") && !var4.isFree()) {
+               ItemBuilder var7 = Utils.readItem(ConfigManager.main.getString("menu.kits.unavailable.item"));
+               var5.setType(var7.getType());
+               var5.setData(var7.getData());
+               var5.setGlow(false);
+           }
 
-         if (!ConfigManager.shop.getBoolean("shopingame")) {
-            var5.setLore(var4.getContents());
-         }
+           if (!ConfigManager.shop.getBoolean("shopingame")) {
+               var5.setLore(var4.getContents());
+           }
 
-         this.setItem(var4.getSlot(), var5);
-      }
+           this.setItem(var4.getSlot(), var5);
+       }
 
    }
 }

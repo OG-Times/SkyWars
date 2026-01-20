@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.UUID;
 import org.bukkit.entity.Player;
@@ -12,7 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class UUIDUtils {
-   public static JSONParser jsonParser = new JSONParser();
+   public static final JSONParser jsonParser = new JSONParser();
 
    public static UUID getUUID(String var0) {
       Iterator var1 = SkyWars.getPlugin().getServer().getOnlinePlayers().iterator();
@@ -24,7 +25,7 @@ public class UUIDUtils {
                return getOnlineUUID(var0);
             }
 
-            return UUID.nameUUIDFromBytes(("OfflinePlayer:" + var0).getBytes(Charset.forName("UTF-8")));
+            return UUID.nameUUIDFromBytes(("OfflinePlayer:" + var0).getBytes(StandardCharsets.UTF_8));
          }
 
          var2 = (Player)var1.next();
@@ -64,8 +65,7 @@ public class UUIDUtils {
 
          var4.close();
          JSONObject var7 = (JSONObject)jsonParser.parse(var5);
-         String var1 = (String)var7.get("name");
-         return var1;
+          return (String)var7.get("name");
       } catch (Exception var8) {
          return null;
       }

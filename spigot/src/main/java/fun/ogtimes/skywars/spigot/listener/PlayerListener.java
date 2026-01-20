@@ -55,9 +55,8 @@ public class PlayerListener implements Listener {
             if (var4.getState() == ArenaState.INGAME) {
                Block var5 = var1.getBlock();
                Location var6 = var5.getLocation();
-               if (var5.getState() instanceof Chest) {
-                  Chest var7 = (Chest)var5.getState();
-                  if (!var4.isFilled(var6) && !var4.getDontFill().contains(var6)) {
+               if (var5.getState() instanceof Chest var7) {
+                   if (!var4.isFilled(var6) && !var4.getDontFill().contains(var6)) {
                      Inventory var8 = var7.getInventory();
                      ChestType var9 = ChestTypeManager.getChestType(var4.getChest());
                      var9.fillChest(var8);
@@ -81,10 +80,9 @@ public class PlayerListener implements Listener {
          if (var1.getAction().equals(Action.RIGHT_CLICK_BLOCK) || var1.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             Block var4 = var1.getClickedBlock();
             Location var5 = var4.getLocation();
-            if (var4.getState() instanceof Chest && var3.isInArena()) {
+            if (var4.getState() instanceof Chest var7 && var3.isInArena()) {
                Arena var6 = var3.getArena();
-               Chest var7 = (Chest)var4.getState();
-               if (var6.getState() == ArenaState.INGAME && !var6.isFilled(var5) && !var6.getDontFill().contains(var5)) {
+                if (var6.getState() == ArenaState.INGAME && !var6.isFilled(var5) && !var6.getDontFill().contains(var5)) {
                   var6.addFilled(var5);
                   Inventory var8 = var7.getInventory();
                   ChestType var9 = ChestTypeManager.getChestType(var6.getChest());
@@ -156,7 +154,7 @@ public class PlayerListener implements Listener {
                return;
             }
 
-            if (var3.getPlayer().getWorld() == Bukkit.getWorlds().get(0)) {
+            if (var3.getPlayer().getWorld() == Bukkit.getWorlds().getFirst()) {
                var3.teleport(var4.getSpawn());
             }
 
@@ -187,7 +185,7 @@ public class PlayerListener implements Listener {
 
                if (var2.getLocation().getY() <= -6.0D) {
                   if (DamageListener.lastDamage.containsKey(var2.getUniqueId())) {
-                     Player var5 = Bukkit.getPlayer((UUID)DamageListener.lastDamage.get(var2.getUniqueId()));
+                     Player var5 = Bukkit.getPlayer(DamageListener.lastDamage.get(var2.getUniqueId()));
                      var2.damage(1000.0D, var5);
                   } else {
                      var2.setHealth(0.0D);
@@ -283,14 +281,12 @@ public class PlayerListener implements Listener {
          }
 
          if (SkyWars.isMultiArenaMode() && !ConfigManager.main.getBoolean("options.disablePerWorldChat")) {
-            Iterator var6 = Bukkit.getServer().getOnlinePlayers().iterator();
 
-            while(var6.hasNext()) {
-               Player var5 = (Player)var6.next();
-               if (var5.getWorld() != var2.getWorld() && var1.getRecipients().contains(var5)) {
-                  var1.getRecipients().remove(var5);
-               }
-            }
+             for (Player var5 : Bukkit.getServer().getOnlinePlayers()) {
+                 if (var5.getWorld() != var2.getWorld()) {
+                     var1.getRecipients().remove(var5);
+                 }
+             }
          }
 
       }

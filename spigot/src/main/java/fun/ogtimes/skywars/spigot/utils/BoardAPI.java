@@ -32,11 +32,11 @@ public class BoardAPI {
                         continue label39;
                     }
 
-                    var7 = (String)var6.next();
-                } while((Integer)var2.get(var7) >= var5 && ((Integer)var2.get(var7) != var5 || var7.compareTo(var4) >= 0));
+                    var7 = var6.next();
+                } while(var2.get(var7) >= var5 && (var2.get(var7) != var5 || var7.compareTo(var4) >= 0));
 
                 var4 = var7;
-                var5 = (Integer)var2.get(var7);
+                var5 = var2.get(var7);
             }
         }
 
@@ -71,7 +71,7 @@ public class BoardAPI {
                                 var728572 = var0.getScoreboard().getEntries().iterator();
 
                                 while(var728572.hasNext()) {
-                                    var5 = (String)var728572.next();
+                                    var5 = var728572.next();
                                     if (var3.getScore(var5).isScoreSet() && !var2.containsKey(var5)) {
                                         var0.getScoreboard().resetScores(var5);
                                     }
@@ -80,10 +80,10 @@ public class BoardAPI {
                                 return;
                             }
 
-                            var5 = (String)var728572.next();
-                        } while(var3.getScore(var5).isScoreSet() && var3.getScore(var5).getScore() == (Integer)var2.get(var5));
+                            var5 = var728572.next();
+                        } while(var3.getScore(var5).isScoreSet() && var3.getScore(var5).getScore() == var2.get(var5));
 
-                        var3.getScore(var5).setScore((Integer)var2.get(var5));
+                        var3.getScore(var5).setScore(var2.get(var5));
                     }
                 });
             }

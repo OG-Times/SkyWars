@@ -36,6 +36,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
@@ -52,35 +55,65 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Arena extends Game {
-   private final List<SkyPlayer> players = new ArrayList();
-   private final LinkedHashMap<Location, Boolean> spawnPoints = new LinkedHashMap();
-   private final List<ArenaBox> glassBoxes = new ArrayList();
-   private final List<String> selectedChest = new ArrayList();
-   private final List<String> selectedTime = new ArrayList();
-   private final List<Location> dontFill = new ArrayList();
-   private final List<BukkitRunnable> tickers = new ArrayList();
-   private final List<Integer> startingCounts = new ArrayList();
-   private final HashMap<Integer, ArenaTeam> teams = new HashMap();
+   @Getter
+   private final List<SkyPlayer> players = new ArrayList<>();
+   @Getter
+   private final LinkedHashMap<Location, Boolean> spawnPoints = new LinkedHashMap<>();
+   private final List<ArenaBox> glassBoxes = new ArrayList<>();
+   private final List<String> selectedChest = new ArrayList<>();
+   private final List<String> selectedTime = new ArrayList<>();
+   @Getter
+   private final List<Location> dontFill = new ArrayList<>();
+   private final List<BukkitRunnable> tickers = new ArrayList<>();
+   @Getter
+   private final List<Integer> startingCounts = new ArrayList<>();
+   private final HashMap<Integer, ArenaTeam> teams = new HashMap<>();
+   @Getter
    private int minPlayers;
+   @Getter
    private boolean forceStart;
+   @Setter
+   @Getter
    private boolean fallDamage;
    private boolean abilities;
    private boolean chestSelected;
+   @Setter
+   @Getter
    private boolean hardReset;
+   @Setter
+   @Getter
    private boolean disabled;
+   @Setter
+   @Getter
    private int startCountdown;
+   @Setter
+   @Getter
    private int startFullCountdown;
+   @Setter
+   @Getter
    private int endCountdown;
+   @Setter
+   @Getter
    private int maxTimeCountdown;
    private ArenaMode mode;
-   private File configFile = null;
-   private SkyConfiguration config;
-   private List<Location> chestFilled = new ArrayList();
-   private LinkedList<ArenaEvent> events = new LinkedList();
+    @Getter
+    private SkyConfiguration config;
+   @Setter
+   @Getter
+   private List<Location> chestFilled = new ArrayList<>();
+   @Setter
+   @Getter
+   private LinkedList<ArenaEvent> events = new LinkedList<>();
    private String chest = "";
-   private HashMap<SkyPlayer, Integer> killStreak = new HashMap();
+   @Setter
+   private HashMap<SkyPlayer, Integer> killStreak = new HashMap<>();
+   @Getter
    private BukkitRunnable ticks;
-   private HashMap<SkyPlayer, ArenaTeam> playerTeam = new HashMap();
+   @Setter
+   @Getter
+   private HashMap<SkyPlayer, ArenaTeam> playerTeam = new HashMap<>();
+   @Setter
+   @Getter
    private Location teamLobby;
    private int teamCountdown;
    private int loadWorldTries = 0;
@@ -111,7 +144,7 @@ public class Arena extends Game {
          this.loadGlassBoxes();
       } else {
          for(int var2 = 1; var2 <= this.config.getInt("team.teams"); ++var2) {
-            this.teams.put(var2, new ArenaTeam(var2, this.config.getInt("team.teams_size"), LocationUtil.getLocation((String)this.config.getStringList("spawnpoints").get(var2 - 1))));
+            this.teams.put(var2, new ArenaTeam(var2, this.config.getInt("team.teams_size"), LocationUtil.getLocation(this.config.getStringList("spawnpoints").get(var2 - 1))));
          }
 
          this.minPlayers = this.config.getInt("min_players");
@@ -184,15 +217,13 @@ public class Arena extends Game {
    }
 
    public void removeFilled(Location var1) {
-      if (this.chestFilled.contains(var1)) {
-         this.chestFilled.remove(var1);
-      }
+       this.chestFilled.remove(var1);
 
    }
 
    public void addPlayer(SkyPlayer var1, ArenaJoinCause var2) {
       if (null == var1) {
-         SkyWars.log(String.format("Arena.addPlayer - Trying to add a NULL Player"));
+         SkyWars.log("Arena.addPlayer - Trying to add a NULL Player");
       } else if (this.disabled) {
          if (var1.getPlayer().hasPermission("skywars.admin")) {
             var1.teleport(this.getWorld().getSpawnLocation());
@@ -203,7 +234,7 @@ public class Arena extends Game {
          }
 
       } else if (this.isLoading()) {
-         SkyWars.log(String.format("Arena.addPlayer - Trying to join Player when game is Reloading"));
+         SkyWars.log("Arena.addPlayer - Trying to join Player when game is Reloading");
          if (SkyWars.isProxyMode()) {
             var1.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_LOADING));
          } else {
@@ -248,29 +279,23 @@ public class Arena extends Game {
       return this.tickers;
    }
 
-   public BukkitRunnable getTicks() {
-      return this.ticks;
-   }
+    public void broadcast(String var1) {
 
-   public void broadcast(String var1) {
-      Iterator var2 = this.players.iterator();
-
-      while(var2.hasNext()) {
-         SkyPlayer var3 = (SkyPlayer)var2.next();
-         if (var3.getPlayer() != null && var3.getPlayer().isOnline()) {
-            var3.sendMessage(var1);
-         }
-      }
+       for (SkyPlayer var3 : this.players) {
+           if (var3.getPlayer() != null && var3.getPlayer().isOnline()) {
+               var3.sendMessage(var1);
+           }
+       }
 
    }
 
    private void createConfig(String var1) {
-      this.configFile = new File(SkyWars.getPlugin().getDataFolder(), SkyWars.arenas + File.separator + var1 + ".yml");
-      this.config = new SkyConfiguration(this.configFile);
+       File configFile = new File(SkyWars.getPlugin().getDataFolder(), SkyWars.arenas + File.separator + var1 + ".yml");
+      this.config = new SkyConfiguration(configFile);
       this.config.addDefault("name", var1, "name displayed in the server");
       this.config.addDefault("min_players", 2, "players required to start the game");
       this.config.addDefault("max_players", 6, "maximum amount of players that can join to the arena");
-      this.config.addDefault("spawnpoints", new ArrayList(), "spawn where the player will spawn in the game (boxes)");
+      this.config.addDefault("spawnpoints", new ArrayList<>(), "spawn where the player will spawn in the game (boxes)");
       this.config.addDefault("spectator_spawn", "", "spawn where spectators will appear");
       this.config.addDefault("countdown.starting", 90, "time in seconds to start the game");
       this.config.addDefault("countdown.starting_message", "90,60,30,10,5,4,3,2,1", "list of seconds when the time message will be displayed");
@@ -291,10 +316,9 @@ public class Arena extends Game {
       ChestType[] var4 = ChestTypeManager.getChestTypes();
       int var5 = var4.length;
 
-      for(int var6 = 0; var6 < var5; ++var6) {
-         ChestType var7 = var4[var6];
-         var3.add(var7.getName());
-      }
+       for (ChestType var7 : var4) {
+           var3.add(var7.getName());
+       }
 
       this.config.addDefault("chests.selectable", var3, "list of chest types that can be selected to vote in this arena");
       ArrayList var8 = new ArrayList();
@@ -306,14 +330,12 @@ public class Arena extends Game {
    }
 
    public void clearItems() {
-      Iterator var1 = this.getWorld().getEntities().iterator();
 
-      while(var1.hasNext()) {
-         Entity var2 = (Entity)var1.next();
-         if (var2 instanceof Item) {
-            var2.remove();
-         }
-      }
+       for (Entity var2 : this.getWorld().getEntities()) {
+           if (var2 instanceof Item) {
+               var2.remove();
+           }
+       }
 
    }
 
@@ -337,18 +359,16 @@ public class Arena extends Game {
    public void end(boolean var1) {
       this.state = ArenaState.ENDING;
       this.playSignUpdate(SkySignUpdateCause.STATE);
-      Iterator var2 = this.getWorld().getPlayers().iterator();
 
-      while(var2.hasNext()) {
-         final Player var3 = (Player)var2.next();
-         if (var3.isDead()) {
-            (new BukkitRunnable() {
-               public void run() {
-                  var3.spigot().respawn();
-               }
-            }).runTaskLater(SkyWars.getPlugin(), 10L);
-         }
-      }
+       for (Player var3 : this.getWorld().getPlayers()) {
+           if (var3.isDead()) {
+               (new BukkitRunnable() {
+                   public void run() {
+                       var3.spigot().respawn();
+                   }
+               }).runTaskLater(SkyWars.getPlugin(), 10L);
+           }
+       }
 
       if (var1) {
          this.endCountdown = 2;
@@ -360,7 +380,7 @@ public class Arena extends Game {
       if (this.getState() != ArenaState.ENDING) {
          this.clearItems();
          this.broadcast(String.format(SkyWars.getMessage(Messages.GAME_FINISH_BROADCAST_WINNER), var1.getName(), this.name));
-         SkyEconomyManager.addCoins(var1.getPlayer(), (double)SkyWars.getPlugin().getConfig().getInt("reward.win"), true);
+         SkyEconomyManager.addCoins(var1.getPlayer(), SkyWars.getPlugin().getConfig().getInt("reward.win"), true);
          this.executeWinnerCommands(ConfigManager.main.getBoolean("reward.wincmd.enabled"), var1);
          var1.addWins(1);
          var1.clearInventory(false);
@@ -379,31 +399,27 @@ public class Arena extends Game {
 
    public void executeWinnerCommands(boolean var1, SkyPlayer var2) {
       if (var1) {
-         Iterator var3 = ConfigManager.main.getStringList("reward.wincmd.list").iterator();
 
-         while(var3.hasNext()) {
-            String var4 = (String)var3.next();
-            String[] var5 = var4.split("/");
-            int var6 = Integer.parseInt(var5[0]);
-            String var7 = var5[1].replace("%winner%", var2.getName()).replace("%map%", this.getName());
-            if (this.getChance() < (double)var6) {
-               SkyWars.getPlugin().getServer().dispatchCommand(SkyWars.getPlugin().getServer().getConsoleSender(), var7);
-            }
-         }
+          for (String var4 : ConfigManager.main.getStringList("reward.wincmd.list")) {
+              String[] var5 = var4.split("/");
+              int var6 = Integer.parseInt(var5[0]);
+              String var7 = var5[1].replace("%winner%", var2.getName()).replace("%map%", this.getName());
+              if (this.getChance() < (double) var6) {
+                  SkyWars.getPlugin().getServer().dispatchCommand(SkyWars.getPlugin().getServer().getConsoleSender(), var7);
+              }
+          }
       }
 
    }
 
    public List<SkyPlayer> getAlivePlayer() {
       ArrayList var1 = new ArrayList();
-      Iterator var2 = this.players.iterator();
 
-      while(var2.hasNext()) {
-         SkyPlayer var3 = (SkyPlayer)var2.next();
-         if (!var3.isSpectating()) {
-            var1.add(var3);
-         }
-      }
+       for (SkyPlayer var3 : this.players) {
+           if (!var3.isSpectating()) {
+               var1.add(var3);
+           }
+       }
 
       return var1;
    }
@@ -446,67 +462,28 @@ public class Arena extends Game {
    }
 
    private double getChance() {
-      double var1 = Math.random() * 100.0D;
-      return var1;
+       return Math.random() * 100.0D;
    }
 
    public String getChest() {
       return this.getSelectedChest();
    }
 
-   public SkyConfiguration getConfig() {
-      return this.config;
-   }
-
-   public LinkedList<ArenaEvent> getEvents() {
-      return this.events;
-   }
-
-   public void setEvents(LinkedList<ArenaEvent> var1) {
-      this.events = var1;
-   }
-
-   public int getEndCountdown() {
-      return this.endCountdown;
-   }
-
-   public void setEndCountdown(int var1) {
-      this.endCountdown = var1;
-   }
-
-   public List<ArenaBox> getGlassBoxes() {
+    public List<ArenaBox> getGlassBoxes() {
       if (this.mode != ArenaMode.TEAM) {
          return this.glassBoxes;
       } else {
          ArrayList var1 = new ArrayList();
-         Iterator var2 = this.teams.values().iterator();
 
-         while(var2.hasNext()) {
-            ArenaTeam var3 = (ArenaTeam)var2.next();
-            var1.addAll(var3.getCages());
-         }
+          for (ArenaTeam var3 : this.teams.values()) {
+              var1.addAll(var3.getCages());
+          }
 
          return var1;
       }
    }
 
-   public int getMaxTimeCountdown() {
-      return this.maxTimeCountdown;
-   }
-
-   public void setMaxTimeCountdown(int var1) {
-      this.maxTimeCountdown = var1;
-   }
-
-   public int getMinPlayers() {
-      return this.minPlayers;
-   }
-
-   public List<SkyPlayer> getPlayers() {
-      return this.players;
-   }
-
-   public String getSelectedChest() {
+    public String getSelectedChest() {
       if (this.chestSelected) {
          return this.chest;
       } else {
@@ -514,22 +491,19 @@ public class Arena extends Game {
          ChestType[] var1 = ChestTypeManager.getChestTypes();
          int var2 = var1.length;
 
-         for(int var3 = 0; var3 < var2; ++var3) {
-            ChestType var4 = var1[var3];
-            this.selectedChest.add("vote_chest_" + var4.getName());
-         }
+          for (ChestType var4 : var1) {
+              this.selectedChest.add("vote_chest_" + var4.getName());
+          }
 
          int var5 = -1;
          String var6 = null;
-         Iterator var7 = this.selectedChest.iterator();
 
-         while(var7.hasNext()) {
-            String var8 = (String)var7.next();
-            if (this.getInt(var8) > var5) {
-               var5 = this.getInt(var8);
-               var6 = var8.replace("vote_chest_", "");
-            }
-         }
+          for (String var8 : this.selectedChest) {
+              if (this.getInt(var8) > var5) {
+                  var5 = this.getInt(var8);
+                  var6 = var8.replace("vote_chest_", "");
+              }
+          }
 
          if (var5 <= 0) {
             var6 = this.config.getString("chests.default");
@@ -548,15 +522,13 @@ public class Arena extends Game {
       this.selectedTime.add("vote_time_sunset");
       int var1 = -1;
       String var2 = null;
-      Iterator var3 = this.selectedTime.iterator();
 
-      while(var3.hasNext()) {
-         String var4 = (String)var3.next();
-         if (this.getInt(var4) > var1) {
-            var1 = this.getInt(var4);
-            var2 = var4.split("_")[2];
-         }
-      }
+       for (String var4 : this.selectedTime) {
+           if (this.getInt(var4) > var1) {
+               var1 = this.getInt(var4);
+               var2 = var4.split("_")[2];
+           }
+       }
 
       if (var1 <= 0) {
          return "default";
@@ -582,55 +554,28 @@ public class Arena extends Game {
 
    public Location getSpawnPoint() {
       if (SkyWars.getPlugin().getConfig().getBoolean("options.orderedSpawnPoints")) {
-         Iterator var1 = this.spawnPoints.keySet().iterator();
 
-         while(var1.hasNext()) {
-            Location var2 = (Location)var1.next();
-            if (!(Boolean)this.spawnPoints.get(var2)) {
-               return var2;
-            }
-         }
+          for (Location var2 : this.spawnPoints.keySet()) {
+              if (!(Boolean) this.spawnPoints.get(var2)) {
+                  return var2;
+              }
+          }
       } else {
          ArrayList var4 = new ArrayList(this.spawnPoints.keySet());
          Collections.shuffle(var4);
-         Iterator var5 = var4.iterator();
 
-         while(var5.hasNext()) {
-            Location var3 = (Location)var5.next();
-            if (!(Boolean)this.spawnPoints.get(var3)) {
-               return var3;
-            }
-         }
+          for (Object object : var4) {
+              Location var3 = (Location) object;
+              if (!(Boolean) this.spawnPoints.get(var3)) {
+                  return var3;
+              }
+          }
       }
 
       return null;
    }
 
-   public LinkedHashMap<Location, Boolean> getSpawnPoints() {
-      return this.spawnPoints;
-   }
-
-   public int getStartCountdown() {
-      return this.startCountdown;
-   }
-
-   public void setStartCountdown(int var1) {
-      this.startCountdown = var1;
-   }
-
-   public int getStartFullCountdown() {
-      return this.startFullCountdown;
-   }
-
-   public void setStartFullCountdown(int var1) {
-      this.startFullCountdown = var1;
-   }
-
-   public List<Integer> getStartingCounts() {
-      return this.startingCounts;
-   }
-
-   public long getTime() {
+    public long getTime() {
       String var1 = this.getSelectedTime();
       if (var1.equalsIgnoreCase("day")) {
          return 0L;
@@ -645,32 +590,20 @@ public class Arena extends Game {
       return Bukkit.getWorld(this.name);
    }
 
-   public List<Location> getChestFilled() {
-      return this.chestFilled;
-   }
-
-   public void setChestFilled(List<Location> var1) {
-      this.chestFilled = var1;
-   }
-
-   public int getKillStreak(SkyPlayer var1) {
-      return this.killStreak.containsKey(var1) ? (Integer)this.killStreak.get(var1) : 0;
+    public int getKillStreak(SkyPlayer var1) {
+      return this.killStreak.containsKey(var1) ? this.killStreak.get(var1) : 0;
    }
 
    public void addKillStreak(SkyPlayer var1) {
       if (this.killStreak.containsKey(var1)) {
-         this.killStreak.put(var1, (Integer)this.killStreak.get(var1) + 1);
+         this.killStreak.put(var1, this.killStreak.get(var1) + 1);
       } else {
          this.killStreak.put(var1, 1);
       }
 
    }
 
-   public void setKillStreak(HashMap<SkyPlayer, Integer> var1) {
-      this.killStreak = var1;
-   }
-
-   public void goToSpawn(SkyPlayer var1) {
+    public void goToSpawn(SkyPlayer var1) {
       var1.teleport(this.getSpawn());
    }
 
@@ -678,59 +611,15 @@ public class Arena extends Game {
       return this.config.getString("spectator_spawn") != null || !this.config.getString("spectator_spawn").isEmpty();
    }
 
-   public boolean isHardReset() {
-      return this.hardReset;
-   }
-
-   public void setHardReset(boolean var1) {
-      this.hardReset = var1;
-   }
-
-   public boolean isDisabled() {
-      return this.disabled;
-   }
-
-   public void setDisabled(boolean var1) {
-      this.disabled = var1;
-   }
-
-   public HashMap<SkyPlayer, ArenaTeam> getPlayerTeam() {
-      return this.playerTeam;
-   }
-
-   public void setPlayerTeam(HashMap<SkyPlayer, ArenaTeam> var1) {
-      this.playerTeam = var1;
-   }
-
-   public Location getTeamLobby() {
-      return this.teamLobby;
-   }
-
-   public void setTeamLobby(Location var1) {
-      this.teamLobby = var1;
-   }
-
-   public boolean isAbilitiesEnabled() {
+    public boolean isAbilitiesEnabled() {
       return this.abilities;
    }
 
-   public boolean isFallDamage() {
-      return this.fallDamage;
-   }
-
-   public void setFallDamage(boolean var1) {
-      this.fallDamage = var1;
-   }
-
-   public boolean isFilled(Location var1) {
+    public boolean isFilled(Location var1) {
       return this.chestFilled.contains(var1);
    }
 
-   public boolean isForceStart() {
-      return this.forceStart;
-   }
-
-   public void setForceStart(boolean var1) {
+    public void setForceStart(boolean var1) {
       this.forceStart = var1;
    }
 
@@ -739,7 +628,7 @@ public class Arena extends Game {
    }
 
    public boolean isUsed(Location var1) {
-      return (Boolean)this.spawnPoints.get(var1);
+      return this.spawnPoints.get(var1);
    }
 
    public void launchFirework(SkyPlayer var1) {
@@ -749,25 +638,21 @@ public class Arena extends Game {
 
    public final void loadGlassBoxes() {
       this.glassBoxes.clear();
-      Iterator var1 = this.spawnPoints.keySet().iterator();
 
-      while(var1.hasNext()) {
-         Location var2 = (Location)var1.next();
-         ArenaBox var3 = new ArenaBox(var2);
-         var3.setBox(SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".item"), SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".data"));
-         this.glassBoxes.add(var3);
-      }
+       for (Location var2 : this.spawnPoints.keySet()) {
+           ArenaBox var3 = new ArenaBox(var2);
+           var3.setBox(SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".item"), SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".data"));
+           this.glassBoxes.add(var3);
+       }
 
    }
 
    public final void loadSpawnPoints() {
       this.spawnPoints.clear();
-      Iterator var1 = this.config.getList("spawnpoints").iterator();
 
-      while(var1.hasNext()) {
-         Object var2 = var1.next();
-         this.spawnPoints.put(LocationUtil.getLocation(var2.toString()), false);
-      }
+       for (Object var2 : this.config.getList("spawnpoints")) {
+           this.spawnPoints.put(LocationUtil.getLocation(var2.toString()), false);
+       }
 
    }
 
@@ -809,22 +694,20 @@ public class Arena extends Game {
    }
 
    public void reloadWorld() {
-      Iterator var1 = this.getWorld().getPlayers().iterator();
 
-      while(var1.hasNext()) {
-         Player var2 = (Player)var1.next();
-         if (SkyWars.isProxyMode()) {
-            ProxyUtils.teleToServer(var2, SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
-         } else {
-            SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-            if (var3 == null) {
-               var2.kickPlayer("Do you have lag?\nWe need reset the world :)");
-            } else {
-               SkyWars.goToSpawn(var3);
-               var2.setFallDistance(0.0F);
-            }
-         }
-      }
+       for (Player var2 : this.getWorld().getPlayers()) {
+           if (SkyWars.isProxyMode()) {
+               ProxyUtils.teleToServer(var2, SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
+           } else {
+               SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
+               if (var3 == null) {
+                   var2.kickPlayer("Do you have lag?\nWe need reset the world :)");
+               } else {
+                   SkyWars.goToSpawn(var3);
+                   var2.setFallDistance(0.0F);
+               }
+           }
+       }
 
       if (!Bukkit.unloadWorld(this.getWorld(), false)) {
          SkyWars.logError(this.name + " was unsuccessful unloaded before the world reset (this can cause some problems and it's not a SkyWars problem)");
@@ -835,17 +718,16 @@ public class Arena extends Game {
          File[] var10 = var9.listFiles();
          int var4 = var10.length;
 
-         for(int var5 = 0; var5 < var4; ++var5) {
-            File var6 = var10[var5];
-            if (var6.getName().equals(this.getName()) && var6.isDirectory()) {
-               try {
-                  ArenaManager.delete(new File(var6.getName()));
-                  ArenaManager.copyFolder(var6, new File(var6.getName()));
-               } catch (Exception var8) {
-                  var8.printStackTrace();
-               }
-            }
-         }
+          for (File var6 : var10) {
+              if (var6.getName().equals(this.getName()) && var6.isDirectory()) {
+                  try {
+                      ArenaManager.delete(new File(var6.getName()));
+                      ArenaManager.copyFolder(var6, new File(var6.getName()));
+                  } catch (Exception var8) {
+                      var8.printStackTrace();
+                  }
+              }
+          }
       }
 
       this.loadFirstWorld();
@@ -872,12 +754,12 @@ public class Arena extends Game {
       this.setUsed(var1.getArenaSpawn(), false);
       var1.playedTimeEnd();
       var1.distanceWalkedConvert();
-      var1.setBox((ArenaBox)null);
-      var1.setArenaSpawn((Location)null);
+      var1.setBox(null);
+      var1.setArenaSpawn(null);
       var1.clearInventory(false);
       var1.resetInventory();
       var1.resetVotes();
-      var1.setArena((Arena)null);
+      var1.setArena(null);
       var1.getPlayer().updateInventory();
    }
 
@@ -899,10 +781,9 @@ public class Arena extends Game {
       ChestType[] var5 = ChestTypeManager.getChestTypes();
       int var6 = var5.length;
 
-      for(int var3 = 0; var3 < var6; ++var3) {
-         ChestType var4 = var5[var3];
-         this.addData("vote_chest_" + var4.getName(), 0);
-      }
+       for (ChestType var4 : var5) {
+           this.addData("vote_chest_" + var4.getName(), 0);
+       }
 
       this.addData("vote_time_day", 0);
       this.addData("vote_time_night", 0);
@@ -966,49 +847,45 @@ public class Arena extends Game {
       if (this.mode == ArenaMode.SOLO) {
          this.startGo();
       } else {
-         Iterator var1 = this.players.iterator();
 
-         while(var1.hasNext()) {
-            SkyPlayer var2 = (SkyPlayer)var1.next();
-            this.setTeam(var2);
-            ArenaTeam var3 = (ArenaTeam)this.playerTeam.get(var2);
-            Location var4 = var3.getSpawnUsable();
-            var2.teleport(var4);
-            var2.setArenaSpawn(var4);
-            Iterator var5 = var3.getCages().iterator();
+          for (SkyPlayer var2 : this.players) {
+              this.setTeam(var2);
+              ArenaTeam var3 = this.playerTeam.get(var2);
+              Location var4 = var3.getSpawnUsable();
+              var2.teleport(var4);
+              var2.setArenaSpawn(var4);
 
-            while(var5.hasNext()) {
-               ArenaBox var6 = (ArenaBox)var5.next();
-               if (var6.getLocation().equals(var4)) {
-                  var2.setBox(var6);
-               }
-            }
+              for (ArenaBox var6 : var3.getCages()) {
+                  if (var6.getLocation().equals(var4)) {
+                      var2.setBox(var6);
+                  }
+              }
 
-            String var11 = var2.getBoxSection();
-            if (var2.getBoxSection() != null && !var11.equalsIgnoreCase(SkyWars.boxes.getString("default"))) {
-               int var7;
-               int var8;
-               ArenaBox var9;
-               String var12;
-               if (var2.getBoxItem(var2.getBoxSection()) != 0) {
-                  var12 = var2.getBoxSection();
-                  var7 = var2.getBoxItem(var12);
-                  var8 = var2.getBoxData(var12);
-                  var9 = var2.getBox();
-                  SkyWars.log("Arena.start - Box Section=" + var12 + ", Box Item=" + var7 + ", Box Data=" + var8 + ", Box=" + var9);
-                  var9.setBox(var7, var8);
-               } else {
-                  var2.getPlayer().setMetadata("upload_me", new FixedMetadataValue(SkyWars.getPlugin(), true));
-                  var12 = SkyWars.boxes.getString("default");
-                  var2.setBoxSection(var12, true);
-                  var7 = var2.getBoxItem(var12);
-                  var8 = var2.getBoxData(var12);
-                  var9 = var2.getBox();
-                  SkyWars.log("Arena.start - Box Section=" + var12 + ", Box Item=" + var7 + ", Box Data=" + var8 + ", Box=" + var9);
-                  var9.setBox(var7, var8);
-               }
-            }
-         }
+              String var11 = var2.getBoxSection();
+              if (var2.getBoxSection() != null && !var11.equalsIgnoreCase(SkyWars.boxes.getString("default"))) {
+                  int var7;
+                  int var8;
+                  ArenaBox var9;
+                  String var12;
+                  if (var2.getBoxItem(var2.getBoxSection()) != 0) {
+                      var12 = var2.getBoxSection();
+                      var7 = var2.getBoxItem(var12);
+                      var8 = var2.getBoxData(var12);
+                      var9 = var2.getBox();
+                      SkyWars.log("Arena.start - Box Section=" + var12 + ", Box Item=" + var7 + ", Box Data=" + var8 + ", Box=" + var9);
+                      var9.setBox(var7, var8);
+                  } else {
+                      var2.getPlayer().setMetadata("upload_me", new FixedMetadataValue(SkyWars.getPlugin(), true));
+                      var12 = SkyWars.boxes.getString("default");
+                      var2.setBoxSection(var12, true);
+                      var7 = var2.getBoxItem(var12);
+                      var8 = var2.getBoxData(var12);
+                      var9 = var2.getBox();
+                      SkyWars.log("Arena.start - Box Section=" + var12 + ", Box Item=" + var7 + ", Box Data=" + var8 + ", Box=" + var9);
+                      var9.setBox(var7, var8);
+                  }
+              }
+          }
 
          BukkitRunnable var10 = new BukkitRunnable() {
             public void run() {
@@ -1029,16 +906,14 @@ public class Arena extends Game {
    public void startGo() {
       this.broadcast(SkyWars.getMessage(Messages.GAME_START_GO_ALERT_CHAT));
       this.broadcast(SkyWars.getMessage(Messages.GAME_START_GO));
-      Iterator var1 = this.getGlassBoxes().iterator();
 
-      while(var1.hasNext()) {
-         ArenaBox var2 = (ArenaBox)var1.next();
-         if (ConfigManager.main.getBoolean("options.removeAllCageOnStart")) {
-            var2.removeAll();
-         } else {
-            var2.removeBase();
-         }
-      }
+       for (ArenaBox var2 : this.getGlassBoxes()) {
+           if (ConfigManager.main.getBoolean("options.removeAllCageOnStart")) {
+               var2.removeAll();
+           } else {
+               var2.removeBase();
+           }
+       }
 
       this.fallDamage = false;
       this.broadcast(String.format(SkyWars.getMessage(Messages.SELECTED_CHEST), this.getChest()));
@@ -1060,31 +935,27 @@ public class Arena extends Game {
       }
 
       this.getWorld().setTime(var8);
-      Iterator var3 = this.players.iterator();
 
-      while(var3.hasNext()) {
-         SkyPlayer var4 = (SkyPlayer)var3.next();
-         if (SkyWars.is18orHigher()) {
-            Title var5 = new Title(SkyWars.getMessage(Messages.GAME_START_GO_ALERT), 10, 40, 20);
-            var5.send(var4.getPlayer());
-         }
+       for (SkyPlayer var4 : this.players) {
+           if (SkyWars.is18orHigher()) {
+               Title var5 = new Title(SkyWars.getMessage(Messages.GAME_START_GO_ALERT), 10, 40, 20);
+               var5.send(var4.getPlayer());
+           }
 
-         var4.getPlayer().getInventory().clear();
-         var4.getPlayer().closeInventory();
-         if (var4.hasKit()) {
-            Kit var9 = var4.getKit();
-            Iterator var6 = var9.getItems().iterator();
+           var4.getPlayer().getInventory().clear();
+           var4.getPlayer().closeInventory();
+           if (var4.hasKit()) {
+               Kit var9 = var4.getKit();
 
-            while(var6.hasNext()) {
-               ItemBuilder var7 = (ItemBuilder)var6.next();
-               var4.getPlayer().getInventory().addItem(new ItemStack[]{var7.build()});
-            }
-         }
+               for (ItemBuilder var7 : var9.getItems()) {
+                   var4.getPlayer().getInventory().addItem(var7.build());
+               }
+           }
 
-         var4.resetVotes();
-         var4.addPlayed(1);
-         var4.playedTimeStart();
-      }
+           var4.resetVotes();
+           var4.addPlayed(1);
+           var4.playedTimeStart();
+       }
 
    }
 
@@ -1108,17 +979,15 @@ public class Arena extends Game {
       if (!this.playerTeam.containsKey(var1)) {
          int var2 = this.config.getInt("team.teams_size");
          int var3 = 0;
-         Iterator var4 = this.teams.values().iterator();
 
-         while(var4.hasNext()) {
-            ArenaTeam var5 = (ArenaTeam)var4.next();
-            if (var5.getPlayers().size() < var2) {
-               var2 = var5.getPlayers().size();
-               var3 = var5.getNumber();
-            }
-         }
+          for (ArenaTeam var5 : this.teams.values()) {
+              if (var5.getPlayers().size() < var2) {
+                  var2 = var5.getPlayers().size();
+                  var3 = var5.getNumber();
+              }
+          }
 
-         ArenaTeam var6 = (ArenaTeam)this.teams.get(var3);
+         ArenaTeam var6 = this.teams.get(var3);
          if (var6 != null) {
             if (!var6.getPlayers().contains(var1)) {
                var6.getPlayers().add(var1);
@@ -1128,7 +997,4 @@ public class Arena extends Game {
       }
    }
 
-   public List<Location> getDontFill() {
-      return this.dontFill;
-   }
 }

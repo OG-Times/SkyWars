@@ -54,16 +54,16 @@ public class SkyWars extends JavaPlugin implements Listener {
 
     @Getter
     public static SkyWars plugin;
-    public static HashMap<UUID, SkyPlayer> skyPlayersUUID;
-    public static HashMap<String, SkyPlayer> skyPlayers;
+    public static final HashMap<UUID, SkyPlayer> skyPlayersUUID;
+    public static final HashMap<String, SkyPlayer> skyPlayers;
     @Getter
     public static Location spawn;
-    public static List<Location> hologram;
+    public static final List<Location> hologram;
 
-    public static String arenas = "games";
-    public static String kits = "kits";
-    public static String chests = "chests";
-    public static String maps = "maps";
+    public static final String arenas = "games";
+    public static final String kits = "kits";
+    public static final String chests = "chests";
+    public static final String maps = "maps";
     public static String vupdate;
     public static String URL_KEY;
 
@@ -80,7 +80,6 @@ public class SkyWars extends JavaPlugin implements Listener {
     private static ResourceBundle messageBundle;
     private static ResourceBundle customBundle;
     private static DatabaseHandler databaseHandler;
-    private static String server_version;
     public static boolean done = false;
 
     static {
@@ -135,7 +134,7 @@ public class SkyWars extends JavaPlugin implements Listener {
             String spawnStr = ConfigManager.main.getString("spawn");
             spawn = LocationUtil.getLocation(spawnStr);
         } else {
-            spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
+            spawn = Bukkit.getWorlds().getFirst().getSpawnLocation();
         }
     }
 
@@ -236,10 +235,6 @@ public class SkyWars extends JavaPlugin implements Listener {
 
     public static boolean is18orHigher() {
         return true;
-    }
-
-    public static boolean is19orHigher() {
-        return false;
     }
 
     public static boolean isDebug() {
@@ -460,13 +455,13 @@ public class SkyWars extends JavaPlugin implements Listener {
 
         if (isLobbyMode()) {
             Bukkit.getServer().getMessenger().registerIncomingPluginChannel(
-                    this, "SkyWars-Sign-Update", new BungeeRecieveListener()
+                    this, "skywars:sign-update", new BungeeRecieveListener()
             );
             ServerManager.initServers();
         }
 
         if (isProxyMode()) {
-            Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWars-Sign-Send");
+            Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "skywars:sign-send");
         }
 
         if (isServerEnabled()) {
@@ -495,7 +490,7 @@ public class SkyWars extends JavaPlugin implements Listener {
             String spawnStr = ConfigManager.main.getString("spawn");
             spawn = LocationUtil.getLocation(spawnStr);
         } else {
-            spawn = Bukkit.getWorlds().get(0).getSpawnLocation();
+            spawn = Bukkit.getWorlds().getFirst().getSpawnLocation();
         }
 
         // Check for HolographicDisplays
@@ -518,7 +513,7 @@ public class SkyWars extends JavaPlugin implements Listener {
 
         console(prefix + "&aMetrics (bStats) enabled");
 
-        server_version = Bukkit.getServer().getClass().getPackage().getName()
+        String server_version = Bukkit.getServer().getClass().getPackage().getName()
                 .replace(".", ",").split(",")[3];
 
         log("Server Version: " + server_version);
@@ -570,7 +565,7 @@ public class SkyWars extends JavaPlugin implements Listener {
 
         if (databaseHandler != null) {
             console(prefix + "&cDisabling all data");
-            databaseHandler.getDS().close();
+            DatabaseHandler.getDS().close();
         }
     }
 

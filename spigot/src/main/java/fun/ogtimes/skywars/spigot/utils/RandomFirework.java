@@ -10,8 +10,8 @@ import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 public class RandomFirework {
-   private static ArrayList<Color> colors = new ArrayList();
-   private static ArrayList<Type> types = new ArrayList();
+   private static final ArrayList<Color> colors = new ArrayList<>();
+   private static final ArrayList<Type> types = new ArrayList<>();
    private static Random random = null;
 
    private static void loadColors() {
@@ -50,21 +50,19 @@ public class RandomFirework {
 
    private static Type getRandomType() {
       int var0 = types.size();
-      Type var1 = (Type)types.get(random.nextInt(var0));
-      return var1;
+       return (Type)types.get(random.nextInt(var0));
    }
 
    private static Color getRandomColor() {
       int var0 = colors.size();
-      Color var1 = (Color)colors.get(random.nextInt(var0));
-      return var1;
+       return (Color)colors.get(random.nextInt(var0));
    }
 
    public static void launchRandomFirework(Location var0) {
-      Firework var1 = (Firework)var0.getWorld().spawn(var0, Firework.class);
+      Firework var1 = var0.getWorld().spawn(var0, Firework.class);
       FireworkMeta var2 = var1.getFireworkMeta();
       var2.setPower(1);
-      var2.addEffects(new FireworkEffect[]{FireworkEffect.builder().flicker(true).with(getRandomType()).withColor(new Color[]{getRandomColor(), getRandomColor()}).withFade(getRandomColor()).build()});
+      var2.addEffects(FireworkEffect.builder().flicker(true).with(getRandomType()).withColor(getRandomColor(), getRandomColor()).withFade(getRandomColor()).build());
       var1.setFireworkMeta(var2);
    }
 }

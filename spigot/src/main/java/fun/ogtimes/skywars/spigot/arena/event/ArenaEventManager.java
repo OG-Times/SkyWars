@@ -21,6 +21,6 @@ public class ArenaEventManager {
          }
       }
 
-      return (ArenaEvent[])var1.toArray(new ArenaEvent[var1.size()]);
+      return (ArenaEvent[])var1.toArray(new ArenaEvent[0]);
    }
 }

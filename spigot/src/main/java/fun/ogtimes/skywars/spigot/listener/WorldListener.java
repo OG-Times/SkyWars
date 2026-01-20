@@ -24,20 +24,18 @@ import org.bukkit.event.world.WorldUnloadEvent;
 public class WorldListener implements Listener {
    @EventHandler
    public void onWeather(WeatherChangeEvent var1) {
-      Iterator var2 = ArenaManager.getGames().iterator();
 
-      while(var2.hasNext()) {
-         Arena var3 = (Arena)var2.next();
-         if (var3.getWorld() == var1.getWorld() && !SkyWars.getPlugin().getConfig().getBoolean("options.weather")) {
-            if (!var1.isCancelled()) {
-               var1.setCancelled(var1.toWeatherState());
-            }
+       for (Arena var3 : ArenaManager.getGames()) {
+           if (var3.getWorld() == var1.getWorld() && !SkyWars.getPlugin().getConfig().getBoolean("options.weather")) {
+               if (!var1.isCancelled()) {
+                   var1.setCancelled(var1.toWeatherState());
+               }
 
-            if (var1.getWorld().hasStorm()) {
-               var1.getWorld().setWeatherDuration(0);
-            }
-         }
-      }
+               if (var1.getWorld().hasStorm()) {
+                   var1.getWorld().setWeatherDuration(0);
+               }
+           }
+       }
 
    }
 

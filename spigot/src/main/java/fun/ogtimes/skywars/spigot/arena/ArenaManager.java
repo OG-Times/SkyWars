@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 public class ArenaManager {
-    public static HashMap<String, Arena> games = new HashMap();
+    public static final HashMap<String, Arena> games = new HashMap<>();
 
     public static void initGames() {
         games.clear();
@@ -90,7 +90,7 @@ public class ArenaManager {
     }
 
     public static Arena getGame(String var0) {
-        return (Arena)games.get(var0);
+        return games.get(var0);
     }
 
     public static void addGame(String var0) {
@@ -111,11 +111,10 @@ public class ArenaManager {
             }
 
             String[] var2 = var0.list();
-            String[] var3 = var2;
             int var4 = var2.length;
 
             for(var5 = 0; var5 < var4; ++var5) {
-                String var6 = var3[var5];
+                String var6 = var2[var5];
                 File var7 = new File(var0, var6);
                 File var8 = new File(var1, var6);
                 copyFolder(var7, var8);
@@ -144,11 +143,10 @@ public class ArenaManager {
                     SkyWars.log("Directory was deleted : " + var0.getAbsolutePath());
                 } else {
                     String[] var1 = var0.list();
-                    String[] var2 = var1;
                     int var3 = var1.length;
 
                     for(int var4 = 0; var4 < var3; ++var4) {
-                        String var5 = var2[var4];
+                        String var5 = var1[var4];
                         File var6 = new File(var0, var5);
                         delete(var6);
                     }

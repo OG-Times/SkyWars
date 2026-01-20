@@ -21,7 +21,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdHide implements BaseCommand {
-   public boolean onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender var1, String[] var2) {
       Player var3 = null;
       if (var1 instanceof Player) {
          var3 = (Player)var1;
@@ -29,7 +29,6 @@ public class CmdHide implements BaseCommand {
           Arena var5 = var4.getArena();
           if (var2.length < 1) {
              var1.sendMessage("This command doesnt exist");
-             return true;
           } else {
              String var6 = var2[0];
              byte var7 = -1;
@@ -165,7 +164,7 @@ public class CmdHide implements BaseCommand {
                    var11.load();
                 }
 
-                return true;
+                return;
              case 7:
                 var4.sendMessage("---------- Signs ----------");
                 var4.sendMessage("Rotation Mode: " + ConfigManager.signs.getBoolean("rotation"));
@@ -199,17 +198,15 @@ public class CmdHide implements BaseCommand {
                    var4.sendMessage(var9.getName() + " - " + var9.getAlivePlayers() + "/" + var9.getMaxPlayers() + " - " + var9.getState() + " - " + var9.getDisplayName() + " - " + var9.isLoading() + " -- " + var9);
                 }
 
-                return true;
+                return;
              case 10:
                 var4.sendMessage("ID: " + SkyWars.vupdate);
                 var4.sendMessage("KEY 1: " + SkyWars.URL_KEY);
              }
 
-             return true;
           }
       } else {
          var1.sendMessage("This command doesnt exist");
-         return true;
       }
    }
 
@@ -226,6 +223,6 @@ public class CmdHide implements BaseCommand {
    }
 
    public List<String> onTabComplete(CommandSender var1, String[] var2) {
-      return var2.length >= 1 ? null : null;
+      return null;
    }
 }

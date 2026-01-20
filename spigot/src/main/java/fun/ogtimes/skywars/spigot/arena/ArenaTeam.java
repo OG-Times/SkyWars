@@ -8,15 +8,20 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 
+@Setter
+@Getter
 public class ArenaTeam {
    private int number;
    private int maximumSize;
    private Location base;
-   private List<SkyPlayer> players = new ArrayList();
-   private LinkedHashMap<Location, Boolean> spawns = new LinkedHashMap();
-   private List<ArenaBox> cages = new ArrayList();
+   private List<SkyPlayer> players = new ArrayList<>();
+   private LinkedHashMap<Location, Boolean> spawns = new LinkedHashMap<>();
+   private List<ArenaBox> cages = new ArrayList<>();
 
    public ArenaTeam(int var1, int var2, Location var3) {
       this.number = var1;
@@ -26,55 +31,7 @@ public class ArenaTeam {
       this.loadCages();
    }
 
-   public int getNumber() {
-      return this.number;
-   }
-
-   public void setNumber(int var1) {
-      this.number = var1;
-   }
-
-   public int getMaximumSize() {
-      return this.maximumSize;
-   }
-
-   public void setMaximumSize(int var1) {
-      this.maximumSize = var1;
-   }
-
-   public Location getBase() {
-      return this.base;
-   }
-
-   public void setBase(Location var1) {
-      this.base = var1;
-   }
-
-   public List<SkyPlayer> getPlayers() {
-      return this.players;
-   }
-
-   public void setPlayers(List<SkyPlayer> var1) {
-      this.players = var1;
-   }
-
-   public LinkedHashMap<Location, Boolean> getSpawns() {
-      return this.spawns;
-   }
-
-   public void setSpawns(LinkedHashMap<Location, Boolean> var1) {
-      this.spawns = var1;
-   }
-
-   public List<ArenaBox> getCages() {
-      return this.cages;
-   }
-
-   public void setCages(List<ArenaBox> var1) {
-      this.cages = var1;
-   }
-
-   public Location getSpawnUsable() {
+    public Location getSpawnUsable() {
       Iterator var1 = this.spawns.entrySet().iterator();
 
       Entry var2;
@@ -107,13 +64,10 @@ public class ArenaTeam {
 
       for(int var10 = 0; var10 < var9; ++var10) {
          if (-var2 / 2 <= var4 && var4 <= var2 / 2 && -var3 / 2 <= var5 && var5 <= var3 / 2) {
-            boolean var11 = true;
-            if (this.maximumSize == 5 && (var10 == 2 || var10 == 4 || var10 == 6 || var10 == 8)) {
-               var11 = false;
-            }
+            boolean var11 = this.maximumSize != 5 || (var10 != 2 && var10 != 4 && var10 != 6 && var10 != 8);
 
-            if (var11) {
-               this.spawns.put(this.base.clone().add((double)(var4 * 5), 0.0D, (double)(var5 * 5)), true);
+             if (var11) {
+               this.spawns.put(this.base.clone().add(var4 * 5, 0.0D, var5 * 5), true);
             }
          }
 
@@ -130,14 +84,12 @@ public class ArenaTeam {
    }
 
    private void loadCages() {
-      Iterator var1 = this.spawns.keySet().iterator();
 
-      while(var1.hasNext()) {
-         Location var2 = (Location)var1.next();
-         ArenaBox var3 = new ArenaBox(var2);
-         var3.setBox(SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".item"), SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".data"));
-         this.cages.add(var3);
-      }
+       for (Location var2 : this.spawns.keySet()) {
+           ArenaBox var3 = new ArenaBox(var2);
+           var3.setBox(SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".item"), SkyWars.boxes.getInt("boxes." + SkyWars.boxes.getString("default") + ".data"));
+           this.cages.add(var3);
+       }
 
    }
 
@@ -152,7 +104,7 @@ public class ArenaTeam {
       }
 
       if (var3.size() == 1) {
-         var2[0] = (Integer)var3.get(0);
+         var2[0] = (Integer)var3.getFirst();
          var2[1] = 1;
       } else if (var3.size() == 2) {
          var2[0] = (Integer)var3.get(1);
@@ -163,26 +115,24 @@ public class ArenaTeam {
          int var5;
          for(var5 = 0; var5 < var3.size(); ++var5) {
             int var6 = (Integer)var3.get(var5);
-            Iterator var7 = var3.iterator();
 
-            while(var7.hasNext()) {
-               int var8 = (Integer)var7.next();
-               if (var6 * var8 == var1) {
-                  Integer[] var9 = new Integer[]{var6, var8};
-                  var10.put(var6 - var8, var9);
-               }
-            }
+             for (Object object : var3) {
+                 int var8 = (Integer) object;
+                 if (var6 * var8 == var1) {
+                     Integer[] var9 = new Integer[]{var6, var8};
+                     var10.put(var6 - var8, var9);
+                 }
+             }
          }
 
          var5 = Integer.MAX_VALUE;
-         Iterator var11 = var10.entrySet().iterator();
 
-         while(var11.hasNext()) {
-            Entry var12 = (Entry)var11.next();
-            if ((Integer)var12.getKey() >= 0 && (Integer)var12.getKey() < var5) {
-               var5 = (Integer)var12.getKey();
-            }
-         }
+          for (Object object : var10.entrySet()) {
+              Entry var12 = (Entry) object;
+              if ((Integer) var12.getKey() >= 0 && (Integer) var12.getKey() < var5) {
+                  var5 = (Integer) var12.getKey();
+              }
+          }
 
          var2[0] = ((Integer[])var10.get(var5))[0];
          var2[1] = ((Integer[])var10.get(var5))[1];

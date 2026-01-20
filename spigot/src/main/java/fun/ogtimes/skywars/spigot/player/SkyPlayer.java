@@ -17,11 +17,8 @@ import fun.ogtimes.skywars.spigot.utils.Utils;
 import fun.ogtimes.skywars.spigot.utils.economy.SkyEconomyManager;
 import fun.ogtimes.skywars.spigot.utils.economy.skyeconomy.CustomEconomy;
 import fun.ogtimes.skywars.spigot.utils.sky.SkyData;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.Map.Entry;
 
 import lombok.Data;
@@ -229,7 +226,7 @@ public class SkyPlayer extends SkyData {
                 this.exp = var2.getExp();
             }
 
-            var2.getInventory().setArmorContents((ItemStack[])null);
+            var2.getInventory().setArmorContents(null);
             var2.getInventory().clear();
             var2.getInventory().setContents(new ItemStack[0]);
 
@@ -426,9 +423,7 @@ public class SkyPlayer extends SkyData {
     }
 
     public void addAbilityDisabled(AbilityType var1) {
-        if (!this.disabledAbilities.contains(var1)) {
-            this.disabledAbilities.add(var1);
-        }
+        this.disabledAbilities.add(var1);
 
         if (!this.hasAbility(var1)) {
             this.ownedAbilityByType.put(var1, null);
@@ -438,19 +433,17 @@ public class SkyPlayer extends SkyData {
     }
 
     public void removeAbilityDisabled(AbilityType var1) {
-        if (this.disabledAbilities.contains(var1)) {
-            this.disabledAbilities.remove(var1);
-        }
+        this.disabledAbilities.remove(var1);
 
         this.addData("upload_data", true);
     }
 
     public boolean hasAbility(AbilityType var1) {
-        return this.ownedAbilityByType.get(var1) == null ? false : this.ownedAbilityByType.containsKey(var1);
+        return this.ownedAbilityByType.get(var1) != null && this.ownedAbilityByType.containsKey(var1);
     }
 
     public AbilityLevel getAbilityLevel(AbilityType var1) {
-        return !this.ownedAbilityByType.containsKey(var1) ? null : this.ownedAbilityByType.get(var1);
+        return this.ownedAbilityByType.getOrDefault(var1, null);
     }
 
     public void setAbility(AbilityType var1, AbilityLevel var2) {
@@ -473,15 +466,14 @@ public class SkyPlayer extends SkyData {
     public void serializeAbilities(String var1) {
         if (var1 != null && !var1.isEmpty()) {
             String[] var2 = var1.split(";");
-            String[] var3 = var2;
             int var4 = var2.length;
 
             for(int var5 = 0; var5 < var4; ++var5) {
-                String var6 = var3[var5];
+                String var6 = var2[var5];
                 String[] var7 = var6.split(",");
                 Ability var8 = AbilityManager.getAbility(var7[0]);
                 AbilityLevel var9 = null;
-                if (var7[1] != "0") {
+                if (!Objects.equals(var7[1], "0")) {
                     var9 = var8.getLevel(Integer.parseInt(var7[1]));
                 }
 

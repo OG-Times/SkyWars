@@ -19,11 +19,10 @@ public class CmdOthers implements CommandExecutor {
    }
 
    public boolean onCommand(CommandSender var1, Command var2, String var3, String[] var4) {
-      if (!(var1 instanceof Player)) {
+      if (!(var1 instanceof Player var5)) {
          return true;
       } else {
-         Player var5 = (Player)var1;
-         if (!var3.equalsIgnoreCase("leave") && !var3.equalsIgnoreCase("salir")) {
+          if (!var3.equalsIgnoreCase("leave") && !var3.equalsIgnoreCase("salir")) {
             return false;
          } else {
             if (var4.length == 0) {
@@ -36,7 +35,7 @@ public class CmdOthers implements CommandExecutor {
                   Arena var7 = var6.getArena();
                   if (var6.isInArena()) {
                      if (DamageListener.lastDamage.containsKey(var5.getUniqueId())) {
-                        Player var8 = Bukkit.getPlayer((UUID)DamageListener.lastDamage.get(var5.getUniqueId()));
+                        Player var8 = Bukkit.getPlayer(DamageListener.lastDamage.get(var5.getUniqueId()));
                         var5.damage(1000.0D, var8);
                         var6.addDeaths(1);
                      }

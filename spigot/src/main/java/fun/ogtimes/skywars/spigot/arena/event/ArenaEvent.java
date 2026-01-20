@@ -8,10 +8,15 @@ import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.utils.Messages;
 import fun.ogtimes.skywars.spigot.utils.title.Title;
 import java.util.Iterator;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 
+@Setter
+@Getter
 public class ArenaEvent {
    private EventType event;
    private String argument;
@@ -26,47 +31,7 @@ public class ArenaEvent {
       this.title = var4;
    }
 
-   public EventType getEvent() {
-      return this.event;
-   }
-
-   public void setEvent(EventType var1) {
-      this.event = var1;
-   }
-
-   public String getArgument() {
-      return this.argument;
-   }
-
-   public void setArgument(String var1) {
-      this.argument = var1;
-   }
-
-   public int getSeconds() {
-      return this.seconds;
-   }
-
-   public void setSeconds(int var1) {
-      this.seconds = var1;
-   }
-
-   public String getTitle() {
-      return this.title;
-   }
-
-   public void setTitle(String var1) {
-      this.title = var1;
-   }
-
-   public boolean isExecuted() {
-      return this.executed;
-   }
-
-   public void setExecuted(boolean var1) {
-      this.executed = var1;
-   }
-
-   public void playEvent(Arena var1) {
+    public void playEvent(Arena var1) {
       if (this.event == EventType.REFILL) {
          ChestType var2 = ChestTypeManager.getChestType(this.argument == null ? var1.getChest() : (this.argument.equalsIgnoreCase("selected") ? var1.getChest() : this.argument));
          Iterator var3 = var1.getChestFilled().iterator();
@@ -74,9 +39,8 @@ public class ArenaEvent {
          while(var3.hasNext()) {
             Location var4 = (Location)var3.next();
             Block var5 = var4.getBlock();
-            if (var5.getState() instanceof Chest) {
-               Chest var6 = (Chest)var5.getState();
-               var2.fillChest(var6.getInventory());
+            if (var5.getState() instanceof Chest var6) {
+                var2.fillChest(var6.getInventory());
             }
          }
 

@@ -20,7 +20,7 @@ public class FileResClassLoader extends ClassLoader {
       if (var2.exists()) {
          try {
             return var2.toURI().toURL();
-         } catch (MalformedURLException var4) {
+         } catch (MalformedURLException ignored) {
          }
       }
 
@@ -32,7 +32,7 @@ public class FileResClassLoader extends ClassLoader {
       if (var2.exists()) {
          try {
             return new FileInputStream(var2);
-         } catch (FileNotFoundException var4) {
+         } catch (FileNotFoundException ignored) {
          }
       }
 

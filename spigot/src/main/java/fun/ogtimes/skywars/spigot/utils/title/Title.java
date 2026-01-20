@@ -2,18 +2,25 @@ package fun.ogtimes.skywars.spigot.utils.title;
 
 import com.google.common.base.Preconditions;
 import java.util.Iterator;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
+@Getter
 public class Title {
    /** @deprecated */
    @Deprecated
    public static boolean DEBUG;
    private JSONObject title;
    private JSONObject subtitle;
+   @Setter
    private int fadeIn;
+   @Setter
    private int fadeOut;
+   @Setter
    private int stay;
 
    public Title(String var1, int var2, int var3, int var4) {
@@ -63,14 +70,14 @@ public class Title {
          Object var10;
          Object var11;
          if (this.title != null && !this.title.isEmpty()) {
-            var10 = var7.getMethod("a", String.class).invoke((Object)null, this.title.toString());
-            var11 = var4.getConstructor(var8, var6).newInstance(var8.getField("TITLE").get((Object)null), var10);
+            var10 = var7.getMethod("a", String.class).invoke(null, this.title.toString());
+            var11 = var4.getConstructor(var8, var6).newInstance(var8.getField("TITLE").get(null), var10);
             var3.getClass().getMethod("sendPacket", var5).invoke(var3, var11);
          }
 
          if (this.subtitle != null && !this.subtitle.isEmpty()) {
-            var10 = var7.getMethod("a", String.class).invoke((Object)null, this.subtitle.toString());
-            var11 = var4.getConstructor(var8, var6).newInstance(var8.getField("SUBTITLE").get((Object)null), var10);
+            var10 = var7.getMethod("a", String.class).invoke(null, this.subtitle.toString());
+            var11 = var4.getConstructor(var8, var6).newInstance(var8.getField("SUBTITLE").get(null), var10);
             var3.getClass().getMethod("sendPacket", var5).invoke(var3, var11);
          }
 
@@ -80,20 +87,14 @@ public class Title {
    }
 
    public void sendToAll() {
-      Iterator var1 = Bukkit.getOnlinePlayers().iterator();
 
-      while(var1.hasNext()) {
-         Player var2 = (Player)var1.next();
-         this.send(var2);
-      }
+       for (Player var2 : Bukkit.getOnlinePlayers()) {
+           this.send(var2);
+       }
 
    }
 
-   public JSONObject getTitle() {
-      return this.title;
-   }
-
-   public void setTitle(String var1) {
+    public void setTitle(String var1) {
       this.title = convert(var1);
    }
 
@@ -101,11 +102,7 @@ public class Title {
       this.title = var1;
    }
 
-   public JSONObject getSubtitle() {
-      return this.subtitle;
-   }
-
-   public void setSubtitle(String var1) {
+    public void setSubtitle(String var1) {
       this.subtitle = convert(var1);
    }
 
@@ -113,27 +110,4 @@ public class Title {
       this.subtitle = var1;
    }
 
-   public int getFadeIn() {
-      return this.fadeIn;
-   }
-
-   public void setFadeIn(int var1) {
-      this.fadeIn = var1;
-   }
-
-   public int getFadeOut() {
-      return this.fadeOut;
-   }
-
-   public void setFadeOut(int var1) {
-      this.fadeOut = var1;
-   }
-
-   public int getStay() {
-      return this.stay;
-   }
-
-   public void setStay(int var1) {
-      this.stay = var1;
-   }
 }

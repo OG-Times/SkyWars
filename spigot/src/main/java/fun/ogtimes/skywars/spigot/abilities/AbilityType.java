@@ -9,5 +9,5 @@ public enum AbilityType {
    MINING_LUCK,
    WOODCHOPPING_LUCK,
    PIRATE,
-   FIRE_RESISTANCE;
+   FIRE_RESISTANCE
 }

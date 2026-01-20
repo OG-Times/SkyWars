@@ -37,7 +37,7 @@ public class MenuSettingsTrails extends Menu {
       ItemStack var2 = var1.getCurrentItem();
       SkyPlayer var3 = SkyWars.getSkyPlayer(this.getPlayer());
       if (var2.isSimilar(this.none.build())) {
-         var3.setTrail((String)null);
+         var3.setTrail(null);
          var3.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_SELECT_TRAIL), "Default"));
          this.getPlayer().closeInventory();
       }

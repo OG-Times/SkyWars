@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.HashMap;
 
 public class KitManager {
-   public static HashMap<String, Kit> kits = new HashMap();
+   public static final HashMap<String, Kit> kits = new HashMap<>();
 
    public static void initKits() {
       kits.clear();
@@ -14,22 +14,21 @@ public class KitManager {
          File[] var1 = var0.listFiles();
          int var2 = var1.length;
 
-         for(int var3 = 0; var3 < var2; ++var3) {
-            File var4 = var1[var3];
-            if (var4.getName().contains(".yml")) {
-               String var5 = var4.getName().replace(".yml", "");
-               new Kit(var5);
-            }
-         }
+          for (File var4 : var1) {
+              if (var4.getName().contains(".yml")) {
+                  String var5 = var4.getName().replace(".yml", "");
+                  new Kit(var5);
+              }
+          }
       }
 
    }
 
    public static Kit[] getKits() {
-      return (Kit[])kits.values().toArray(new Kit[kits.values().size()]);
+      return kits.values().toArray(new Kit[0]);
    }
 
    public static Kit getKit(String var0) {
-      return (Kit)kits.get(var0);
+      return kits.get(var0);
    }
 }

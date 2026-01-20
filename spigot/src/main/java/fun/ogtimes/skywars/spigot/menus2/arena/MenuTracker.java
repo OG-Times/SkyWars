@@ -45,16 +45,14 @@ public class MenuTracker extends Menu {
       if (var1.isInArena() && var1.isSpectating()) {
          Arena var2 = var1.getArena();
          this.getInventory().clear();
-         Iterator var3 = var2.getAlivePlayer().iterator();
 
-         while(var3.hasNext()) {
-            SkyPlayer var4 = (SkyPlayer)var3.next();
-            ItemBuilder var5 = (new ItemBuilder(Material.SKULL_ITEM, (short)3)).setTitle("§a" + var4.getName());
-            SkullMeta var6 = (SkullMeta)Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
-            var6.setOwner(var4.getName());
-            var5.build().setItemMeta(var6);
-            this.addItem(var5);
-         }
+          for (SkyPlayer var4 : var2.getAlivePlayer()) {
+              ItemBuilder var5 = (new ItemBuilder(Material.SKULL_ITEM, (short) 3)).setTitle("§a" + var4.getName());
+              SkullMeta var6 = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
+              var6.setOwner(var4.getName());
+              var5.build().setItemMeta(var6);
+              this.addItem(var5);
+          }
       }
 
    }

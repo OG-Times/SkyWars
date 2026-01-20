@@ -47,7 +47,7 @@ public final class SkyEconomyManager {
         if (economy == null) {
             SkyWars.logError("Seems that your economy is null, please check your config.");
         } else {
-            economy.removeCoins(var0, (double)var1);
+            economy.removeCoins(var0, var1);
             var0.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_COINS_LESS), var1));
             var0.playSound(var0.getLocation(), Sound.valueOf("ORB_PICKUP"), 1.0F, 1.0F);
 

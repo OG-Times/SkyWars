@@ -43,8 +43,8 @@ public class ActionBar {
          Class var3 = ServerPackage.MINECRAFT.getClass("ChatMessageType");
          Object var4 = var1.getClass().getMethod("getHandle").invoke(var1);
          Object var5 = var4.getClass().getField("playerConnection").get(var4);
-         Object var6 = ServerPackage.MINECRAFT.getClass("IChatBaseComponent$ChatSerializer").getMethod("a", String.class).invoke((Object)null, this.json.toString());
-         Object var7 = var3.getMethod("valueOf", String.class).invoke((Object)null, "GAME_INFO");
+         Object var6 = ServerPackage.MINECRAFT.getClass("IChatBaseComponent$ChatSerializer").getMethod("a", String.class).invoke(null, this.json.toString());
+         Object var7 = var3.getMethod("valueOf", String.class).invoke(null, "GAME_INFO");
          Object var8 = ServerPackage.MINECRAFT.getClass("PacketPlayOutChat").getConstructor(var2, var3).newInstance(var6, var7);
          var5.getClass().getMethod("sendPacket", ServerPackage.MINECRAFT.getClass("Packet")).invoke(var5, var8);
       } catch (Throwable var9) {
@@ -53,12 +53,10 @@ public class ActionBar {
    }
 
    public void sendToAll() {
-      Iterator var1 = Bukkit.getOnlinePlayers().iterator();
 
-      while(var1.hasNext()) {
-         Player var2 = (Player)var1.next();
-         this.send(var2);
-      }
+       for (Player var2 : Bukkit.getOnlinePlayers()) {
+           this.send(var2);
+       }
 
    }
 

@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -22,21 +25,28 @@ import org.bukkit.potion.PotionType;
 public class ItemBuilder {
     private Material mat;
     private int amount;
+    @Getter
     private short data;
+    @Getter
     private String title;
+    @Getter
     private List<String> lore;
-    private Map<Enchantment, Integer> enchants;
+    private final Map<Enchantment, Integer> enchants;
+    @Getter
     private Color color;
     private PotionType potion;
     private boolean potionUpgraded;
     private boolean potionExtended;
     private boolean potionSplash;
+    @Getter
     private boolean hideFlags;
+    @Setter
+    @Getter
     private boolean glow;
     private String skull;
 
     public ItemBuilder(Material var1) {
-        this(var1, (int)1);
+        this(var1, 1);
     }
 
     public ItemBuilder(Material var1, int var2) {
@@ -49,8 +59,8 @@ public class ItemBuilder {
 
     public ItemBuilder(Material var1, int var2, short var3) {
         this.title = null;
-        this.lore = new ArrayList();
-        this.enchants = new HashMap();
+        this.lore = new ArrayList<>();
+        this.enchants = new HashMap<>();
         this.mat = var1;
         if (this.mat == null) {
             this.mat = Material.BEDROCK;
@@ -63,8 +73,8 @@ public class ItemBuilder {
 
     public ItemBuilder(ItemStack var1) {
         this.title = null;
-        this.lore = new ArrayList();
-        this.enchants = new HashMap();
+        this.lore = new ArrayList<>();
+        this.enchants = new HashMap<>();
         this.mat = var1.getType();
         this.amount = var1.getAmount();
         this.data = var1.getDurability();
@@ -107,10 +117,8 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLore(List<String> var1) {
-        Iterator var2 = var1.iterator();
 
-        while(var2.hasNext()) {
-            String var3 = (String)var2.next();
+        for (String var3 : var1) {
             this.lore.add(ChatColor.translateAlternateColorCodes('&', var3));
         }
 
@@ -118,16 +126,14 @@ public class ItemBuilder {
     }
 
     public ItemBuilder removeLastLoreLine() {
-        this.lore.remove(this.lore.size() - 1);
+        this.lore.removeLast();
         return this;
     }
 
     public ItemBuilder setLore(List<String> var1) {
         this.lore.clear();
-        Iterator var2 = var1.iterator();
 
-        while(var2.hasNext()) {
-            String var3 = (String)var2.next();
+        for (String var3 : var1) {
             this.lore.add(ChatColor.translateAlternateColorCodes('&', var3));
         }
 
@@ -135,9 +141,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addEnchantment(Enchantment var1, int var2) {
-        if (this.enchants.containsKey(var1)) {
-            this.enchants.remove(var1);
-        }
+        this.enchants.remove(var1);
 
         this.enchants.put(var1, var2);
         return this;
@@ -154,18 +158,6 @@ public class ItemBuilder {
     public ItemBuilder setHideFlags(boolean var1) {
         this.hideFlags = var1;
         return this;
-    }
-
-    public boolean isHideFlags() {
-        return this.hideFlags;
-    }
-
-    public boolean isGlow() {
-        return this.glow;
-    }
-
-    public void setGlow(boolean var1) {
-        this.glow = var1;
     }
 
     public ItemBuilder setPotion(String var1, Material var2, boolean var3, boolean var4) {
@@ -199,7 +191,7 @@ public class ItemBuilder {
         }
 
         ItemStack var1 = new ItemStack(this.mat, this.amount, this.data);
-        Object var2 = var1.getItemMeta();
+        ItemMeta var2 = var1.getItemMeta();
         if (var2 instanceof LeatherArmorMeta && this.color != null) {
             ((LeatherArmorMeta)var2).setColor(this.color);
         }
@@ -214,23 +206,23 @@ public class ItemBuilder {
         }
 
         if (this.title != null) {
-            ((ItemMeta)var2).setDisplayName(this.title);
+            var2.setDisplayName(this.title);
         }
 
         if (!this.lore.isEmpty()) {
-            ((ItemMeta)var2).setLore(this.lore);
+            var2.setLore(this.lore);
         }
 
         if (this.hideFlags) {
-            ((ItemMeta)var2).addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS});
+            var2.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
         }
 
         if (this.glow) {
             Glow var4 = new Glow(120);
-            ((ItemMeta)var2).addEnchant(var4, 0, true);
+            var2.addEnchant(var4, 0, true);
         }
 
-        var1.setItemMeta((ItemMeta)var2);
+        var1.setItemMeta(var2);
         var1.addUnsafeEnchantments(this.enchants);
         return var1;
     }
@@ -239,11 +231,10 @@ public class ItemBuilder {
         ItemBuilder var1 = new ItemBuilder(this.mat, this.amount, this.data);
         var1.setTitle(this.title);
         var1.setLore(this.lore);
-        Iterator var2 = this.enchants.entrySet().iterator();
 
-        while(var2.hasNext()) {
-            Entry var3 = (Entry)var2.next();
-            var1.addEnchantment((Enchantment)var3.getKey(), (Integer)var3.getValue());
+        for (Entry<Enchantment, Integer> enchantmentIntegerEntry : this.enchants.entrySet()) {
+            Entry var3 = (Entry) enchantmentIntegerEntry;
+            var1.addEnchantment((Enchantment) var3.getKey(), (Integer) var3.getValue());
         }
 
         var1.setColor(this.color);
@@ -258,28 +249,12 @@ public class ItemBuilder {
         return this.mat;
     }
 
-    public short getData() {
-        return this.data;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public List<String> getLore() {
-        return this.lore;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
-
     public boolean hasEnchantment(Enchantment var1) {
         return this.enchants.containsKey(var1);
     }
 
     public int getEnchantmentLevel(Enchantment var1) {
-        return (Integer)this.enchants.get(var1);
+        return this.enchants.get(var1);
     }
 
     public Map<Enchantment, Integer> getAllEnchantments() {
@@ -361,7 +336,7 @@ public class ItemBuilder {
         }
 
         if (this.potion != null) {
-            var1 = var1 + ",potion:" + this.potion.toString() + ":" + this.potionUpgraded + ":" + this.potionExtended;
+            var1 = var1 + ",potion:" + this.potion + ":" + this.potionUpgraded + ":" + this.potionExtended;
         }
 
         if (this.glow) {

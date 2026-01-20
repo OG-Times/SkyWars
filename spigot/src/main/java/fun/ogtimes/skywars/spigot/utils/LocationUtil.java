@@ -10,8 +10,8 @@ public class LocationUtil {
    }
 
    private static double getRelativeCoord(int var0) {
-      double var1 = (double)var0;
-      var1 = var1 < 0.0D ? var1 + 0.5D : var1 + 0.5D;
+      double var1 = var0;
+      var1 = var1 + 0.5D;
       return var1;
    }
 

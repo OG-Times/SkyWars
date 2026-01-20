@@ -23,9 +23,8 @@ public class StatsListener implements Listener {
       ignoreCancelled = true
    )
    public void onArrowShot(EntityShootBowEvent var1) {
-      if (var1.getEntity() instanceof Player) {
-         Player var2 = (Player)var1.getEntity();
-         SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
+      if (var1.getEntity() instanceof Player var2) {
+          SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
          if (var3 == null) {
             return;
          }
@@ -45,11 +44,9 @@ public class StatsListener implements Listener {
       ignoreCancelled = true
    )
    public void onArrowHit(EntityDamageByEntityEvent var1) {
-      if (var1.getDamager() instanceof Arrow) {
-         Arrow var2 = (Arrow)var1.getDamager();
-         if (var2.getShooter() instanceof Player && var1.getEntity() instanceof Player) {
-            Player var3 = (Player)var2.getShooter();
-            SkyPlayer var4 = SkyWars.getSkyPlayer(var3);
+      if (var1.getDamager() instanceof Arrow var2) {
+          if (var2.getShooter() instanceof Player var3 && var1.getEntity() instanceof Player) {
+             SkyPlayer var4 = SkyWars.getSkyPlayer(var3);
             if (var4 == null) {
                return;
             }

@@ -24,12 +24,9 @@ public class MenuShop extends Menu {
          new MenuAbilities(var1, var2, this.getAbilitiesPages());
       }
 
-      Iterator var4 = ConfigManager.shop.getConfigurationSection("submenus").getKeys(false).iterator();
-
-      while(var4.hasNext()) {
-         String var3 = (String)var4.next();
-         new MenuShopCategory(var1, var3);
-      }
+       for (String var3 : ConfigManager.shop.getConfigurationSection("submenus").getKeys(false)) {
+           new MenuShopCategory(var1, var3);
+       }
 
    }
 
@@ -95,9 +92,7 @@ public class MenuShop extends Menu {
                }
 
                switch(var8) {
-               case 0:
-                  return;
-               case 1:
+                   case 1:
                   this.getPlayer().closeInventory();
                   return;
                default:
@@ -224,23 +219,23 @@ public class MenuShop extends Menu {
                }
             }
 
-            switch(var8) {
-            case 0:
-               return true;
-            case 1:
-               var2.closeInventory();
-               return true;
-            case 2:
-               if (var1.isInArena()) {
-                  var2.closeInventory();
-               } else {
-                  var2.openInventory(MenuListener.getPlayerMenu(var1.getPlayer(), "shop").getInventory());
-               }
+             return switch (var8) {
+                 case 0 -> true;
+                 case 1 -> {
+                     var2.closeInventory();
+                     yield true;
+                 }
+                 case 2 -> {
+                     if (var1.isInArena()) {
+                         var2.closeInventory();
+                     } else {
+                         var2.openInventory(MenuListener.getPlayerMenu(var1.getPlayer(), "shop").getInventory());
+                     }
 
-               return true;
-            default:
-               return true;
-            }
+                     yield true;
+                 }
+                 default -> true;
+             };
          }
 
          var4 = (String)var3.next();
@@ -262,31 +257,27 @@ public class MenuShop extends Menu {
          }
       }
 
-      switch(var8) {
-      case 0:
-         return true;
-      case 1:
-         var2.closeInventory();
-         return true;
-      default:
-         return true;
-      }
+       return switch (var8) {
+           case 0 -> true;
+           case 1 -> {
+               var2.closeInventory();
+               yield true;
+           }
+           default -> true;
+       };
    }
 
    public static ItemBuilder getItemRead(String var0, SkyConfiguration var1, boolean var2, SkyPlayer var3) {
       ItemBuilder var4 = Utils.readItem(var1.getString(var0 + ".item"));
       if (var3 != null) {
          var4.setTitle(var1.getString(var0 + ".name").replace("%coins%", "" + var3.getCoins()));
-         if (var2) {
-            var4.setLore(var1.getStringList(var0 + ".lore"));
-         }
       } else {
          var4.setTitle(var1.getString(var0 + ".name"));
-         if (var2) {
-            var4.setLore(var1.getStringList(var0 + ".lore"));
-         }
       }
+       if (var2) {
+          var4.setLore(var1.getStringList(var0 + ".lore"));
+       }
 
-      return var4;
+       return var4;
    }
 }

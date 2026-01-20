@@ -2,14 +2,26 @@ package fun.ogtimes.skywars.spigot.box;
 
 import fun.ogtimes.skywars.spigot.utils.ItemBuilder;
 import java.util.Arrays;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 
 public class Box {
+   @Getter
    private final String name;
    private String desc;
+   @Setter
+   @Getter
    private String section;
+   @Setter
+   @Getter
    private int item;
+   @Setter
+   @Getter
    private int data;
+   @Setter
+   @Getter
    private int slot;
 
    public Box(String var1, String var2) {
@@ -17,51 +29,16 @@ public class Box {
       this.desc = var2;
    }
 
-   public String getName() {
-      return this.name;
-   }
-
-   public String getDescription() {
+    public String getDescription() {
       return this.desc;
    }
 
-   public int getItem() {
-      return this.item;
-   }
-
-   public int getData() {
-      return this.data;
-   }
-
-   public ItemBuilder getItemBuilder() {
+    public ItemBuilder getItemBuilder() {
       return (new ItemBuilder(Material.getMaterial(this.getItem()), (short)this.getData())).setTitle(this.getName()).addLore(Arrays.asList(this.getDescription().split("\n")));
    }
 
-   public int getSlot() {
-      return this.slot;
-   }
-
-   public String getSection() {
-      return this.section;
-   }
-
-   public void setItem(int var1) {
-      this.item = var1;
-   }
-
-   public void setData(int var1) {
-      this.data = var1;
-   }
-
-   public void setDescription(String var1) {
+    public void setDescription(String var1) {
       this.desc = var1;
    }
 
-   public void setSlot(int var1) {
-      this.slot = var1;
-   }
-
-   public void setSection(String var1) {
-      this.section = var1;
-   }
 }

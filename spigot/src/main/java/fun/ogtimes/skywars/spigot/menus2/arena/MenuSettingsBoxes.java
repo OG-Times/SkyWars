@@ -30,25 +30,24 @@ public class MenuSettingsBoxes extends Menu {
          Box[] var3 = BoxManager.getBoxes();
          int var4 = var3.length;
 
-         for(int var5 = 0; var5 < var4; ++var5) {
-            Box var6 = var3[var5];
-            if (var1.getCurrentItem().isSimilar(var6.getItemBuilder().build())) {
-               if (!var6.getSection().equals(SkyWars.boxes.getString("default")) && !var2.hasPermissions("skywars.settings.colour." + var6.getSection())) {
-                  var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_COLOUR));
-                  return;
-               }
+          for (Box var6 : var3) {
+              if (var1.getCurrentItem().isSimilar(var6.getItemBuilder().build())) {
+                  if (!var6.getSection().equals(SkyWars.boxes.getString("default")) && !var2.hasPermissions("skywars.settings.colour." + var6.getSection())) {
+                      var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_COLOUR));
+                      return;
+                  }
 
-               ArenaBox var7 = var2.getBox();
-               var7.setBox(var6.getItem(), var6.getData());
-               var2.addData("upload_data", true);
-               var2.setBoxSection(var6.getSection(), true);
-               if (var6.getSection().equals(SkyWars.boxes.getString("default"))) {
-                  var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_SELECT_COLOUR_DEFAULT));
-               } else {
-                  var2.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_SELECT_COLOUR), var6.getName()));
-               }
-            }
-         }
+                  ArenaBox var7 = var2.getBox();
+                  var7.setBox(var6.getItem(), var6.getData());
+                  var2.addData("upload_data", true);
+                  var2.setBoxSection(var6.getSection(), true);
+                  if (var6.getSection().equals(SkyWars.boxes.getString("default"))) {
+                      var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_SELECT_COLOUR_DEFAULT));
+                  } else {
+                      var2.sendMessage(String.format(SkyWars.getMessage(Messages.PLAYER_SELECT_COLOUR), var6.getName()));
+                  }
+              }
+          }
 
       }
    }
@@ -57,10 +56,9 @@ public class MenuSettingsBoxes extends Menu {
       Box[] var1 = BoxManager.getBoxes();
       int var2 = var1.length;
 
-      for(int var3 = 0; var3 < var2; ++var3) {
-         Box var4 = var1[var3];
-         this.setItem(var4.getSlot() - 1, var4.getItemBuilder());
-      }
+       for (Box var4 : var1) {
+           this.setItem(var4.getSlot() - 1, var4.getItemBuilder());
+       }
 
    }
 }

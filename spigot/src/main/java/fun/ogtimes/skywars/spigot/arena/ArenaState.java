@@ -4,5 +4,5 @@ public enum ArenaState {
    WAITING,
    STARTING,
    INGAME,
-   ENDING;
+   ENDING
 }

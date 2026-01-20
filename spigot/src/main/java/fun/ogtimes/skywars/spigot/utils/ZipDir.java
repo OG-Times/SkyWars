@@ -13,7 +13,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipDir extends SimpleFileVisitor<Path> {
    private static ZipOutputStream zos;
-   private Path sourceDir;
+   private final Path sourceDir;
 
    public ZipDir(Path var1) {
       this.sourceDir = var1;
@@ -34,11 +34,10 @@ public class ZipDir extends SimpleFileVisitor<Path> {
    }
 
    public static void zipFile(String var0) {
-      String var1 = var0;
-      Path var2 = Paths.get(var0);
+       Path var2 = Paths.get(var0);
 
       try {
-         String var3 = var1.concat("-Backup.zip");
+         String var3 = var0.concat("-Backup.zip");
          zos = new ZipOutputStream(new FileOutputStream(var3));
          Files.walkFileTree(var2, new ZipDir(var2));
          zos.close();

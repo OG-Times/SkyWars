@@ -13,16 +13,12 @@ public class SkyServer {
    }
 
    public static void load() {
-      Bukkit.getScheduler().runTaskAsynchronously(SkyWars.getPlugin(), () -> {
-         DatabaseHandler.getDS().loadServer();
-      });
+      Bukkit.getScheduler().runTaskAsynchronously(SkyWars.getPlugin(), () -> DatabaseHandler.getDS().loadServer());
    }
 
    public static void setValues(Arena var0) {
       if (SkyWars.isServerEnabled()) {
-         Bukkit.getScheduler().runTaskAsynchronously(SkyWars.getPlugin(), () -> {
-            DatabaseHandler.getDS().setServerData(var0);
-         });
+         Bukkit.getScheduler().runTaskAsynchronously(SkyWars.getPlugin(), () -> DatabaseHandler.getDS().setServerData(var0));
          sendUpdateRequest();
       }
 
@@ -32,7 +28,7 @@ public class SkyServer {
       Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
          ByteArrayDataOutput var0 = ByteStreams.newDataOutput();
          var0.writeUTF(getProxyId());
-         SkyWars.getPlugin().getServer().sendPluginMessage(SkyWars.getPlugin(), "SkyWars-Sign-Send", var0.toByteArray());
+         SkyWars.getPlugin().getServer().sendPluginMessage(SkyWars.getPlugin(), "skywars:sign-send", var0.toByteArray());
       }, 10L);
    }
 }

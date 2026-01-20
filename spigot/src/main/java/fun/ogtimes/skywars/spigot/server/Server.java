@@ -59,7 +59,7 @@ public class Server extends Game {
 
                SkySignUpdateCause var14 = null;
                if (var6.size() == 1) {
-                  var14 = (SkySignUpdateCause)var6.get(0);
+                  var14 = (SkySignUpdateCause)var6.getFirst();
                }
 
                if (var6.size() >= 2) {
@@ -73,9 +73,7 @@ public class Server extends Game {
                this.displayName = var13;
                if (!var6.isEmpty() && var1) {
                   SkySignUpdateCause finalVar1 = var14;
-                  Bukkit.getScheduler().runTask(SkyWars.getPlugin(), () -> {
-                     Bukkit.getServer().getPluginManager().callEvent(new SkySignUpdateEvent(var7, finalVar1));
-                  });
+                  Bukkit.getScheduler().runTask(SkyWars.getPlugin(), () -> Bukkit.getServer().getPluginManager().callEvent(new SkySignUpdateEvent(var7, finalVar1)));
                }
 
                var2.close();

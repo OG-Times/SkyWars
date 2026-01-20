@@ -21,10 +21,8 @@ public class TrailListener implements Listener {
     public void trail(EntityShootBowEvent var1) {
         LivingEntity var2 = var1.getEntity();
         Entity var3 = var1.getProjectile();
-        if (var3 instanceof Projectile) {
-            Projectile var4 = (Projectile)var3;
-            if (var4 instanceof Arrow && var2 instanceof Player) {
-                Player var5 = (Player)var2;
+        if (var3 instanceof Projectile var4) {
+            if (var4 instanceof Arrow && var2 instanceof Player var5) {
                 SkyPlayer var6 = SkyWars.getSkyPlayer(var5);
                 if (var6.isInArena()) {
                     Arena var7 = var6.getArena();

@@ -81,10 +81,8 @@ public class WorldTabListener implements Listener {
         if (SkyWars.is18orHigher() && SkyWars.isMultiArenaMode()) {
             var2 = var1.getPlayer();
             World var7 = var2.getWorld();
-            Iterator var8 = Bukkit.getServer().getOnlinePlayers().iterator();
 
-            while(var8.hasNext()) {
-                Player var9 = (Player)var8.next();
+            for (Player var9 : Bukkit.getServer().getOnlinePlayers()) {
                 if (var9 != var2) {
                     if (var9.getWorld() == var7) {
                         var9.showPlayer(var2);
@@ -108,10 +106,8 @@ public class WorldTabListener implements Listener {
             SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
             if (var3 != null && var3.isInArena()) {
                 Arena var4 = var3.getArena();
-                Iterator var5 = var4.getAlivePlayer().iterator();
 
-                while(var5.hasNext()) {
-                    SkyPlayer var6 = (SkyPlayer)var5.next();
+                for (SkyPlayer var6 : var4.getAlivePlayer()) {
                     if (var6 != var3) {
                         var6.getPlayer().hidePlayer(var2);
                         var2.hidePlayer(var6.getPlayer());
@@ -119,10 +115,8 @@ public class WorldTabListener implements Listener {
                 }
 
                 Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
-                    Iterator var3x = var4.getAlivePlayer().iterator();
 
-                    while(var3x.hasNext()) {
-                        SkyPlayer var4x = (SkyPlayer)var3x.next();
+                    for (SkyPlayer var4x : var4.getAlivePlayer()) {
                         if (var4x != var3) {
                             var4x.getPlayer().showPlayer(var2);
                             var2.showPlayer(var4x.getPlayer());

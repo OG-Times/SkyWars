@@ -10,19 +10,17 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 
 public class ServerManager {
-   public static HashMap<String, Server> servers = new HashMap();
+   public static final HashMap<String, Server> servers = new HashMap<>();
 
    public static void initServers() {
       DatabaseHandler.getDS().getServers();
       if (SkyWars.getMysql()) {
          Bukkit.getScheduler().runTaskTimerAsynchronously(SkyWars.getPlugin(), () -> {
             if (!SkyWars.disabling) {
-               Iterator var0 = getServers().iterator();
 
-               while(var0.hasNext()) {
-                  Server var1 = (Server)var0.next();
-                  var1.getData(true);
-               }
+                for (Server var1 : getServers()) {
+                    var1.getData(true);
+                }
             }
 
          }, 0L, 15L);
@@ -35,6 +33,6 @@ public class ServerManager {
    }
 
    public static Server getServer(String var0) {
-      return (Server)servers.get(var0);
+      return servers.get(var0);
    }
 }

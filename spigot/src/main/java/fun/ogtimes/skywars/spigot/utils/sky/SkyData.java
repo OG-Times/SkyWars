@@ -7,17 +7,13 @@ public class SkyData {
    private final HashMap<String, Object> data = new HashMap<>();
 
    public void addData(String string, Object object) {
-      if (this.data.containsKey(string)) {
-         this.data.remove(string);
-      }
+       this.data.remove(string);
 
       this.data.put(string, object);
    }
 
    public void removeData(String string) {
-      if (this.data.containsKey(string)) {
-         this.data.remove(string);
-      }
+       this.data.remove(string);
 
    }
 

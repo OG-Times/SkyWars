@@ -4,10 +4,10 @@ import fun.ogtimes.skywars.spigot.utils.ItemBuilder;
 import java.util.Random;
 
 public class RandomItem {
-   private double chance;
-   private int min;
-   private int max;
-   private ItemBuilder item;
+   private final double chance;
+   private final int min;
+   private final int max;
+   private final ItemBuilder item;
 
    public RandomItem(double var1, int var3, int var4, ItemBuilder var5) {
       this.chance = var1;
