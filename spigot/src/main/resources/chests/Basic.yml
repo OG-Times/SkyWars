@@ -1,0 +1,38 @@
+name: Basic
+item:
+  item: LEATHER_HELMET
+  name: '&e&lBasic Chests'
+  slot: 10
+  description:
+    - '&7Chest will contain:'
+    - '&7Weak armour'
+    - '&7Low power swords'
+    - '&7Basic Minecraft Food'
+    - '&7And other struff'
+items:
+# CHANCE MIN-AMOUNT MAX-AMOUNT ITEM:DATA,ECHANTMENT:LEVEL,ECHANTMENT:LEVEL,ECHANTMENT:LEVEL,..,name:&aCUSTOM NAME,lore:&7CUSTOM LORE,lore:&7CUSTOM LORE,lore:&7CUSTOM LORE,leather_color:255-0-0,...
+
+# Random Stuff
+- 85 6 12 wood
+- 100 6 12 cobblestone
+- 50 3 3 snow_ball
+- 50 2 2 egg
+
+# Food
+- 90 1 1 apple
+
+# Bow and arrows
+- 1 1 1 bow
+- 50 2 12 arrow
+
+# weapons
+- 50 1 1 wood_sword
+- 25 1 1 stone_sword
+- 15 1 1 stone_axe
+- 1 1 1 iron_sword
+
+# Leather Stuff
+- 20 1 1 leather_chestplate 
+- 10 1 1 leather_helmet
+- 10 1 1 leather_leggings
+- 20 1 1 leather_boots

@@ -1,0 +1,4 @@
+name: SkyWarsBridge
+main: ak.CookLoco.SkyWars.SkyWarsBungee
+version: ${project.version}
+author: CookLoco

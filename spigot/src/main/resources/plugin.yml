@@ -1,0 +1,71 @@
+name: SkyWars
+main: ak.CookLoco.SkyWars.SkyWars
+version: 1.10.3
+author: CookLoco
+softdepend: [HolographicDisplays,PlaceholderAPI,LeaderHeads,Vault,PlayerPoints,Craftconomy3,Coins]
+commands:
+    sw:
+        description: SkyWars commands.
+        usage: /<command>
+    leave:
+        description: SkyWars leave command.
+        usage: /<command>
+    salir:
+        description: SkyWars leave command.
+        usage: /<command>
+permissions:
+    skywars.admin:
+        description: Access for admin commands and features
+        default: op
+        children:
+          skywars.admin.arena: true
+          skywars.admin.tp: true
+          skywars.admin.hologram: true
+          skywars.admin.reload: true
+          skywars.admin.coins: true
+          skywars.admin.forcestart: true
+          skywars.admin.spectate: true
+          skywars.cmd.open: true
+          skywars.vip: true
+          skywars.tab.bypass: true
+    skywars.admin.arena:
+        description: Access for arena setup commands
+        default: op
+        children:
+          skywars.admin.arena.load: true
+          skywars.admin.arena.create: true
+          skywars.admin.arena.spawn: true
+          skywars.admin.arena.set: true
+          skywars.admin.arena.disable: true
+          skywars.admin.arena.reload: true
+    skywars.admin.reload:
+        description: Access for reload commands
+        default: op
+        children:
+          skywars.admin.reload.all: true
+          skywars.admin.reload.config: true
+          skywars.admin.reload.messages: true
+          skywars.admin.reload.score: true
+          skywars.admin.reload.shops: true
+    skywars.admin.hologram:
+        description: Access for hologram commands
+        default: op
+        children:
+          skywars.admin.hologram.add: true
+          skywars.admin.hologram.remove: true
+    skywars.cmd.open:
+        description: Access for open menus command
+        default: false
+        children:
+          skywars.cmd.open.lshop: true
+    skywars.user:
+        description: Access for user features
+        default: true
+    skywars.vip:
+        description: Access for vip features
+        default: false
+        children:
+          skywars.vip.talk: true
+    skywars.join:
+        description: Join
+        default: true
