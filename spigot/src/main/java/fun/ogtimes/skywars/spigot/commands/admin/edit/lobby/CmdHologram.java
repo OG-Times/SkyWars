@@ -20,20 +20,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 public class CmdHologram implements BaseCommand {
-   public void onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender sender, String[] args) {
       Player var3 = null;
-      if (!(var1 instanceof Player)) {
-         var1.sendMessage("You are not a player!");
+      if (!(sender instanceof Player)) {
+         sender.sendMessage("You are not a player!");
       } else {
-         var3 = (Player)var1;
+         var3 = (Player) sender;
          if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
-         } else if (var2.length == 0) {
-            this.helpDefault(var1);
+         } else if (args.length == 0) {
+            this.helpDefault(sender);
          } else {
-            if (var2.length >= 1) {
+            if (args.length >= 1) {
                ArrayList var4 = new ArrayList();
-               String var5 = var2[0].toLowerCase();
+               String var5 = args[0].toLowerCase();
                byte var6 = -1;
                switch(var5.hashCode()) {
                case -934610812:
@@ -81,10 +81,10 @@ public class CmdHologram implements BaseCommand {
                   }
 
                   int var7;
-                  if (var2.length == 1) {
+                  if (args.length == 1) {
                      var7 = var4.size();
                   } else {
-                     var7 = Integer.parseInt(var2[0]);
+                     var7 = Integer.parseInt(args[0]);
                   }
 
                   var4.remove(var7 - 1);
@@ -111,7 +111,7 @@ public class CmdHologram implements BaseCommand {
                   var3.sendMessage("§aHologram #" + var7 + " was removed");
                   break;
                default:
-                  this.helpDefault(var1);
+                  this.helpDefault(sender);
                }
             }
 
@@ -119,9 +119,9 @@ public class CmdHologram implements BaseCommand {
       }
    }
 
-   public String help(CommandSender var1) {
+   public String help(CommandSender sender) {
       String var2 = "&a/sw hologram &a- &bFor more help about setup holograms";
-      return var1.hasPermission(this.getPermission()) ? var2 : "";
+      return sender.hasPermission(this.getPermission()) ? var2 : "";
    }
 
    public String getPermission() {
@@ -148,28 +148,28 @@ public class CmdHologram implements BaseCommand {
       var1.sendMessage("--------------------------------------------");
    }
 
-   public List<String> onTabComplete(CommandSender var1, String[] var2) {
-      if (!var1.hasPermission(this.getPermission())) {
+   public List<String> onTabComplete(CommandSender sender, String[] args) {
+      if (!sender.hasPermission(this.getPermission())) {
          return null;
-      } else if (var2.length == 1) {
+      } else if (args.length == 1) {
          HashMap var3 = new HashMap();
          var3.put("add", "&a/sw hologram &eadd &a- &bAdd Lobby Hologram");
          var3.put("remove", "&a/sw hologram &eremove &d[#] &a- &bRemove latest or specific hologram");
          String[] var4 = new String[]{"add", "remove"};
          ArrayList var5 = new ArrayList(Arrays.asList(var4));
          ArrayList var6 = new ArrayList();
-         StringUtil.copyPartialMatches(var2[0], var5, var6);
+         StringUtil.copyPartialMatches(args[0], var5, var6);
          Collections.sort(var6);
-         var1.sendMessage("--------------------------------------------");
+         sender.sendMessage("--------------------------------------------");
 
           for (Object object : var3.entrySet()) {
               Entry var8 = (Entry) object;
-              if (var6.contains(var8.getKey()) && var1.hasPermission("skywars.admin.hologram." + var8.getKey())) {
-                  var1.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) var8.getValue()));
+              if (var6.contains(var8.getKey()) && sender.hasPermission("skywars.admin.hologram." + var8.getKey())) {
+                  sender.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) var8.getValue()));
               }
           }
 
-         var1.sendMessage("--------------------------------------------");
+         sender.sendMessage("--------------------------------------------");
          return var6;
       } else {
          return null;

@@ -10,16 +10,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdForceStart implements BaseCommand {
-   public void onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender sender, String[] args) {
       Player var3 = null;
-      if (!(var1 instanceof Player)) {
-         var1.sendMessage("You aren't a player!");
+      if (!(sender instanceof Player)) {
+         sender.sendMessage("You aren't a player!");
       } else {
-         var3 = (Player)var1;
+         var3 = (Player) sender;
          if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
          } else {
-            if (var2.length < 1) {
+            if (args.length < 1) {
                SkyPlayer var4 = SkyWars.getSkyPlayer(var3);
                if (var4.isInArena()) {
                   if (var4.getArena().getPlayers().size() <= 1) {
@@ -37,9 +37,9 @@ public class CmdForceStart implements BaseCommand {
       }
    }
 
-   public String help(CommandSender var1) {
+   public String help(CommandSender sender) {
       String var2 = "&a/sw &eforcestart &a- &bForce to start game";
-      return var1.hasPermission(this.getPermission()) ? var2 : "";
+      return sender.hasPermission(this.getPermission()) ? var2 : "";
    }
 
    public String getPermission() {
@@ -50,7 +50,7 @@ public class CmdForceStart implements BaseCommand {
       return false;
    }
 
-   public List<String> onTabComplete(CommandSender var1, String[] var2) {
+   public List<String> onTabComplete(CommandSender sender, String[] args) {
       return null;
    }
 }

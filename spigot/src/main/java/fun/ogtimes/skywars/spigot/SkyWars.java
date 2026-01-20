@@ -37,6 +37,8 @@ import fun.ogtimes.skywars.spigot.utils.variable.VariableManager;
 import fun.ogtimes.skywars.spigot.utils.variable.VariablesDefault;
 import fun.ogtimes.skywars.spigot.utils.variable.VariablesPlaceholder;
 import lombok.Getter;
+import lombok.Setter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -49,11 +51,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
+@Getter @Setter
 public class SkyWars extends JavaPlugin implements Listener {
     private static final ResourceBundle NULL_BUNDLE = null;
 
     @Getter
-    public static SkyWars plugin;
+    private static SkyWars plugin;
     public static final HashMap<UUID, SkyPlayer> skyPlayersUUID;
     public static final HashMap<String, SkyPlayer> skyPlayers;
     @Getter
@@ -80,7 +83,6 @@ public class SkyWars extends JavaPlugin implements Listener {
     private static ResourceBundle messageBundle;
     private static ResourceBundle customBundle;
     private static DatabaseHandler databaseHandler;
-    public static boolean done = false;
 
     static {
         skyPlayersUUID = new HashMap<>();
@@ -91,6 +93,7 @@ public class SkyWars extends JavaPlugin implements Listener {
     }
 
     private Metrics metrics;
+    private BukkitAudiences adventure;
 
     public static void reloadMessages() {
         CustomConfig customConfig = new CustomConfig(SkyWars.getPlugin());
@@ -243,7 +246,7 @@ public class SkyWars extends JavaPlugin implements Listener {
 
     public static void goToSpawn(SkyPlayer skyPlayer) {
         try {
-            skyPlayer.teleport(getSpawn());
+            skyPlayer.teleport(spawn);
         } catch (Exception e) {
             logError("Lobby Spawn doesn't exist, please add a Lobby Spawn with: /sw lobbyspawn");
         }
@@ -343,6 +346,7 @@ public class SkyWars extends JavaPlugin implements Listener {
         login = false;
         disabling = false;
 
+        adventure = BukkitAudiences.create(this);
         console(prefix + "&aLoading all config files");
 
         ConfigManager.mainConfig();
@@ -481,8 +485,7 @@ public class SkyWars extends JavaPlugin implements Listener {
 
             RandomFirework.loadFireworks();
 
-            getCommand("leave").setExecutor(new CmdOthers(this));
-            getCommand("salir").setExecutor(new CmdOthers(this));
+            new CmdOthers(this);
         }
 
         // Set spawn location
@@ -555,6 +558,11 @@ public class SkyWars extends JavaPlugin implements Listener {
         disabling = true;
 
         metrics.shutdown();
+
+        if (adventure != null) {
+            adventure.close();
+        }
+
         for (SkyPlayer skyPlayer : skyPlayersUUID.values()) {
             if (skyPlayer.isInArena()) {
                 Arena arena = skyPlayer.getArena();

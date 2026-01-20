@@ -11,8 +11,12 @@ import fun.ogtimes.skywars.spigot.arena.chest.ChestType;
 import fun.ogtimes.skywars.spigot.arena.chest.ChestTypeManager;
 import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.events.SkyPlayerSpectatorEvent;
+import fun.ogtimes.skywars.spigot.events.enums.ArenaLeaveCause;
 import fun.ogtimes.skywars.spigot.events.enums.SpectatorReason;
 import fun.ogtimes.skywars.spigot.kit.Kit;
+import fun.ogtimes.skywars.spigot.listener.DamageListener;
+import fun.ogtimes.skywars.spigot.utils.Messages;
+import fun.ogtimes.skywars.spigot.utils.ProxyUtils;
 import fun.ogtimes.skywars.spigot.utils.Utils;
 import fun.ogtimes.skywars.spigot.utils.economy.SkyEconomyManager;
 import fun.ogtimes.skywars.spigot.utils.economy.skyeconomy.CustomEconomy;
@@ -198,15 +202,15 @@ public class SkyPlayer extends SkyData {
         return this.getPlayer().hasPermission(var1);
     }
 
-    public void sendMessage(String var1) {
+    public void sendMessage(String message) {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            var1 = PlaceholderAPI.setPlaceholders(this.getPlayer(), var1);
+            message = PlaceholderAPI.setPlaceholders(this.getPlayer(), message);
         }
 
-        if (var1 != null && !var1.isEmpty()) {
-            Player var2 = this.getPlayer();
-            if (var2 != null) {
-                var2.sendMessage(ChatColor.translateAlternateColorCodes('&', Utils.color(var1)));
+        if (message != null && !message.isEmpty()) {
+            Player player = this.getPlayer();
+            if (player != null) {
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', Utils.color(message)));
             }
         }
 
@@ -503,5 +507,22 @@ public class SkyPlayer extends SkyData {
         }
 
         return var1.toString();
+    }
+
+    public void leave() {
+        if (isInArena()) {
+            if (DamageListener.lastDamage.containsKey(getUniqueId())) {
+                Player lastDamager = Bukkit.getPlayer(DamageListener.lastDamage.get(getUniqueId()));
+                getPlayer().damage(1000.0D, lastDamager);
+                addDeaths(1);
+            }
+
+            arena.removePlayer(this, ArenaLeaveCause.COMMAND);
+            SkyWars.log("CmdOther.onCommand - " + getName() + " removed using command");
+        }
+
+        if (SkyWars.isProxyMode()) {
+            ProxyUtils.teleToServer(getPlayer(), SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
+        }
     }
 }

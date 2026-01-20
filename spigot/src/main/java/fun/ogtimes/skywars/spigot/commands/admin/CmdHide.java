@@ -21,16 +21,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdHide implements BaseCommand {
-   public void onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender sender, String[] args) {
       Player var3 = null;
-      if (var1 instanceof Player) {
-         var3 = (Player)var1;
+      if (sender instanceof Player) {
+         var3 = (Player) sender;
           SkyPlayer var4 = SkyWars.getSkyPlayer(var3);
           Arena var5 = var4.getArena();
-          if (var2.length < 1) {
-             var1.sendMessage("This command doesnt exist");
+          if (args.length < 1) {
+             sender.sendMessage("This command doesnt exist");
           } else {
-             String var6 = var2[0];
+             String var6 = args[0];
              byte var7 = -1;
              switch(var6.hashCode()) {
              case -954082964:
@@ -107,7 +107,7 @@ public class CmdHide implements BaseCommand {
                 break;
              case 1:
                 if (var5 != null) {
-                   var1.sendMessage("---------- " + var5.getName() + " Spawns ----------");
+                   sender.sendMessage("---------- " + var5.getName() + " Spawns ----------");
                    var8 = var5.getSpawnPoints().entrySet().iterator();
 
                    while(var8.hasNext()) {
@@ -206,11 +206,11 @@ public class CmdHide implements BaseCommand {
 
           }
       } else {
-         var1.sendMessage("This command doesnt exist");
+         sender.sendMessage("This command doesnt exist");
       }
    }
 
-   public String help(CommandSender var1) {
+   public String help(CommandSender sender) {
       return "";
    }
 
@@ -222,7 +222,7 @@ public class CmdHide implements BaseCommand {
       return false;
    }
 
-   public List<String> onTabComplete(CommandSender var1, String[] var2) {
+   public List<String> onTabComplete(CommandSender sender, String[] args) {
       return null;
    }
 }

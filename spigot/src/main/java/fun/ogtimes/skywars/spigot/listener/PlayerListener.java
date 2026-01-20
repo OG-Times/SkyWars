@@ -293,26 +293,28 @@ public class PlayerListener implements Listener {
    }
 
    @EventHandler
-   public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 != null) {
-         if (var3.isInArena()) {
-            String[] var4 = var1.getMessage().split(" ");
-            var4[0] = var4[0].replace("/", "");
+   public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+      Player player = event.getPlayer();
+      SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+      if (skyPlayer != null) {
+         if (skyPlayer.isInArena()) {
+            String[] message = event.getMessage().split(" ");
+            message[0] = message[0].replace("/", "");
             if (ConfigManager.main.getString("block.commands.mode").equalsIgnoreCase("blacklist")) {
-               if (ConfigManager.main.getStringList("block.commands.ingame").contains(var4[0])) {
-                  var3.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
-                  var1.setCancelled(true);
-               }
-            } else {
-               if (var4[0].equalsIgnoreCase("salir") || var4[0].equalsIgnoreCase("leave")) {
-                  return;
+               if (ConfigManager.main.getStringList("block.commands.ingame").contains(message[0])) {
+                  skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
+                  event.setCancelled(true);
                }
 
-               if (!ConfigManager.main.getStringList("block.commands.ingame").contains(var4[0])) {
-                  var3.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
-                  var1.setCancelled(true);
+            } else {
+               if (message[0].equalsIgnoreCase("salir") ||
+                       message[0].equalsIgnoreCase("leave") ||
+                       message[0].equalsIgnoreCase("playagain")
+               ) return;
+
+               if (!ConfigManager.main.getStringList("block.commands.ingame").contains(message[0])) {
+                  skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
+                  event.setCancelled(true);
                }
             }
          }

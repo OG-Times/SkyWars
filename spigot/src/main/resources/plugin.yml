@@ -13,6 +13,9 @@ commands:
     salir:
         description: SkyWars leave command.
         usage: /<command>
+    playagain:
+        description: SkyWars play again command.
+        usage: /<command>
 permissions:
     skywars.admin:
         description: Access for admin commands and features

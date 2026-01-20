@@ -13,16 +13,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 public class CmdTp implements BaseCommand {
-   public void onCommand(CommandSender var1, String[] var2) {
+   public void onCommand(CommandSender sender, String[] args) {
       Player var3 = null;
-      if (!(var1 instanceof Player)) {
-         var1.sendMessage("You aren't a player!");
+      if (!(sender instanceof Player)) {
+         sender.sendMessage("You aren't a player!");
       } else {
-         var3 = (Player)var1;
+         var3 = (Player) sender;
          if (!var3.hasPermission(this.getPermission())) {
             var3.sendMessage("§cYou do not have permission!");
-         } else if (var2.length == 1) {
-            World var7 = Bukkit.getWorld(var2[0]);
+         } else if (args.length == 1) {
+            World var7 = Bukkit.getWorld(args[0]);
             if (var7 == null) {
                var3.sendMessage("§cThat world does not exist!");
             } else {
@@ -41,9 +41,9 @@ public class CmdTp implements BaseCommand {
       }
    }
 
-   public String help(CommandSender var1) {
+   public String help(CommandSender sender) {
       String var2 = "&a/sw tp &e<world> &a- &bTeleport to another world";
-      return var1.hasPermission(this.getPermission()) ? var2 : "";
+      return sender.hasPermission(this.getPermission()) ? var2 : "";
    }
 
    public String getPermission() {
@@ -54,10 +54,10 @@ public class CmdTp implements BaseCommand {
       return false;
    }
 
-   public List<String> onTabComplete(CommandSender var1, String[] var2) {
-      if (!var1.hasPermission(this.getPermission())) {
+   public List<String> onTabComplete(CommandSender sender, String[] args) {
+      if (!sender.hasPermission(this.getPermission())) {
          return null;
-      } else if (var2.length != 1) {
+      } else if (args.length != 1) {
          return null;
       } else {
          ArrayList var3 = new ArrayList();
@@ -67,9 +67,9 @@ public class CmdTp implements BaseCommand {
               var3.add(var6.getName());
           }
 
-         var1.sendMessage("--------------------------------------------");
-         var1.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWorlds loaded (&b" + var3.size() + "&a):"));
-         StringUtil.copyPartialMatches(var2[0], var3, var4);
+         sender.sendMessage("--------------------------------------------");
+         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWorlds loaded (&b" + var3.size() + "&a):"));
+         StringUtil.copyPartialMatches(args[0], var3, var4);
          Collections.sort(var4);
          return var4;
       }
