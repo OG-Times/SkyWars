@@ -1,8 +1,8 @@
-package fun.ogtimes.skywars.spigot.menus2.arena;
+package fun.ogtimes.skywars.spigot.menus.arena;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
-import fun.ogtimes.skywars.spigot.menus2.Menu;
-import fun.ogtimes.skywars.spigot.menus2.MenuListener;
+import fun.ogtimes.skywars.spigot.menus.Menu;
+import fun.ogtimes.skywars.spigot.menus.MenuListener;
 import fun.ogtimes.skywars.spigot.utils.ItemBuilder;
 import fun.ogtimes.skywars.spigot.utils.Messages;
 import org.bukkit.Material;

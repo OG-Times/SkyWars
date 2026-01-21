@@ -17,7 +17,7 @@ import fun.ogtimes.skywars.spigot.listener.*;
 import fun.ogtimes.skywars.spigot.listener.skywars.ArenaListener;
 import fun.ogtimes.skywars.spigot.listener.skywars.DeathListener;
 import fun.ogtimes.skywars.spigot.listener.skywars.SpectateListener;
-import fun.ogtimes.skywars.spigot.menus2.MenuListener;
+import fun.ogtimes.skywars.spigot.menus.MenuListener;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.server.ServerManager;
 import fun.ogtimes.skywars.spigot.server.SkyServer;

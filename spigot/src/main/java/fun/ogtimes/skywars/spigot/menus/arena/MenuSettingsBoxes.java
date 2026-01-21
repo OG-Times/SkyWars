@@ -1,10 +1,10 @@
-package fun.ogtimes.skywars.spigot.menus2.arena;
+package fun.ogtimes.skywars.spigot.menus.arena;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.arena.ArenaBox;
 import fun.ogtimes.skywars.spigot.box.Box;
 import fun.ogtimes.skywars.spigot.box.BoxManager;
-import fun.ogtimes.skywars.spigot.menus2.Menu;
+import fun.ogtimes.skywars.spigot.menus.Menu;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.utils.Messages;
 import org.bukkit.entity.Player;

@@ -1,11 +1,11 @@
-package fun.ogtimes.skywars.spigot.menus2.lobby;
+package fun.ogtimes.skywars.spigot.menus.lobby;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.abilities.AbilityManager;
 import fun.ogtimes.skywars.spigot.config.ConfigManager;
 import fun.ogtimes.skywars.spigot.config.SkyConfiguration;
-import fun.ogtimes.skywars.spigot.menus2.Menu;
-import fun.ogtimes.skywars.spigot.menus2.MenuListener;
+import fun.ogtimes.skywars.spigot.menus.Menu;
+import fun.ogtimes.skywars.spigot.menus.MenuListener;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.utils.ItemBuilder;
 import fun.ogtimes.skywars.spigot.utils.Utils;

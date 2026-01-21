@@ -2,7 +2,7 @@ package fun.ogtimes.skywars.spigot.commands.user;
 
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.commands.BaseCommand;
-import fun.ogtimes.skywars.spigot.menus2.MenuListener;
+import fun.ogtimes.skywars.spigot.menus.MenuListener;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import java.util.ArrayList;
 import java.util.List;
