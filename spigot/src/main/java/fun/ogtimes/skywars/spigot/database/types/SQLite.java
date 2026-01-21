@@ -107,20 +107,20 @@ public class SQLite extends DataSource {
 
     }
 
-    public synchronized void loadPlayerData(SkyPlayer var1) {
-        this.loadPlayerData(con, var1);
+    public synchronized void loadPlayerData(SkyPlayer skyPlayer) {
+        this.loadPlayerData(con, skyPlayer);
     }
 
-    public void uploadPlayerData(SkyPlayer var1) {
-        this.uploadPlayerData(con, var1);
+    public void uploadPlayerData(SkyPlayer skyPlayer) {
+        this.uploadPlayerData(con, skyPlayer);
     }
 
-    public double getCoins(SkyPlayer var1) {
-        return this.getCoins(con, var1);
+    public double getCoins(SkyPlayer skyPlayer) {
+        return this.getCoins(con, skyPlayer);
     }
 
-    public void modifyCoins(SkyPlayer var1, double var2) {
-        this.modifyCoins(con, var1, var2);
+    public void modifyCoins(SkyPlayer skyPlayer, double modifier) {
+        this.modifyCoins(con, skyPlayer, modifier);
     }
 
     public void loadServer() {
@@ -131,7 +131,7 @@ public class SQLite extends DataSource {
         System.err.println("[SkyWars] Trying to get servers from SQLite, please change the data type to MySQL");
     }
 
-    public void setServerData(Arena var1) {
+    public void setServerData(Arena arena) {
         System.err.println("[SkyWars] Trying to set server data from SQLite, please change the data type to MySQL");
     }
 

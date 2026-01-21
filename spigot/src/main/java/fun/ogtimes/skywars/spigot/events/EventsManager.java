@@ -13,29 +13,27 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class EventsManager implements Listener {
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent var1) {
-        Player var2 = var1.getEntity();
-        SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-        Player var4 = var1.getEntity().getKiller();
-        SkyPlayer var5;
-        if (var4 == null) {
-            var5 = null;
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player killed = event.getEntity();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(killed);
+        Player killer = event.getEntity().getKiller();
+        SkyPlayer killerSkyPlayer;
+        if (killer == null) {
+            killerSkyPlayer = null;
         } else {
-            var5 = SkyWars.getSkyPlayer(var4);
+            killerSkyPlayer = SkyWars.getSkyPlayer(killer);
         }
 
-        if (var3 != null) {
-            if (var3.isInArena()) {
-                Arena var6 = var3.getArena();
-                var1.setDeathMessage(null);
-                var3.setSpectating(true, SpectatorReason.DEATH);
-                if (SkyWars.is18orHigher()) {
-                    var2.setHealth(var2.getMaxHealth());
-                    Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> var2.spigot().respawn(), 1L);
-                }
+        if (skyPlayer != null) {
+            if (skyPlayer.isInArena()) {
+                Arena arena = skyPlayer.getArena();
+                event.setDeathMessage(null);
+                skyPlayer.setSpectating(true, SpectatorReason.DEATH);
+                killed.setHealth(killed.getMaxHealth());
+                Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> killed.spigot().respawn(), 1L);
 
-                SkyPlayerDeathEvent var7 = new SkyPlayerDeathEvent(var3, var5, var6, var1);
-                Bukkit.getServer().getPluginManager().callEvent(var7);
+                SkyPlayerDeathEvent skyPlayerDeathEvent = new SkyPlayerDeathEvent(skyPlayer, killerSkyPlayer, arena, event);
+                Bukkit.getServer().getPluginManager().callEvent(skyPlayerDeathEvent);
             }
 
         }

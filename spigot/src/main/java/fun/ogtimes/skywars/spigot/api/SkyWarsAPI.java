@@ -5,46 +5,49 @@ import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import java.util.List;
 import java.util.Map.Entry;
+
+import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 
+@UtilityClass
 public class SkyWarsAPI {
-   public static SkyPlayer getSkyPlayer(Player var0) {
-      return SkyWars.getSkyPlayer(var0);
-   }
+    public SkyPlayer getSkyPlayer(Player player) {
+        return SkyWars.getSkyPlayer(player);
+    }
 
-   public static int getWins(Player var0) {
-      SkyPlayer var1 = SkyWars.getSkyPlayer(var0);
-      return var1.getWins();
-   }
+    public int getWins(Player player) {
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        return skyPlayer.getWins();
+    }
 
-   public static int getKills(Player var0) {
-      SkyPlayer var1 = SkyWars.getSkyPlayer(var0);
-      return var1.getKills();
-   }
+    public int getKills(Player player) {
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        return skyPlayer.getKills();
+    }
 
-   public static int getDeaths(Player var0) {
-      SkyPlayer var1 = SkyWars.getSkyPlayer(var0);
-      return var1.getDeaths();
-   }
+    public int getDeaths(Player player) {
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        return skyPlayer.getDeaths();
+    }
 
-   public static int getPlayed(Player var0) {
-      SkyPlayer var1 = SkyWars.getSkyPlayer(var0);
-      return var1.getPlayed();
-   }
+    public int getPlayed(Player player) {
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        return skyPlayer.getPlayed();
+    }
 
-   public static List<Entry<String, Integer>> getTopWins(int var0) {
-      return DatabaseHandler.getDS().getTopStats("wins", var0);
-   }
+    public List<Entry<String, Integer>> getTopWins(int number) {
+        return DatabaseHandler.getDS().getTopStats("wins", number);
+    }
 
-   public static List<Entry<String, Integer>> getTopKills(int var0) {
-      return DatabaseHandler.getDS().getTopStats("kills", var0);
-   }
+    public List<Entry<String, Integer>> getTopKills(int number) {
+        return DatabaseHandler.getDS().getTopStats("kills", number);
+    }
 
-   public static List<Entry<String, Integer>> getTopDeaths(int var0) {
-      return DatabaseHandler.getDS().getTopStats("deaths", var0);
-   }
+    public List<Entry<String, Integer>> getTopDeaths(int number) {
+        return DatabaseHandler.getDS().getTopStats("deaths", number);
+    }
 
-   public static List<Entry<String, Integer>> getTopPlayed(int var0) {
-      return DatabaseHandler.getDS().getTopStats("played", var0);
-   }
+    public List<Entry<String, Integer>> getTopPlayed(int number) {
+        return DatabaseHandler.getDS().getTopStats("played", number);
+    }
 }

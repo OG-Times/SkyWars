@@ -39,18 +39,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SkyPlayer extends SkyData {
+    private final UUID uniqueId;
+
     private String name;
-    private String uid;
-    private UUID uniqueId;
     private String url;
     private Arena arena;
     private Kit kit;
     private ArenaBox box;
     private String trail;
     private String boxsection;
-    private final HashSet<String> owned_kits = new HashSet<>();
-    private final HashMap<AbilityType, AbilityLevel> ownedAbilityByType = new HashMap<>();
-    private final HashSet<AbilityType> disabledAbilities = new HashSet<>();
+    private final Set<String> ownedKits = new HashSet<>();
+    private final Map<AbilityType, AbilityLevel> ownedAbilityByType = new HashMap<>();
+    private final Set<AbilityType> disabledAbilities = new HashSet<>();
     private Location arenaSpawn;
     private boolean spectating;
     private int wins = 0;
@@ -70,11 +70,12 @@ public class SkyPlayer extends SkyData {
     private Integer xplevel = 0;
     private float exp = 0.0F;
 
-    public SkyPlayer(String var1, UUID var2) {
-        this.name = var1;
-        this.uniqueId = var2;
-        this.addData("upload_data", false);
-        this.load();
+    public SkyPlayer(String name, UUID uuid) {
+        this.name = name;
+        this.uniqueId = uuid;
+
+        addData("upload_data", false);
+        load();
     }
 
     public Player getPlayer() {
@@ -85,90 +86,89 @@ public class SkyPlayer extends SkyData {
         return this.getArena() != null ? this.arenaSpawn : null;
     }
 
-    public void addWins(int var1) {
-        this.setWins(this.getWins() + var1);
-        if (var1 > 0) {
+    public void addWins(int amount) {
+        this.setWins(this.getWins() + amount);
+        if (amount > 0) {
+            this.addData("upload_data", true);
+        }
+    }
+
+    public void addKills(int amount) {
+        this.setKills(this.getKills() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addKills(int var1) {
-        this.setKills(this.getKills() + var1);
-        if (var1 > 0) {
+    public void addDeaths(int amount) {
+        this.setDeaths(this.getDeaths() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addDeaths(int var1) {
-        this.setDeaths(this.getDeaths() + var1);
-        if (var1 > 0) {
+    public void addPlayed(int amount) {
+        this.setPlayed(this.getPlayed() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addPlayed(int var1) {
-        this.setPlayed(this.getPlayed() + var1);
-        if (var1 > 0) {
+    public void addArrowShot(int amount) {
+        this.setArrowShot(this.getArrowShot() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addArrowShot(int var1) {
-        this.setArrowShot(this.getArrowShot() + var1);
-        if (var1 > 0) {
+    public void addArrowHit(int amount) {
+        this.setArrowHit(this.getArrowHit() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addArrowHit(int var1) {
-        this.setArrowHit(this.getArrowHit() + var1);
-        if (var1 > 0) {
+    public void addBlocksBroken(int amount) {
+        this.setBlocksBroken(this.getBlocksBroken() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addBlocksBroken(int var1) {
-        this.setBlocksBroken(this.getBlocksBroken() + var1);
-        if (var1 > 0) {
+    public void addBlocksPlaced(int amount) {
+        this.setBlocksPlaced(this.getBlocksPlaced() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addBlocksPlaced(int var1) {
-        this.setBlocksPlaced(this.getBlocksPlaced() + var1);
-        if (var1 > 0) {
+    public void addDistanceWalked(int amount) {
+        this.setDistanceWalked(this.getDistanceWalked() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addDistanceWalked(int var1) {
-        this.setDistanceWalked(this.getDistanceWalked() + var1);
-        if (var1 > 0) {
+    public void addTimePlayed(int amount) {
+        this.setTimePlayed(this.getTimePlayed() + amount);
+        if (amount > 0) {
             this.addData("upload_data", true);
         }
 
     }
 
-    public void addTimePlayed(int var1) {
-        this.setTimePlayed(this.getTimePlayed() + var1);
-        if (var1 > 0) {
-            this.addData("upload_data", true);
-        }
-
-    }
-
-    public void setSpectating(boolean var1, SpectatorReason var2) {
-        this.spectating = var1;
-        if (var2 != null) {
-            SkyPlayerSpectatorEvent var3 = new SkyPlayerSpectatorEvent(this, this.getArena(), var1, var2);
+    public void setSpectating(boolean spectating, SpectatorReason reason) {
+        this.spectating = spectating;
+        if (reason != null) {
+            SkyPlayerSpectatorEvent var3 = new SkyPlayerSpectatorEvent(this, this.getArena(), spectating, reason);
             Bukkit.getServer().getPluginManager().callEvent(var3);
         }
 
@@ -190,16 +190,16 @@ public class SkyPlayer extends SkyData {
         return this.trail != null && !this.trail.isEmpty() && !this.trail.equals("none");
     }
 
-    public void teleport(Location var1) {
-        Player var2 = this.getPlayer();
-        if (var2 != null) {
-            this.getPlayer().teleport(var1);
+    public void teleport(Location location) {
+        Player player = this.getPlayer();
+        if (player != null) {
+            this.getPlayer().teleport(location);
         }
 
     }
 
-    public boolean hasPermissions(String var1) {
-        return this.getPlayer().hasPermission(var1);
+    public boolean hasPermission(String permission) {
+        return this.getPlayer().hasPermission(permission);
     }
 
     public void sendMessage(String message) {
@@ -221,30 +221,30 @@ public class SkyPlayer extends SkyData {
     }
 
     public void clearInventory(boolean var1) {
-        Player var2 = this.getPlayer();
-        if (var2 != null) {
+        Player player = this.getPlayer();
+        if (player != null) {
             if (SkyWars.getPlugin().getConfig().getBoolean("options.saveInventory") && var1) {
-                this.armourContents = var2.getInventory().getArmorContents();
-                this.inventoryContents = var2.getInventory().getContents();
-                this.xplevel = var2.getLevel();
-                this.exp = var2.getExp();
+                this.armourContents = player.getInventory().getArmorContents();
+                this.inventoryContents = player.getInventory().getContents();
+                this.xplevel = player.getLevel();
+                this.exp = player.getExp();
             }
 
-            var2.getInventory().setArmorContents(null);
-            var2.getInventory().clear();
-            var2.getInventory().setContents(new ItemStack[0]);
+            player.getInventory().setArmorContents(null);
+            player.getInventory().clear();
+            player.getInventory().setContents(new ItemStack[0]);
 
-            for (PotionEffect var4 : var2.getActivePotionEffects()) {
-                var2.removePotionEffect(var4.getType());
+            for (PotionEffect effect : player.getActivePotionEffects()) {
+                player.removePotionEffect(effect.getType());
             }
 
-            var2.setHealth(var2.getMaxHealth());
+            player.setHealth(player.getMaxHealth());
 
-            var2.setFoodLevel(20);
-            var2.setExp(0.0F);
-            var2.setLevel(0);
-            var2.setFlying(false);
-            var2.setAllowFlight(false);
+            player.setFoodLevel(20);
+            player.setExp(0.0F);
+            player.setLevel(0);
+            player.setFlying(false);
+            player.setAllowFlight(false);
             this.updateInventory();
         }
     }
@@ -331,8 +331,8 @@ public class SkyPlayer extends SkyData {
 
     }
 
-    public void upload(boolean var1) {
-        if (var1) {
+    public void upload(boolean sync) {
+        if (sync) {
             this.uploadData();
         } else {
             this.uploadAsyncData();
@@ -362,11 +362,11 @@ public class SkyPlayer extends SkyData {
         String var1 = "";
 
         String var3;
-        for(Iterator<String> var2 = this.owned_kits.iterator(); var2.hasNext(); var1 = var1 + var3 + ",") {
+        for(Iterator<String> var2 = this.ownedKits.iterator(); var2.hasNext(); var1 = var1 + var3 + ",") {
             var3 = var2.next();
         }
 
-        if (var1 != null && var1.endsWith(",")) {
+        if (var1.endsWith(",")) {
             var1.substring(0, var1.length() - 1);
         }
 
@@ -389,21 +389,21 @@ public class SkyPlayer extends SkyData {
         return SkyWars.boxes.getInt("boxes." + var1 + ".data");
     }
 
-    public boolean hasKit(Kit var1) {
-        return var1 != null && this.owned_kits != null && this.owned_kits.contains(var1.getName());
+    public boolean hasKit(Kit kit) {
+        return kit != null && this.ownedKits.contains(kit.getName());
     }
 
     public void addKit(Kit var1) {
         if (!this.hasKit(var1)) {
-            this.owned_kits.add(var1.getName());
+            this.ownedKits.add(var1.getName());
         }
 
     }
 
     public void distanceWalkedConvert() {
-        double var1 = this.getDouble("local_distance");
-        int var3 = (int)Math.round(var1);
-        this.addDistanceWalked(var3);
+        double localDistance = this.getDouble("local_distance");
+        int roundedDistance = (int)Math.round(localDistance);
+        this.addDistanceWalked(roundedDistance);
         this.removeData("local_distance");
     }
 
@@ -413,10 +413,10 @@ public class SkyPlayer extends SkyData {
 
     public void playedTimeEnd() {
         if (this.localTimePlayed != null) {
-            Date var1 = new Date();
-            long var2 = var1.getTime() - this.localTimePlayed.getTime();
-            int var4 = (int)(var2 / 1000L);
-            this.addTimePlayed(var4);
+            Date date = new Date();
+            long played = date.getTime() - this.localTimePlayed.getTime();
+            int playedSeconds = (int)(played / 1000L);
+            this.addTimePlayed(playedSeconds);
             this.localTimePlayed = null;
         }
 
@@ -470,10 +470,8 @@ public class SkyPlayer extends SkyData {
     public void serializeAbilities(String var1) {
         if (var1 != null && !var1.isEmpty()) {
             String[] var2 = var1.split(";");
-            int var4 = var2.length;
 
-            for(int var5 = 0; var5 < var4; ++var5) {
-                String var6 = var2[var5];
+            for (String var6 : var2) {
                 String[] var7 = var6.split(",");
                 Ability var8 = AbilityManager.getAbility(var7[0]);
                 AbilityLevel var9 = null;
@@ -502,7 +500,7 @@ public class SkyPlayer extends SkyData {
             }
         }
 
-        if (var1 != null && var1.toString().endsWith(";")) {
+        if (var1.toString().endsWith(";")) {
             var1.substring(0, var1.length() - 1);
         }
 

@@ -18,58 +18,56 @@ import org.bukkit.block.Chest;
 @Setter
 @Getter
 public class ArenaEvent {
-   private EventType event;
-   private String argument;
-   private int seconds;
-   private String title;
-   private boolean executed = false;
+    private EventType event;
+    private String argument;
+    private int seconds;
+    private String title;
+    private boolean executed = false;
 
-   public ArenaEvent(EventType var1, String var2, int var3, String var4) {
-      this.event = var1;
-      this.argument = var2;
-      this.seconds = var3;
-      this.title = var4;
-   }
+    public ArenaEvent(EventType var1, String var2, int var3, String var4) {
+        this.event = var1;
+        this.argument = var2;
+        this.seconds = var3;
+        this.title = var4;
+    }
 
-    public void playEvent(Arena var1) {
-      if (this.event == EventType.REFILL) {
-         ChestType var2 = ChestTypeManager.getChestType(this.argument == null ? var1.getChest() : (this.argument.equalsIgnoreCase("selected") ? var1.getChest() : this.argument));
-         Iterator var3 = var1.getChestFilled().iterator();
+    public void playEvent(Arena arena) {
+        if (this.event == EventType.REFILL) {
+            ChestType chestType = ChestTypeManager.getChestType(this.argument == null ? arena.getChest() : (this.argument.equalsIgnoreCase("selected") ? arena.getChest() : this.argument));
+            Iterator<?> iterator = arena.getChestFilled().iterator();
 
-         while(var3.hasNext()) {
-            Location var4 = (Location)var3.next();
-            Block var5 = var4.getBlock();
-            if (var5.getState() instanceof Chest var6) {
-                var2.fillChest(var6.getInventory());
+            while(iterator.hasNext()) {
+                Location location = (Location)iterator.next();
+                Block block = location.getBlock();
+                if (block.getState() instanceof Chest chest) {
+                    chestType.fillChest(chest.getInventory());
+                }
             }
-         }
 
-         var3 = var1.getAlivePlayer().iterator();
+            iterator = arena.getAlivePlayer().iterator();
 
-         while(var3.hasNext()) {
-            SkyPlayer var7 = (SkyPlayer)var3.next();
-            var7.sendMessage(SkyWars.getMessage(Messages.GAME_EVENT_REFILL));
-            if (SkyWars.is18orHigher()) {
-               Title var8 = new Title(SkyWars.getMessage(Messages.GAME_EVENT_REFILL), 20, 80, 20);
-               var8.send(var7.getPlayer());
+            while(iterator.hasNext()) {
+                SkyPlayer skyPlayer = (SkyPlayer)iterator.next();
+                skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_EVENT_REFILL));
+                Title title = new Title(SkyWars.getMessage(Messages.GAME_EVENT_REFILL), 20, 80, 20);
+                title.send(skyPlayer.getPlayer());
             }
-         }
-      }
+        }
 
-      this.executed = true;
-   }
+        this.executed = true;
+    }
 
-   public String getTime() {
-      int var1 = this.seconds / 3600;
-      int var2 = this.seconds % 3600 / 60;
-      int var3 = this.seconds % 60;
-      String var4;
-      if (var1 >= 1) {
-         var4 = String.format("%02d:%02d:%02d", var1, var2, var3);
-      } else {
-         var4 = String.format("%02d:%02d", var2, var3);
-      }
+    public String getTime() {
+        int var1 = this.seconds / 3600;
+        int var2 = this.seconds % 3600 / 60;
+        int var3 = this.seconds % 60;
+        String var4;
+        if (var1 >= 1) {
+            var4 = String.format("%02d:%02d:%02d", var1, var2, var3);
+        } else {
+            var4 = String.format("%02d:%02d", var2, var3);
+        }
 
-      return var4;
-   }
+        return var4;
+    }
 }

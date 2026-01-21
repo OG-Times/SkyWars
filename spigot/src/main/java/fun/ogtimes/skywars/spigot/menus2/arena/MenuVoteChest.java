@@ -35,7 +35,7 @@ public class MenuVoteChest extends Menu {
 
           for (ChestType var7 : var4) {
               if (var1.getCurrentItem().getType() == var7.getItem() && var1.getSlot() == var7.getSlot()) {
-                  if (!var2.hasPermissions("skywars.vote.chest." + var7.getName())) {
+                  if (!var2.hasPermission("skywars.vote.chest." + var7.getName())) {
                       var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_CHEST));
                       this.getPlayer().closeInventory();
                       return;

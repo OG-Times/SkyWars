@@ -32,7 +32,7 @@ public class MenuSettingsBoxes extends Menu {
 
           for (Box var6 : var3) {
               if (var1.getCurrentItem().isSimilar(var6.getItemBuilder().build())) {
-                  if (!var6.getSection().equals(SkyWars.boxes.getString("default")) && !var2.hasPermissions("skywars.settings.colour." + var6.getSection())) {
+                  if (!var6.getSection().equals(SkyWars.boxes.getString("default")) && !var2.hasPermission("skywars.settings.colour." + var6.getSection())) {
                       var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_COLOUR));
                       return;
                   }

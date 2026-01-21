@@ -352,49 +352,49 @@ public class ArenaListener implements Listener {
         var1.setMaxTimeCountdown(var1.getMaxTimeCountdown() - 1);
     }
 
-    private void countStart(Arena var1) {
-        int var2 = var1.getStartCountdown();
+    private void countStart(Arena arena) {
+        int countdown = arena.getStartCountdown();
 
-        for (SkyPlayer var4 : var1.getPlayers()) {
-            if (var2 >= 0) {
-                Player var5 = var4.getPlayer();
-                if (var5 != null) {
-                    var5.setLevel(var2);
+        for (SkyPlayer skyPlayer : arena.getPlayers()) {
+            if (countdown >= 0) {
+                Player player = skyPlayer.getPlayer();
+                if (player != null) {
+                    player.setLevel(countdown);
                 }
             }
         }
 
-        if (var1.getStartingCounts().contains(var2)) {
-            if (var2 >= 60) {
-                int var6 = var2 % 3600 / 60;
-                int var7 = var2 % 60;
-                if (var7 == 0) {
-                    var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_MINUTES), var6));
+        if (arena.getStartingCounts().contains(countdown)) {
+            if (countdown >= 60) {
+                int minutes = countdown % 3600 / 60;
+                int seconds = countdown % 60;
+                if (seconds == 0) {
+                    arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_MINUTES), minutes));
                 } else {
-                    var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_MINUTES_SECONDS), var6, var7));
+                    arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_MINUTES_SECONDS), minutes, seconds));
                 }
             } else {
-                var1.getPlayers().forEach((var1x) -> {
-                    Player var2x = var1x.getPlayer();
-                    if (var2x != null) {
-                        var2x.playSound(var2x.getLocation(), Sound.valueOf("CLICK"), 1.0F, 1.0F);
+                arena.getPlayers().forEach((skyPlayer) -> {
+                    Player player = skyPlayer.getPlayer();
+                    if (player != null) {
+                        player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1.0F, 1.0F);
 
-                        if (var2 <= 5 && SkyWars.is18orHigher()) {
-                            Title title = new Title(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_ALERT), var2), 0, 25, 0);
-                            title.send(var2x);
+                        if (countdown <= 5) {
+                            Title title = new Title(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_ALERT), countdown), 0, 25, 0);
+                            title.send(player);
                         }
 
                     }
                 });
-                if (var2 == 1) {
-                    var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_ONE), var2));
+                if (countdown == 1) {
+                    arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN_ONE), countdown));
                 } else {
-                    var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN), var2));
+                    arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_COUNTDOWN), countdown));
                 }
             }
         }
 
-        var1.setStartCountdown(var2 - 1);
+        arena.setStartCountdown(countdown - 1);
     }
 
     private void countEnd(Arena var1) {

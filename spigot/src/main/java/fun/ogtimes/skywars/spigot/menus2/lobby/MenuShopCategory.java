@@ -46,7 +46,7 @@ public class MenuShopCategory extends Menu {
                      }
 
                      if (!var3.hasKit(var7)) {
-                         if (SkyWars.getPlugin().getConfig().getBoolean("kit_permission") && !var3.hasPermissions("skywars.kit." + var7.getName().toLowerCase())) {
+                         if (SkyWars.getPlugin().getConfig().getBoolean("kit_permission") && !var3.hasPermission("skywars.kit." + var7.getName().toLowerCase())) {
                              var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_KIT));
                              return;
                          }

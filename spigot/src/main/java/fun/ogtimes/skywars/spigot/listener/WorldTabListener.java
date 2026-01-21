@@ -16,58 +16,58 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class WorldTabListener implements Listener {
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent event) {
-        if (SkyWars.is18orHigher() && SkyWars.isMultiArenaMode()) {
-            Player eventPlayer = event.getPlayer();
-            World worldTo = eventPlayer.getWorld();
-            World worldFrom = event.getFrom();
-            SkyPlayer skyPlayer = SkyWars.getSkyPlayer(eventPlayer);
+        if (!SkyWars.isMultiArenaMode()) return;
 
-            Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
-                if (skyPlayer != null && skyPlayer.isInArena()) {
-                    Arena arena = skyPlayer.getArena();
+        Player eventPlayer = event.getPlayer();
+        World worldTo = eventPlayer.getWorld();
+        World worldFrom = event.getFrom();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(eventPlayer);
 
-                    for (SkyPlayer alivePlayer : arena.getAlivePlayer()) {
-                        if (alivePlayer != skyPlayer) {
-                            alivePlayer.getPlayer().hidePlayer(eventPlayer);
-                            eventPlayer.hidePlayer(alivePlayer.getPlayer());
-                        }
-                    }
+        Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
+            if (skyPlayer != null && skyPlayer.isInArena()) {
+                Arena arena = skyPlayer.getArena();
 
-                    Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
-
-                        for (SkyPlayer skyAlivePlayer : arena.getAlivePlayer()) {
-                            if (skyAlivePlayer != skyPlayer) {
-                                skyAlivePlayer.getPlayer().showPlayer(eventPlayer);
-                                eventPlayer.showPlayer(skyAlivePlayer.getPlayer());
-                            }
-                        }
-
-                    }, 20L);
-                } else {
-
-                    for (Player player : worldTo.getPlayers()) {
-                        if (player != eventPlayer) {
-                            player.showPlayer(eventPlayer);
-                            eventPlayer.showPlayer(player);
-                        }
+                for (SkyPlayer alivePlayer : arena.getAlivePlayer()) {
+                    if (alivePlayer != skyPlayer) {
+                        alivePlayer.getPlayer().hidePlayer(eventPlayer);
+                        eventPlayer.hidePlayer(alivePlayer.getPlayer());
                     }
                 }
 
-            }, 20L);
+                Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
 
-            for (Player player : worldFrom.getPlayers()) {
-                if (player != eventPlayer) {
-                    if (!ConfigManager.main.getBoolean("options.perWorldTabBypass")) {
+                    for (SkyPlayer skyAlivePlayer : arena.getAlivePlayer()) {
+                        if (skyAlivePlayer != skyPlayer) {
+                            skyAlivePlayer.getPlayer().showPlayer(eventPlayer);
+                            eventPlayer.showPlayer(skyAlivePlayer.getPlayer());
+                        }
+                    }
+
+                }, 20L);
+            } else {
+
+                for (Player player : worldTo.getPlayers()) {
+                    if (player != eventPlayer) {
+                        player.showPlayer(eventPlayer);
+                        eventPlayer.showPlayer(player);
+                    }
+                }
+            }
+
+        }, 20L);
+
+        for (Player player : worldFrom.getPlayers()) {
+            if (player != eventPlayer) {
+                if (!ConfigManager.main.getBoolean("options.perWorldTabBypass")) {
+                    player.hidePlayer(eventPlayer);
+                    eventPlayer.hidePlayer(player);
+                } else {
+                    if (!player.hasPermission("skywars.tab.bypass")) {
                         player.hidePlayer(eventPlayer);
-                        eventPlayer.hidePlayer(player);
-                    } else {
-                        if (!player.hasPermission("skywars.tab.bypass")) {
-                            player.hidePlayer(eventPlayer);
-                        }
+                    }
 
-                        if (!eventPlayer.hasPermission("skywars.tab.bypass")) {
-                            eventPlayer.hidePlayer(player);
-                        }
+                    if (!eventPlayer.hasPermission("skywars.tab.bypass")) {
+                        eventPlayer.hidePlayer(player);
                     }
                 }
             }
@@ -76,50 +76,50 @@ public class WorldTabListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent var1) {
-        Player var2;
-        if (SkyWars.is18orHigher() && SkyWars.isMultiArenaMode()) {
-            var2 = var1.getPlayer();
-            World var7 = var2.getWorld();
+    public void onJoin(PlayerJoinEvent event) {
+        Player player;
+        if (SkyWars.isMultiArenaMode()) {
+            player = event.getPlayer();
+            World world = player.getWorld();
 
-            for (Player var9 : Bukkit.getServer().getOnlinePlayers()) {
-                if (var9 != var2) {
-                    if (var9.getWorld() == var7) {
-                        var9.showPlayer(var2);
-                        var2.showPlayer(var9);
+            for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+                if (online != player) {
+                    if (online.getWorld() == world) {
+                        online.showPlayer(player);
+                        player.showPlayer(online);
                     } else if (!ConfigManager.main.getBoolean("options.perWorldTabBypass")) {
-                        var9.hidePlayer(var2);
-                        var2.hidePlayer(var9);
+                        online.hidePlayer(player);
+                        player.hidePlayer(online);
                     } else {
-                        if (!var9.hasPermission("skywars.tab.bypass")) {
-                            var9.hidePlayer(var2);
+                        if (!online.hasPermission("skywars.tab.bypass")) {
+                            online.hidePlayer(player);
                         }
 
-                        if (!var2.hasPermission("skywars.tab.bypass")) {
-                            var2.hidePlayer(var9);
+                        if (!player.hasPermission("skywars.tab.bypass")) {
+                            player.hidePlayer(online);
                         }
                     }
                 }
             }
-        } else if (SkyWars.is18orHigher() && SkyWars.isProxyMode()) {
-            var2 = var1.getPlayer();
-            SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-            if (var3 != null && var3.isInArena()) {
-                Arena var4 = var3.getArena();
+        } else if (SkyWars.isProxyMode()) {
+            player = event.getPlayer();
+            SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+            if (skyPlayer != null && skyPlayer.isInArena()) {
+                Arena arena = skyPlayer.getArena();
 
-                for (SkyPlayer var6 : var4.getAlivePlayer()) {
-                    if (var6 != var3) {
-                        var6.getPlayer().hidePlayer(var2);
-                        var2.hidePlayer(var6.getPlayer());
+                for (SkyPlayer alivePlayer : arena.getAlivePlayer()) {
+                    if (alivePlayer != skyPlayer) {
+                        alivePlayer.getPlayer().hidePlayer(player);
+                        player.hidePlayer(alivePlayer.getPlayer());
                     }
                 }
 
                 Bukkit.getScheduler().runTaskLater(SkyWars.getPlugin(), () -> {
 
-                    for (SkyPlayer var4x : var4.getAlivePlayer()) {
-                        if (var4x != var3) {
-                            var4x.getPlayer().showPlayer(var2);
-                            var2.showPlayer(var4x.getPlayer());
+                    for (SkyPlayer alivePlayer : arena.getAlivePlayer()) {
+                        if (alivePlayer != skyPlayer) {
+                            alivePlayer.getPlayer().showPlayer(player);
+                            player.showPlayer(alivePlayer.getPlayer());
                         }
                     }
 

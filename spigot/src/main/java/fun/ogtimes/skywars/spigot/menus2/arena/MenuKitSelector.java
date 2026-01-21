@@ -44,7 +44,7 @@ public class MenuKitSelector extends Menu {
          if (var3 == null) {
             Console.debugWarn("MenuKitSelect.onClick - " + this.getPlayer().getName() + " has selected a NULL Kit");
          } else if (var3.isFree()) {
-            if (ConfigManager.main.getBoolean("kit_permission") && !var2.hasPermissions("skywars.kit." + var3.getName().toLowerCase())) {
+            if (ConfigManager.main.getBoolean("kit_permission") && !var2.hasPermission("skywars.kit." + var3.getName().toLowerCase())) {
                var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_KIT));
             } else {
                var2.setKit(var3);
@@ -53,7 +53,7 @@ public class MenuKitSelector extends Menu {
             }
          } else if (!var2.hasKit(var3)) {
             if (ConfigManager.shop.getBoolean("shopingame")) {
-               if (SkyWars.getPlugin().getConfig().getBoolean("kit_permission") && !var2.hasPermissions("skywars.kit." + var3.getName().toLowerCase())) {
+               if (SkyWars.getPlugin().getConfig().getBoolean("kit_permission") && !var2.hasPermission("skywars.kit." + var3.getName().toLowerCase())) {
                   var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_KIT));
                } else if (var3.isFree()) {
                   var2.setKit(var3);

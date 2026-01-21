@@ -43,7 +43,7 @@ public class MenuSettingsTrails extends Menu {
       }
 
       if (var2.isSimilar(this.slime.build())) {
-         if (!var3.hasPermissions("skywars.settings.trail.slime")) {
+         if (!var3.hasPermission("skywars.settings.trail.slime")) {
             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_TRAIL));
             this.getPlayer().closeInventory();
             return;
@@ -55,7 +55,7 @@ public class MenuSettingsTrails extends Menu {
       }
 
       if (var2.isSimilar(this.flame.build())) {
-         if (!var3.hasPermissions("skywars.settings.trail.flame")) {
+         if (!var3.hasPermission("skywars.settings.trail.flame")) {
             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_TRAIL));
             this.getPlayer().closeInventory();
             return;
@@ -67,7 +67,7 @@ public class MenuSettingsTrails extends Menu {
       }
 
       if (var2.isSimilar(this.water.build())) {
-         if (!var3.hasPermissions("skywars.settings.trail.water")) {
+         if (!var3.hasPermission("skywars.settings.trail.water")) {
             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_TRAIL));
             this.getPlayer().closeInventory();
             return;
@@ -79,7 +79,7 @@ public class MenuSettingsTrails extends Menu {
       }
 
       if (var2.isSimilar(this.lava.build())) {
-         if (!var3.hasPermissions("skywars.settings.trail.lava")) {
+         if (!var3.hasPermission("skywars.settings.trail.lava")) {
             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_TRAIL));
             this.getPlayer().closeInventory();
             return;
@@ -91,7 +91,7 @@ public class MenuSettingsTrails extends Menu {
       }
 
       if (var2.isSimilar(this.potion.build())) {
-         if (!var3.hasPermissions("skywars.settings.trail.potion")) {
+         if (!var3.hasPermission("skywars.settings.trail.potion")) {
             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_TRAIL));
             this.getPlayer().closeInventory();
             return;
@@ -103,7 +103,7 @@ public class MenuSettingsTrails extends Menu {
       }
 
       if (var2.isSimilar(this.notes.build())) {
-         if (!var3.hasPermissions("skywars.settings.trail.notes")) {
+         if (!var3.hasPermission("skywars.settings.trail.notes")) {
             var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_TRAIL));
             this.getPlayer().closeInventory();
             return;

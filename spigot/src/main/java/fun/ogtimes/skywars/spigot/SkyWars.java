@@ -236,10 +236,6 @@ public class SkyWars extends JavaPlugin implements Listener {
         return ConfigManager.main.getBoolean("mode.bungeerandom");
     }
 
-    public static boolean is18orHigher() {
-        return true;
-    }
-
     public static boolean isDebug() {
         return ConfigManager.main.getBoolean("debug");
     }

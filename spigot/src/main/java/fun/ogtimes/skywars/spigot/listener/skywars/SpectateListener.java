@@ -13,54 +13,40 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class SpectateListener implements Listener {
-   @EventHandler
-   public void onSkyPlayerSpectator(SkyPlayerSpectatorEvent var1) {
-      SkyPlayer var2 = var1.getPlayer();
-      Arena var3 = var1.getGame();
-      if (!var1.isLeaveReason() && var1.getSpectate()) {
-         if (var1.getSpectate() && var1.isDeathReason()) {
-            if (ConfigManager.main.getBoolean("options.disableSpectatorMode-Death")) {
-               if (SkyWars.isProxyMode()) {
-                  var3.removePlayer(var2, ArenaLeaveCause.SPECTATOR_DISABLED_ON_DEATH);
-                  ProxyUtils.teleToServer(var2.getPlayer(), SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
-               } else {
-                  var3.removePlayer(var2, ArenaLeaveCause.SPECTATOR_DISABLED_ON_DEATH);
-               }
+    @EventHandler
+    public void onSkyPlayerSpectator(SkyPlayerSpectatorEvent event) {
+        SkyPlayer player = event.getPlayer();
+        Arena arena = event.getGame();
+        if (!event.isLeaveReason() && event.getSpectate()) {
+            if (event.getSpectate() && event.isDeathReason()) {
+                if (ConfigManager.main.getBoolean("options.disableSpectatorMode-Death")) {
+                    if (SkyWars.isProxyMode()) {
+                        arena.removePlayer(player, ArenaLeaveCause.SPECTATOR_DISABLED_ON_DEATH);
+                        ProxyUtils.teleToServer(player.getPlayer(), SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
+                    } else {
+                        arena.removePlayer(player, ArenaLeaveCause.SPECTATOR_DISABLED_ON_DEATH);
+                    }
 
-               return;
+                    return;
+                }
+
+                if (player.getPlayer().getGameMode() != GameMode.SPECTATOR) {
+                    player.getPlayer().setGameMode(GameMode.SPECTATOR);
+                }
             }
 
-            if (SkyWars.is18orHigher()) {
-               if (var2.getPlayer().getGameMode() != GameMode.SPECTATOR) {
-                  var2.getPlayer().setGameMode(GameMode.SPECTATOR);
-               }
-            } else if (SkyWars.isProxyMode()) {
-               var3.removePlayer(var2, ArenaLeaveCause.SPECTATOR_IN_LOWER_VERSION);
-               ProxyUtils.teleToServer(var2.getPlayer(), SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
-            } else {
-               var3.removePlayer(var2, ArenaLeaveCause.SPECTATOR_IN_LOWER_VERSION);
+            if (event.getSpectate() && event.isJoinReason()) {
+                if (player.getPlayer().getGameMode() != GameMode.SPECTATOR) {
+                    player.getPlayer().setGameMode(GameMode.SPECTATOR);
+                    player.sendMessage(SkyWars.getMessage(Messages.PLAYER_DEATH));
+                }
             }
-         }
 
-         if (var1.getSpectate() && var1.isJoinReason()) {
-            if (SkyWars.is18orHigher()) {
-               if (var2.getPlayer().getGameMode() != GameMode.SPECTATOR) {
-                  var2.getPlayer().setGameMode(GameMode.SPECTATOR);
-                  var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_DEATH));
-               }
-            } else if (SkyWars.isProxyMode()) {
-               var3.removePlayer(var2, ArenaLeaveCause.SPECTATOR_JOIN_IN_LOWER_VERSION);
-               ProxyUtils.teleToServer(var2.getPlayer(), SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
-            } else {
-               var3.removePlayer(var2, ArenaLeaveCause.SPECTATOR_JOIN_IN_LOWER_VERSION);
+        } else {
+            if (player.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+                player.getPlayer().setGameMode(GameMode.SURVIVAL);
             }
-         }
 
-      } else {
-         if (var2.getPlayer().getGameMode() != GameMode.SURVIVAL) {
-            var2.getPlayer().setGameMode(GameMode.SURVIVAL);
-         }
-
-      }
-   }
+        }
+    }
 }

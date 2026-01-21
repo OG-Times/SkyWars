@@ -7,32 +7,30 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+@Getter
 public class SkyPlayerDeathEvent extends Event {
-   private static final HandlerList handlers = new HandlerList();
-   @Getter
-   private final SkyPlayer player;
-   @Getter
-   private final SkyPlayer killer;
-   @Getter
-   private final Arena game;
-   private final PlayerDeathEvent originalEvent;
+    private static final HandlerList handlers = new HandlerList();
+    private final SkyPlayer player;
+    private final SkyPlayer killer;
+    private final Arena game;
+    private final PlayerDeathEvent originalEvent;
 
-   public SkyPlayerDeathEvent(SkyPlayer var1, SkyPlayer var2, Arena var3, PlayerDeathEvent var4) {
-      this.player = var1;
-      this.killer = var2;
-      this.game = var3;
-      this.originalEvent = var4;
-   }
+    public SkyPlayerDeathEvent(SkyPlayer player, SkyPlayer killer, Arena game, PlayerDeathEvent originalEvent) {
+        this.player = player;
+        this.killer = killer;
+        this.game = game;
+        this.originalEvent = originalEvent;
+    }
 
     public PlayerDeathEvent getDeathEvent() {
-      return this.originalEvent;
-   }
+        return this.originalEvent;
+    }
 
-   public HandlerList getHandlers() {
-      return handlers;
-   }
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-   public static HandlerList getHandlerList() {
-      return handlers;
-   }
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

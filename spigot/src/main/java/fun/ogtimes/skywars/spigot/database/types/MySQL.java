@@ -236,13 +236,13 @@ public class MySQL extends DataSource {
 
     }
 
-    public void loadPlayerData(SkyPlayer var1) {
+    public void loadPlayerData(SkyPlayer skyPlayer) {
         try {
             Connection var2 = this.getConnection();
             Throwable var3 = null;
 
             try {
-                this.loadPlayerData(var2, var1);
+                this.loadPlayerData(var2, skyPlayer);
             } catch (Throwable var13) {
                 var3 = var13;
                 throw var13;
@@ -266,13 +266,13 @@ public class MySQL extends DataSource {
 
     }
 
-    public void uploadPlayerData(SkyPlayer var1) {
+    public void uploadPlayerData(SkyPlayer skyPlayer) {
         try {
             Connection var2 = this.getConnection();
             Throwable var3 = null;
 
             try {
-                this.uploadPlayerData(var2, var1);
+                this.uploadPlayerData(var2, skyPlayer);
             } catch (Throwable var13) {
                 var3 = var13;
                 throw var13;
@@ -296,14 +296,14 @@ public class MySQL extends DataSource {
 
     }
 
-    public double getCoins(SkyPlayer var1) {
+    public double getCoins(SkyPlayer skyPlayer) {
         try {
             Connection var2 = this.getConnection();
             Throwable var3 = null;
 
             double var4;
             try {
-                var4 = this.getCoins(var2, var1);
+                var4 = this.getCoins(var2, skyPlayer);
             } catch (Throwable var15) {
                 var3 = var15;
                 throw var15;
@@ -329,13 +329,13 @@ public class MySQL extends DataSource {
         }
     }
 
-    public void modifyCoins(SkyPlayer var1, double var2) {
+    public void modifyCoins(SkyPlayer skyPlayer, double modifier) {
         try {
             Connection var4 = this.getConnection();
             Throwable var5 = null;
 
             try {
-                this.modifyCoins(var4, var1, var2);
+                this.modifyCoins(var4, skyPlayer, modifier);
             } catch (Throwable var15) {
                 var5 = var15;
                 throw var15;
@@ -447,7 +447,7 @@ public class MySQL extends DataSource {
 
     }
 
-    public void setServerData(Arena var1) {
+    public void setServerData(Arena arena) {
         PreparedStatement var2 = null;
 
         try {
@@ -456,11 +456,11 @@ public class MySQL extends DataSource {
 
             try {
                 var2 = var3.prepareStatement(String.format("UPDATE %s SET players=?, max_players=?, map=?, loading=?, state=? WHERE bungeeid=?", this.TABLE_SERVER));
-                var2.setInt(1, var1.getAlivePlayers());
-                var2.setInt(2, var1.getMaxPlayers());
-                var2.setString(3, var1.getDisplayName());
-                var2.setInt(4, var1.isLoading() ? 1 : 0);
-                var2.setString(5, var1.getState().toString());
+                var2.setInt(1, arena.getAlivePlayers());
+                var2.setInt(2, arena.getMaxPlayers());
+                var2.setString(3, arena.getDisplayName());
+                var2.setInt(4, arena.isLoading() ? 1 : 0);
+                var2.setString(5, arena.getState().toString());
                 var2.setString(6, SkyServer.getProxyId());
                 var2.executeUpdate();
             } catch (Throwable var22) {

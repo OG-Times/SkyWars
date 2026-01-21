@@ -32,7 +32,7 @@ public class MenuVoteTime extends Menu {
       if (var3.isInArena()) {
          Arena var4 = var3.getArena();
          if (var2.getType() == Material.STAINED_CLAY && var2.getDurability() == 4) {
-            if (!var3.hasPermissions("skywars.vote.time.day")) {
+            if (!var3.hasPermission("skywars.vote.time.day")) {
                var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
                this.getPlayer().closeInventory();
                return;
@@ -53,7 +53,7 @@ public class MenuVoteTime extends Menu {
          }
 
          if (var2.getType() == Material.STAINED_CLAY && var2.getDurability() == 15) {
-            if (!var3.hasPermissions("skywars.vote.time.night")) {
+            if (!var3.hasPermission("skywars.vote.time.night")) {
                var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
                this.getPlayer().closeInventory();
                return;
@@ -74,7 +74,7 @@ public class MenuVoteTime extends Menu {
          }
 
          if (var2.getType() == Material.STAINED_CLAY && var2.getDurability() == 14) {
-            if (!var3.hasPermissions("skywars.vote.time.sunset")) {
+            if (!var3.hasPermission("skywars.vote.time.sunset")) {
                var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
                this.getPlayer().closeInventory();
                return;
