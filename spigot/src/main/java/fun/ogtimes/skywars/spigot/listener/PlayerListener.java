@@ -11,19 +11,15 @@ import fun.ogtimes.skywars.spigot.player.SkyPlayer;
 import fun.ogtimes.skywars.spigot.utils.ItemBuilder;
 import fun.ogtimes.skywars.spigot.utils.Messages;
 import fun.ogtimes.skywars.spigot.utils.Utils;
-import java.util.Iterator;
-import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -35,290 +31,320 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
-   @EventHandler
-   public void onBlockBreak(BlockBreakEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onBlockBreak - null Player");
-      } else {
-         if (var3.isInArena()) {
-            Arena var4 = var3.getArena();
-            if (var3.isSpectating()) {
-               var1.setCancelled(true);
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onBlockBreak - null Player");
+            return;
+        }
+
+        if (skyPlayer.isInArena()) {
+            Arena arena = skyPlayer.getArena();
+            if (skyPlayer.isSpectating()) {
+                event.setCancelled(true);
             }
 
-            if (var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING || var4.getState() == ArenaState.ENDING) {
-               var1.setCancelled(true);
+            if (arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING || arena.getState() == ArenaState.ENDING) {
+                event.setCancelled(true);
             }
 
-            if (var4.getState() == ArenaState.INGAME) {
-               Block var5 = var1.getBlock();
-               Location var6 = var5.getLocation();
-               if (var5.getState() instanceof Chest var7) {
-                   if (!var4.isFilled(var6) && !var4.getDontFill().contains(var6)) {
-                     Inventory var8 = var7.getInventory();
-                     ChestType var9 = ChestTypeManager.getChestType(var4.getChest());
-                     var9.fillChest(var8);
-                  }
+            if (arena.getState() == ArenaState.INGAME) {
+                Block block = event.getBlock();
+                Location location = block.getLocation();
+                if (block.getState() instanceof Chest chest) {
+                    if (!arena.isFilled(location) && !arena.getDontFill().contains(location)) {
+                        Inventory inventory = chest.getInventory();
+                        ChestType chestType = ChestTypeManager.getChestType(arena.getChest());
+                        chestType.fillChest(inventory);
+                    }
 
-                  var4.removeFilled(var6);
-               }
+                    arena.removeFilled(location);
+                }
             }
-         }
+        } else {
+            event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
+        }
+    }
 
-      }
-   }
+    @EventHandler
+    public void onChestOpen(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onChestOpen - null Player");
+            return;
+        }
 
-   @EventHandler
-   public void onChestOpen(PlayerInteractEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onChestOpen - null Player");
-      } else {
-         if (var1.getAction().equals(Action.RIGHT_CLICK_BLOCK) || var1.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            Block var4 = var1.getClickedBlock();
-            Location var5 = var4.getLocation();
-            if (var4.getState() instanceof Chest var7 && var3.isInArena()) {
-               Arena var6 = var3.getArena();
-                if (var6.getState() == ArenaState.INGAME && !var6.isFilled(var5) && !var6.getDontFill().contains(var5)) {
-                  var6.addFilled(var5);
-                  Inventory var8 = var7.getInventory();
-                  ChestType var9 = ChestTypeManager.getChestType(var6.getChest());
-                  var9.fillChest(var8);
-               }
+        if (!skyPlayer.isInArena()) {
+            event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
+        }
+
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+            Block block = event.getClickedBlock();
+            Location location = block.getLocation();
+            if (block.getState() instanceof Chest chest && skyPlayer.isInArena()) {
+                Arena arena = skyPlayer.getArena();
+                if (arena.getState() == ArenaState.INGAME && !arena.isFilled(location) && !arena.getDontFill().contains(location)) {
+                    arena.addFilled(location);
+                    Inventory inventory = chest.getInventory();
+                    ChestType chestType = ChestTypeManager.getChestType(arena.getChest());
+                    chestType.fillChest(inventory);
+                }
             }
-         }
+        }
+    }
 
-      }
-   }
+    @EventHandler
+    private void onLeavesDecay(LeavesDecayEvent event) {
+        if (event.getBlock() == SkyWars.getSpawn().getWorld()) {
+            event.setCancelled(true);
+        }
+    }
 
-   @EventHandler
-   public void onPlaceBlock(BlockPlaceEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onPlaceBlock - null Player");
-      } else {
-         if (var3.isInArena()) {
-            if (var3.isSpectating()) {
-               var1.setCancelled(true);
+    @EventHandler
+    public void onBlockExplode(BlockExplodeEvent event) {
+        for (Block block : event.blockList()) {
+            if (block.getWorld() == SkyWars.getSpawn().getWorld()) {
+                event.setCancelled(true);
+                break;
             }
+        }
+    }
 
-            Arena var4 = var3.getArena();
-            if (var4.getState() == ArenaState.INGAME) {
-               Block var5 = var1.getBlock();
-               Location var6 = var5.getLocation();
-               if (var5.getState() instanceof Chest) {
-                  var4.getDontFill().add(var6);
-                  var4.removeFilled(var6);
-               }
-            }
-         }
+    @EventHandler
+    public void onPlaceBlock(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onPlaceBlock - null Player");
+            return;
+        }
 
-      }
-   }
-
-   @EventHandler
-   public void onHunger(FoodLevelChangeEvent var1) {
-      Player var2 = (Player)var1.getEntity();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onHunger - null Player");
-      } else {
-         if (var3.isInArena()) {
-            Arena var4 = var3.getArena();
-            if (var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING || var4.getState() == ArenaState.ENDING) {
-               var1.setCancelled(true);
+        if (skyPlayer.isInArena()) {
+            if (skyPlayer.isSpectating()) {
+                event.setCancelled(true);
             }
 
-            if (var3.isSpectating()) {
-               var1.setCancelled(true);
+            Arena arena = skyPlayer.getArena();
+            if (arena.getState() == ArenaState.INGAME) {
+                Block block = event.getBlock();
+                Location location = block.getLocation();
+                if (block.getState() instanceof Chest) {
+                    arena.getDontFill().add(location);
+                    arena.removeFilled(location);
+                }
             }
-         }
+        } else {
+            event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
+        }
 
-      }
-   }
+    }
 
-   @EventHandler
-   public void onMove(PlayerMoveEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onMove - null Player");
-      } else {
-         if (var3.isInArena() && !var2.isDead()) {
-            Arena var4 = var3.getArena();
-            if (var4 == null) {
-               return;
-            }
+    @EventHandler
+    public void onHunger(FoodLevelChangeEvent event) {
+        Player player = (Player)event.getEntity();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onHunger - null Player");
+            return;
+        }
 
-            if (var3.getPlayer().getWorld() == Bukkit.getWorlds().getFirst()) {
-               var3.teleport(var4.getSpawn());
-            }
-
-            if (var4.getState() != ArenaState.INGAME && var4.getState() != ArenaState.ENDING) {
-               if (var4.getArenaMode() == ArenaMode.TEAM) {
-                  if (var4.getState() == ArenaState.WAITING && (var2.getLocation().getY() <= 0.0D || !var2.getWorld().equals(var4.getTeamLobby().getWorld()))) {
-                     var3.teleport(var4.getTeamLobby());
-                  }
-
-                  if (var4.getState() == ArenaState.STARTING && var2.getWorld().equals(var4.getWorld()) && var2.getLocation().distanceSquared(var3.getArenaSpawn()) >= 2.0D) {
-                     var3.teleport(var3.getArenaSpawn());
-                  }
-
-                  return;
-               }
-
-               if (var2.getWorld().equals(var4.getWorld()) && var2.getLocation().distanceSquared(var3.getArenaSpawn()) >= 2.0D && (var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING)) {
-                  var3.teleport(var3.getArenaSpawn());
-               }
-            } else {
-               if (!var2.getWorld().equals(var4.getWorld())) {
-                  var3.teleport(var3.getArenaSpawn());
-               }
-
-               if (var2.getLocation().getY() <= 0.0D && (var3.isSpectating() || var4.getState() == ArenaState.ENDING)) {
-                  var3.teleport(var4.getSpawn());
-               }
-
-               if (var2.getLocation().getY() <= -6.0D) {
-                  if (DamageListener.lastDamage.containsKey(var2.getUniqueId())) {
-                     Player var5 = Bukkit.getPlayer(DamageListener.lastDamage.get(var2.getUniqueId()));
-                     var2.damage(1000.0D, var5);
-                  } else {
-                     var2.setHealth(0.0D);
-                  }
-
-                  var3.teleport(var4.getSpawn());
-               }
-            }
-         }
-
-      }
-   }
-
-   @EventHandler
-   public void onDrop(PlayerDropItemEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onDrop - null Player");
-      } else {
-         if (var3.isInArena()) {
-            Arena var4 = var3.getArena();
-            if (var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING) {
-               var1.setCancelled(true);
+        if (skyPlayer.isInArena()) {
+            Arena arena = skyPlayer.getArena();
+            if (arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING || arena.getState() == ArenaState.ENDING) {
+                event.setCancelled(true);
             }
 
-            if (var3.isSpectating()) {
-               var1.setCancelled(true);
+            if (skyPlayer.isSpectating()) {
+                event.setCancelled(true);
             }
-         } else if (ConfigManager.shop.getBoolean("item.enabled")) {
-            ItemStack var6 = var1.getItemDrop().getItemStack();
-            ItemBuilder var5 = Utils.readItem(ConfigManager.shop.getString("item.item"));
-            var5.setTitle(ConfigManager.shop.getString("item.name")).setLore(ConfigManager.shop.getStringList("item.lore"));
-            if (var6.isSimilar(var5.build())) {
-               var1.setCancelled(true);
-            }
-         }
+        }
+    }
 
-      }
-   }
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onMove - null Player");
+            return;
+        }
 
-   @EventHandler
-   public void onPickUp(PlayerPickupItemEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onPickUp - null Player");
-      } else {
-         if (var3.isInArena()) {
-            Arena var4 = var3.getArena();
-            if (var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING || var4.getState() == ArenaState.ENDING) {
-               var1.setCancelled(true);
+        if (skyPlayer.isInArena() && !player.isDead()) {
+            Arena arena = skyPlayer.getArena();
+            if (arena == null) {
+                return;
             }
 
-            if (var3.isSpectating()) {
-               var1.setCancelled(true);
+            if (skyPlayer.getPlayer().getWorld() == Bukkit.getWorlds().getFirst()) {
+                skyPlayer.teleport(arena.getSpawn());
             }
-         }
 
-      }
-   }
+            if (arena.getState() != ArenaState.INGAME && arena.getState() != ArenaState.ENDING) {
+                if (arena.getArenaMode() == ArenaMode.TEAM) {
+                    if (arena.getState() == ArenaState.WAITING && (player.getLocation().getY() <= 0.0D || !player.getWorld().equals(arena.getTeamLobby().getWorld()))) {
+                        skyPlayer.teleport(arena.getTeamLobby());
+                    }
 
-   @EventHandler
-   public void onAnimation(BlockDamageEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onAnimation - null Player");
-      } else {
-         if (var3.isInArena()) {
-            Arena var4 = var3.getArena();
-            if (var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING) {
-               var1.setCancelled(true);
+                    if (arena.getState() == ArenaState.STARTING && player.getWorld().equals(arena.getWorld()) && player.getLocation().distanceSquared(skyPlayer.getArenaSpawn()) >= 2.0D) {
+                        skyPlayer.teleport(skyPlayer.getArenaSpawn());
+                    }
+
+                    return;
+                }
+
+                if (player.getWorld().equals(arena.getWorld()) && player.getLocation().distanceSquared(skyPlayer.getArenaSpawn()) >= 2.0D && (arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING)) {
+                    skyPlayer.teleport(skyPlayer.getArenaSpawn());
+                }
+                return;
             }
-         }
 
-      }
-   }
-
-   @EventHandler
-   public void onChat(AsyncPlayerChatEvent var1) {
-      Player var2 = var1.getPlayer();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-      if (var3 == null) {
-         SkyWars.log("PlayerListener.onChat - null Player");
-      } else {
-         if (var3.isInArena()) {
-            Arena var4 = var3.getArena();
-            if ((var4.getState() == ArenaState.WAITING || var4.getState() == ArenaState.STARTING) && !var2.hasPermission("skywars.vip.talk")) {
-               var1.setCancelled(true);
-               var3.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_TALK));
+            if (!player.getWorld().equals(arena.getWorld())) {
+                skyPlayer.teleport(skyPlayer.getArenaSpawn());
             }
-         }
 
-         if (SkyWars.isMultiArenaMode() && !ConfigManager.main.getBoolean("options.disablePerWorldChat")) {
-
-             for (Player var5 : Bukkit.getServer().getOnlinePlayers()) {
-                 if (var5.getWorld() != var2.getWorld()) {
-                     var1.getRecipients().remove(var5);
-                 }
-             }
-         }
-
-      }
-   }
-
-   @EventHandler
-   public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-      Player player = event.getPlayer();
-      SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
-      if (skyPlayer != null) {
-         if (skyPlayer.isInArena()) {
-            String[] message = event.getMessage().split(" ");
-            message[0] = message[0].replace("/", "");
-            if (ConfigManager.main.getString("block.commands.mode").equalsIgnoreCase("blacklist")) {
-               if (ConfigManager.main.getStringList("block.commands.ingame").contains(message[0])) {
-                  skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
-                  event.setCancelled(true);
-               }
-
-            } else {
-               if (message[0].equalsIgnoreCase("salir") ||
-                       message[0].equalsIgnoreCase("leave") ||
-                       message[0].equalsIgnoreCase("playagain")
-               ) return;
-
-               if (!ConfigManager.main.getStringList("block.commands.ingame").contains(message[0])) {
-                  skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
-                  event.setCancelled(true);
-               }
+            if (player.getLocation().getY() <= 0.0D && (skyPlayer.isSpectating() || arena.getState() == ArenaState.ENDING)) {
+                skyPlayer.teleport(arena.getSpawn());
             }
-         }
 
-      }
-   }
+            if (player.getLocation().getY() <= -6.0D) {
+                if (DamageListener.lastDamage.containsKey(player.getUniqueId())) {
+                    Player lastDamager = Bukkit.getPlayer(DamageListener.lastDamage.get(player.getUniqueId()));
+                    player.damage(1000.0D, lastDamager);
+                } else {
+                    player.setHealth(0.0D);
+                }
+
+                skyPlayer.teleport(arena.getSpawn());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onDrop - null Player");
+            return;
+        }
+
+        if (skyPlayer.isInArena()) {
+            Arena arena = skyPlayer.getArena();
+            if (arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING) {
+                event.setCancelled(true);
+            }
+
+            if (skyPlayer.isSpectating()) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
+        if (ConfigManager.shop.getBoolean("item.enabled")) {
+            ItemStack droppedItem = event.getItemDrop().getItemStack();
+            ItemBuilder itemBuilder = Utils.readItem(ConfigManager.shop.getString("item.item"));
+            itemBuilder.setTitle(ConfigManager.shop.getString("item.name")).setLore(ConfigManager.shop.getStringList("item.lore"));
+            if (droppedItem.isSimilar(itemBuilder.build())) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPickUp(PlayerPickupItemEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onPickUp - null Player");
+            return;
+        }
+
+        if (skyPlayer.isInArena()) {
+            Arena arena = skyPlayer.getArena();
+            if (arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING || arena.getState() == ArenaState.ENDING) {
+                event.setCancelled(true);
+            }
+
+            if (skyPlayer.isSpectating()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onAnimation(BlockDamageEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onAnimation - null Player");
+            return;
+        }
+
+        if (skyPlayer.isInArena()) {
+            Arena arena = skyPlayer.getArena();
+            if (arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer == null) {
+            SkyWars.log("PlayerListener.onChat - null Player");
+            return;
+        }
+
+        if (skyPlayer.isInArena()) {
+            Arena arena = skyPlayer.getArena();
+            if ((arena.getState() == ArenaState.WAITING || arena.getState() == ArenaState.STARTING) && !player.hasPermission("skywars.vip.talk")) {
+                event.setCancelled(true);
+                skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_TALK));
+            }
+        }
+
+        if (SkyWars.isMultiArenaMode() && !ConfigManager.main.getBoolean("options.disablePerWorldChat")) {
+
+            for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+                if (online.getWorld() != player.getWorld()) {
+                    event.getRecipients().remove(online);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
+        if (skyPlayer != null) {
+            if (skyPlayer.isInArena()) {
+                String[] message = event.getMessage().split(" ");
+                message[0] = message[0].replace("/", "");
+                if (ConfigManager.main.getString("block.commands.mode").equalsIgnoreCase("blacklist")) {
+                    if (ConfigManager.main.getStringList("block.commands.ingame").contains(message[0])) {
+                        skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
+                        event.setCancelled(true);
+                    }
+
+                } else {
+                    if (message[0].equalsIgnoreCase("salir") ||
+                            message[0].equalsIgnoreCase("leave") ||
+                            message[0].equalsIgnoreCase("playagain")
+                    ) return;
+
+                    if (!ConfigManager.main.getStringList("block.commands.ingame").contains(message[0])) {
+                        skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_PLAYER_BLOCKEDCOMMANDS));
+                        event.setCancelled(true);
+                    }
+                }
+            }
+
+        }
+    }
 }
