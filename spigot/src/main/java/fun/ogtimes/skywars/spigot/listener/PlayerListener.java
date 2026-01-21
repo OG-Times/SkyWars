@@ -107,7 +107,6 @@ public class PlayerListener implements Listener {
     private void onFoodLevelChange(FoodLevelChangeEvent event) {
         if (event.getEntity().getWorld() == SkyWars.getSpawn().getWorld()) {
             event.setFoodLevel(20);
-            event.setCancelled(true);
         }
     }
 
