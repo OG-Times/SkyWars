@@ -62,6 +62,7 @@ public class Arena extends Game {
     private final List<String> selectedChest = new ArrayList<>();
     private final List<String> selectedTime = new ArrayList<>();
     private final List<Location> dontFill = new ArrayList<>();
+    private final List<Location> originalChestLocations = new ArrayList<>();
     private final List<BukkitRunnable> tickers = new ArrayList<>();
     private final List<Integer> startingCounts = new ArrayList<>();
     private final HashMap<Integer, ArenaTeam> teams = new HashMap<>();
@@ -802,6 +803,7 @@ public class Arena extends Game {
         this.selectedTime.clear();
         this.chestFilled.clear();
         this.dontFill.clear();
+        this.originalChestLocations.clear();
         this.events.clear();
         this.killStreak.clear();
         this.events.addAll(Arrays.asList(ArenaEventManager.getArenaEvents(this)));

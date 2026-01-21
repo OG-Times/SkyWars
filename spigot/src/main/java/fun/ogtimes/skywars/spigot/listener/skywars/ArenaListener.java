@@ -444,13 +444,13 @@ public class ArenaListener implements Listener {
         var1.setEndCountdown(var1.getEndCountdown() - 1);
     }
 
-    private void countEvents(Arena var1) {
-        if (!var1.getEvents().isEmpty() && var1.getConfig().getBoolean("options.events") && var1.getState() == ArenaState.INGAME) {
-            ArenaEvent var2 = var1.getEvents().getFirst();
-            var2.setSeconds(var2.getSeconds() - 1);
-            if (var2.getSeconds() <= 0) {
-                var2.playEvent(var1);
-                var1.getEvents().removeFirst();
+    private void countEvents(Arena arena) {
+        if (!arena.getEvents().isEmpty() && arena.getConfig().getBoolean("options.events") && arena.getState() == ArenaState.INGAME) {
+            ArenaEvent event = arena.getEvents().getFirst();
+            event.setSeconds(event.getSeconds() - 1);
+            if (event.getSeconds() <= 0) {
+                event.playEvent(arena);
+                arena.getEvents().removeFirst();
             }
 
         }

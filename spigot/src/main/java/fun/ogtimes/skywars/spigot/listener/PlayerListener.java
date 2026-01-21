@@ -60,6 +60,10 @@ public class PlayerListener implements Listener {
                         chestType.fillChest(inventory);
                     }
 
+                    if (!arena.getDontFill().contains(location) && !arena.getOriginalChestLocations().contains(location)) {
+                        arena.getOriginalChestLocations().add(location);
+                    }
+
                     arena.removeFilled(location);
                 }
             }
@@ -88,6 +92,9 @@ public class PlayerListener implements Listener {
                 Arena arena = skyPlayer.getArena();
                 if (arena.getState() == ArenaState.INGAME && !arena.isFilled(location) && !arena.getDontFill().contains(location)) {
                     arena.addFilled(location);
+                    if (!arena.getOriginalChestLocations().contains(location)) {
+                        arena.getOriginalChestLocations().add(location);
+                    }
                     Inventory inventory = chest.getInventory();
                     ChestType chestType = ChestTypeManager.getChestType(arena.getChest());
                     chestType.fillChest(inventory);
