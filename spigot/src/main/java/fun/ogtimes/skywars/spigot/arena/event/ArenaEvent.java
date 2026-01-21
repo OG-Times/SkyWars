@@ -34,20 +34,22 @@ public class ArenaEvent {
     public void playEvent(Arena arena) {
         if (this.event == EventType.REFILL) {
             ChestType chestType = ChestTypeManager.getChestType(this.argument == null ? arena.getChest() : (this.argument.equalsIgnoreCase("selected") ? arena.getChest() : this.argument));
-            Iterator<?> iterator = arena.getChestFilled().iterator();
 
-            while(iterator.hasNext()) {
-                Location location = (Location)iterator.next();
+            for (Location location : arena.getOriginalChestLocations()) {
                 Block block = location.getBlock();
+
+                if (!(block.getState() instanceof Chest)) {
+                    block.setType(org.bukkit.Material.CHEST);
+                }
+
                 if (block.getState() instanceof Chest chest) {
+                    chest.getInventory().clear();
                     chestType.fillChest(chest.getInventory());
+                    arena.addFilled(location);
                 }
             }
 
-            iterator = arena.getAlivePlayer().iterator();
-
-            while(iterator.hasNext()) {
-                SkyPlayer skyPlayer = (SkyPlayer)iterator.next();
+            for (SkyPlayer skyPlayer : arena.getAlivePlayer()) {
                 skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_EVENT_REFILL));
                 Title title = new Title(SkyWars.getMessage(Messages.GAME_EVENT_REFILL), 20, 80, 20);
                 title.send(skyPlayer.getPlayer());

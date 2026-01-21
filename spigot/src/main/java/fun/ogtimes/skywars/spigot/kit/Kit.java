@@ -24,8 +24,8 @@ public class Kit {
    @Getter
    private final int slot;
    private final List<String> item_lore = new ArrayList<>();
-    @Getter
-    private boolean free = false;
+   @Getter
+   private boolean free = false;
    private final ItemBuilder item;
    @Getter
    private final SkyConfiguration config;

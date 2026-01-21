@@ -22,86 +22,86 @@ import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
 public class WorldListener implements Listener {
-   @EventHandler
-   public void onWeather(WeatherChangeEvent var1) {
+    @EventHandler
+    public void onWeather(WeatherChangeEvent var1) {
 
-       for (Arena var3 : ArenaManager.getGames()) {
-           if (var3.getWorld() == var1.getWorld() && !SkyWars.getPlugin().getConfig().getBoolean("options.weather")) {
-               if (!var1.isCancelled()) {
-                   var1.setCancelled(var1.toWeatherState());
-               }
+        for (Arena var3 : ArenaManager.getGames()) {
+            if (var3.getWorld() == var1.getWorld() && !SkyWars.getPlugin().getConfig().getBoolean("options.weather")) {
+                if (!var1.isCancelled()) {
+                    var1.setCancelled(var1.toWeatherState());
+                }
 
-               if (var1.getWorld().hasStorm()) {
-                   var1.getWorld().setWeatherDuration(0);
-               }
-           }
-       }
-
-   }
-
-   @EventHandler
-   public void onWorldChange(PlayerChangedWorldEvent var1) {
-      Player var2 = var1.getPlayer();
-      if (SkyWars.isMultiArenaMode()) {
-         SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
-         if (var3 != null && var3.isSpectating()) {
-            Arena var4 = var3.getArena();
-            if (var4 != null) {
-               var4.removePlayer(var3, ArenaLeaveCause.WORLD_CHANGE);
+                if (var1.getWorld().hasStorm()) {
+                    var1.getWorld().setWeatherDuration(0);
+                }
             }
-         }
-      }
+        }
 
-      if ((SkyWars.isMultiArenaMode() || SkyWars.isLobbyMode()) && SkyWars.getSpawn().getWorld().getName().equals(var2.getWorld().getName()) && ConfigManager.shop.getBoolean("item.enabled")) {
-         ItemBuilder var5 = Utils.readItem(ConfigManager.shop.getString("item.item"));
-         var5.setTitle(ConfigManager.shop.getString("item.name")).setLore(ConfigManager.shop.getStringList("item.lore"));
-         var2.getInventory().setItem(ConfigManager.shop.getInt("item.inventorySlot"), var5.build());
-      }
+    }
 
-   }
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent var1) {
+        Player var2 = var1.getPlayer();
+        if (SkyWars.isMultiArenaMode()) {
+            SkyPlayer var3 = SkyWars.getSkyPlayer(var2);
+            if (var3 != null && var3.isSpectating()) {
+                Arena var4 = var3.getArena();
+                if (var4 != null) {
+                    var4.removePlayer(var3, ArenaLeaveCause.WORLD_CHANGE);
+                }
+            }
+        }
 
-   @EventHandler
-   public void onSaveWorld(WorldSaveEvent var1) {
-      Arena var2 = ArenaManager.getGame(var1.getWorld().getName());
-      if (var2 != null) {
-         if (!var2.isHardReset()) {
-            Console.debugWarn(var1.getWorld().getName() + " has forced to hard world reset (due to something is saving the world)");
-            var2.setHardReset(true);
-         }
-      }
-   }
+        if ((SkyWars.isMultiArenaMode() || SkyWars.isLobbyMode()) && SkyWars.getSpawn().getWorld().getName().equals(var2.getWorld().getName()) && ConfigManager.shop.getBoolean("item.enabled")) {
+            ItemBuilder var5 = Utils.readItem(ConfigManager.shop.getString("item.item"));
+            var5.setTitle(ConfigManager.shop.getString("item.name")).setLore(ConfigManager.shop.getStringList("item.lore"));
+            var2.getInventory().setItem(ConfigManager.shop.getInt("item.inventorySlot"), var5.build());
+        }
 
-   @EventHandler
-   public void onMobSpawn(CreatureSpawnEvent var1) {
-      Iterator var2 = ArenaManager.getGames().iterator();
+    }
 
-      while(true) {
-         Arena var3;
-         do {
-            if (!var2.hasNext()) {
-               return;
+    @EventHandler
+    public void onSaveWorld(WorldSaveEvent var1) {
+        Arena var2 = ArenaManager.getGame(var1.getWorld().getName());
+        if (var2 != null) {
+            if (!var2.isHardReset()) {
+                Console.debugWarn(var1.getWorld().getName() + " has forced to hard world reset (due to something is saving the world)");
+                var2.setHardReset(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onMobSpawn(CreatureSpawnEvent event) {
+        Iterator<Arena> arenas = ArenaManager.getGames().iterator();
+
+        while(true) {
+            Arena arena;
+            do {
+                if (!arenas.hasNext()) {
+                    return;
+                }
+
+                arena = arenas.next();
+            } while(arena.getWorld() != event.getLocation().getWorld());
+
+            if (event.getSpawnReason() == SpawnReason.EGG || event.getSpawnReason() == SpawnReason.DISPENSE_EGG) {
+                event.setCancelled(true);
             }
 
-            var3 = (Arena)var2.next();
-         } while(var3.getWorld() != var1.getLocation().getWorld());
+            if (!SkyWars.getPlugin().getConfig().getBoolean("options.creaturespawn")) {
+                event.setCancelled(true);
+            }
+        }
+    }
 
-         if (var1.getSpawnReason() == SpawnReason.EGG || var1.getSpawnReason() == SpawnReason.DISPENSE_EGG) {
-            var1.setCancelled(true);
-         }
+    @EventHandler(
+            priority = EventPriority.MONITOR
+    )
+    public void onWorldUnload(WorldUnloadEvent var1) {
+        if (var1.isCancelled() && ArenaManager.getGame(var1.getWorld().getName()) != null) {
+            var1.setCancelled(false);
+        }
 
-         if (!SkyWars.getPlugin().getConfig().getBoolean("options.creaturespawn")) {
-            var1.setCancelled(true);
-         }
-      }
-   }
-
-   @EventHandler(
-      priority = EventPriority.MONITOR
-   )
-   public void onWorldUnload(WorldUnloadEvent var1) {
-      if (var1.isCancelled() && ArenaManager.getGame(var1.getWorld().getName()) != null) {
-         var1.setCancelled(false);
-      }
-
-   }
+    }
 }

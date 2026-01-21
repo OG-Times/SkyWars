@@ -89,22 +89,22 @@ public class ChestType {
       return var2;
    }
 
-   public void fillChest(Inventory var1) {
-       this.fillChest(var1, var1.getHolder() instanceof DoubleChest);
+   public void fillChest(Inventory inventory) {
+       this.fillChest(inventory, inventory.getHolder() instanceof DoubleChest);
 
    }
 
-   private void fillChest(Inventory var1, boolean var2) {
-      var1.clear();
+   private void fillChest(Inventory inventory, boolean doubleChest) {
+      inventory.clear();
       if (!this.getItems().isEmpty()) {
-         int var3 = SkyWars.getPlugin().getConfig().getInt("max_items_types_chest");
+         int maxItemsTypesChest = SkyWars.getPlugin().getConfig().getInt("max_items_types_chest");
 
-         while(this.countItems(var1) < var3) {
+         while(this.countItems(inventory) < maxItemsTypesChest) {
             Collections.shuffle(this.getItems(), new Random());
 
-             for (RandomItem var5 : this.getItems()) {
-                 if (this.countItems(var1) < var3 && var5.hasChance()) {
-                     var1.setItem((new Random()).nextInt(var1.getSize()), var5.getItem().build());
+             for (RandomItem item : this.getItems()) {
+                 if (this.countItems(inventory) < maxItemsTypesChest && item.hasChance()) {
+                     inventory.setItem((new Random()).nextInt(inventory.getSize()), item.getItem().build());
                  }
              }
          }
