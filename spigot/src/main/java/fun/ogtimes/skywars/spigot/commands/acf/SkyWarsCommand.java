@@ -4,21 +4,23 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.arena.Arena;
+import fun.ogtimes.skywars.spigot.arena.ArenaManager;
 import fun.ogtimes.skywars.spigot.arena.ArenaState;
 import fun.ogtimes.skywars.spigot.arena.GameQueue;
 import fun.ogtimes.skywars.spigot.config.ConfigManager;
 import fun.ogtimes.skywars.spigot.events.enums.ArenaJoinCause;
 import fun.ogtimes.skywars.spigot.menus.MenuListener;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
-import fun.ogtimes.skywars.spigot.utils.Game;
-import fun.ogtimes.skywars.spigot.utils.LocationUtil;
-import fun.ogtimes.skywars.spigot.utils.Messages;
-import fun.ogtimes.skywars.spigot.utils.ProxyUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
+import fun.ogtimes.skywars.spigot.utils.*;
+import fun.ogtimes.skywars.spigot.utils.sky.SkyHologram;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -33,7 +35,7 @@ public class SkyWarsCommand extends BaseCommand {
     @Default
     @HelpCommand
     public void help(CommandSender sender) {
-
+        showCommandHelp();
     }
 
     @Subcommand("join")
@@ -140,6 +142,262 @@ public class SkyWarsCommand extends BaseCommand {
 
         player.teleport(world.getSpawnLocation());
         skyPlayer.sendMessage("&aTeleported to world &e" + world);
+    }
+
+    @Subcommand("arena")
+    @CommandPermission("skywars.admin.arena")
+    public static class ArenaCommand extends BaseCommand {
+
+        @Subcommand("load")
+        @CommandPermission("skywars.admin.arena.load")
+        @Syntax("<arena>")
+        @CommandCompletion("@arenas")
+        public void load(CommandSender sender, String worldName) {
+            File mapsFolder = new File(SkyWars.maps);
+
+            if (!mapsFolder.exists() || !mapsFolder.isDirectory()) {
+                sender.sendMessage("§cMaps folder not found.");
+                return;
+            }
+
+            File[] mapCandidates = mapsFolder.listFiles();
+            if (mapCandidates == null) {
+                sender.sendMessage("§cMaps folder is empty.");
+                return;
+            }
+
+            boolean loaded = false;
+            for (File candidate : mapCandidates) {
+                if (!candidate.isDirectory()) continue;
+                if (!candidate.getName().contains(worldName)) continue;
+
+                try {
+                    ArenaManager.delete(new File(candidate.getName()));
+                    ArenaManager.copyFolder(candidate, new File(candidate.getName()));
+
+                    WorldCreator creator = new WorldCreator(worldName);
+                    creator.generateStructures(false);
+
+                    World world = creator.createWorld();
+                    if (world != null) {
+                        world.setAutoSave(false);
+                        world.setKeepSpawnInMemory(false);
+                        world.setGameRuleValue("doMobSpawning", "false");
+                        world.setGameRuleValue("doDaylightCycle", "false");
+                        world.setGameRuleValue("mobGriefing", "false");
+                        world.setGameRuleValue("commandBlockOutput", "false");
+                        world.setTime(0L);
+                    }
+
+                    sender.sendMessage("§a" + worldName + " loaded");
+                    loaded = true;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            if (!loaded) {
+                sender.sendMessage("§cWorld not found in maps folder: " + worldName);
+            }
+        }
+
+        @Subcommand("create")
+        @CommandPermission("skywars.admin.arena.create")
+        public void create(CommandSender sender, String arenaName) {
+            Arena existingArena = ArenaManager.getGame(arenaName);
+            if (existingArena != null) {
+                sender.sendMessage("§cThis arena already exists!");
+                return;
+            }
+
+            new Arena(arenaName, true);
+            sender.sendMessage("§a" + arenaName + " has been created");
+        }
+
+        @Subcommand("disable")
+        @CommandPermission("skywars.admin.arena.disable")
+        @Syntax("<arena>")
+        @CommandCompletion("@arenas")
+        public void disable(CommandSender sender, Arena arena) {
+            if (arena.isDisabled()) {
+                sender.sendMessage("§cThe arena is already disabled");
+                return;
+            }
+
+            arena.setDisabled(true);
+            arena.restart();
+            sender.sendMessage("§a" + arena.getName() + " has been disabled and now you can edit it");
+        }
+
+        @Subcommand("reload")
+        @CommandPermission("skywars.admin.arena.reload")
+        @Syntax("<arena>")
+        @CommandCompletion("@arenas")
+        public void reload(CommandSender sender, Arena arena) {
+            arena.setDisabled(false);
+            arena.restart();
+            sender.sendMessage("§a" + arena.getName() + " has been reloaded" + (arena.isDisabled() ? " §aand now is enabled" : ""));
+        }
+
+        @Subcommand("save")
+        @CommandPermission("skywars.admin.arena.save")
+        @Syntax("<arena>")
+        @CommandCompletion("@arenas")
+        public void save(CommandSender sender, Arena arena) {
+            if (!arena.isDisabled()) {
+                sender.sendMessage("§cYou can't save an arena if it is not disabled");
+                return;
+            }
+
+            arena.getWorld().save();
+
+            String mapPath = SkyWars.maps + File.separator + arena.getName();
+            ZipDir.zipFile(mapPath);
+            sender.sendMessage("§aBackup created for " + arena.getName());
+
+            File mapFolder = new File(mapPath);
+            ArenaManager.delete(mapFolder);
+
+            try {
+                ArenaManager.copyFolder(new File(arena.getName()), mapFolder);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            sender.sendMessage("§a" + arena.getName() + " has been saved in maps folder");
+        }
+
+        @Subcommand("spawn")
+        @CommandPermission("skywars.admin.arena.create")
+        public static class SpawnCommand extends BaseCommand {
+
+            @Subcommand("add")
+            public void add(Player player) {
+                Arena arena = getArenaFromCurrentWorld(player);
+                if (arena == null) {
+                    player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
+                    return;
+                }
+
+                if (!arena.isDisabled()) {
+                    player.sendMessage("§cYou can't edit an arena if it is not disabled");
+                    return;
+                }
+
+                List<String> spawnpoints = new ArrayList<>(arena.getConfig().getStringList("spawnpoints"));
+                spawnpoints.add(LocationUtil.getString(player.getLocation(), true));
+                arena.getConfig().set("spawnpoints", spawnpoints);
+                arena.getConfig().save();
+                player.sendMessage("§aSpawn added (" + spawnpoints.size() + ")");
+            }
+
+            @Subcommand("remove")
+            public void remove(Player player, @Optional Integer index) {
+                Arena arena = getArenaFromCurrentWorld(player);
+                if (arena == null) {
+                    player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
+                    return;
+                }
+
+                if (!arena.isDisabled()) {
+                    player.sendMessage("§cYou can't edit an arena if it is not disabled");
+                    return;
+                }
+
+                List<String> spawnpoints = new ArrayList<>(arena.getConfig().getStringList("spawnpoints"));
+                if (spawnpoints.isEmpty()) {
+                    player.sendMessage("§cThis arena don't have spawn points");
+                    return;
+                }
+
+                int indexToRemove = index == null ? spawnpoints.size() : index;
+                if (indexToRemove < 1 || indexToRemove > spawnpoints.size()) {
+                    player.sendMessage("§cInvalid spawn index. Choose between 1 and " + spawnpoints.size() + ".");
+                    return;
+                }
+
+                spawnpoints.remove(indexToRemove - 1);
+                arena.getConfig().set("spawnpoints", spawnpoints);
+                arena.getConfig().save();
+                player.sendMessage("§aSpawn #" + indexToRemove + " removed");
+            }
+
+            @Subcommand("spectator|spect")
+            public void spectator(Player player, String arenaName) {
+                Arena arena = getArenaFromCurrentWorld(player);
+                if (arena == null) {
+                    player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
+                    return;
+                }
+
+                if (!arena.isDisabled()) {
+                    player.sendMessage("§cYou can't edit an arena if it is not disabled");
+                    return;
+                }
+
+                arena.getConfig().set("spectator_spawn", LocationUtil.getString(player.getLocation(), true));
+                arena.getConfig().save();
+                player.sendMessage("§aSpectator spawn set");
+            }
+
+            private Arena getArenaFromCurrentWorld(Player player) {
+                String currentWorldName = player.getWorld().getName();
+                return ArenaManager.getGame(currentWorldName);
+            }
+
+        }
+
+        @Subcommand("set")
+        @CommandPermission("skywars.admin.arena.set")
+        public static class SetCommand extends BaseCommand {
+
+            @Subcommand("max")
+            public void add(Player player, int maxPlayers) {
+                Arena arena = getArenaFromCurrentWorld(player);
+                if (arena == null) {
+                    player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
+                    return;
+                }
+
+                if (!arena.isDisabled()) {
+                    player.sendMessage("§cYou can't edit an arena if it is not disabled");
+                    return;
+                }
+
+                arena.getConfig().set("max_players", maxPlayers);
+                arena.getConfig().save();
+                player.sendMessage("§aMaximum players set to " + maxPlayers + " in " + arena.getName());
+            }
+
+            @Subcommand("min")
+            public void min(Player player, int minPlayers) {
+                Arena arena = getArenaFromCurrentWorld(player);
+                if (arena == null) {
+                    player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
+                    return;
+                }
+
+                if (!arena.isDisabled()) {
+                    player.sendMessage("§cYou can't edit an arena if it is not disabled");
+                    return;
+                }
+
+                if (minPlayers <= 1) {
+                    player.sendMessage("§cThere isn't recommended set minimum player to " + minPlayers + ", this could cause the game start after one player join the match (and if is alone will win)");
+                }
+
+                arena.getConfig().set("min_players", minPlayers);
+                arena.getConfig().save();
+                player.sendMessage("§aMinimun players set to " + minPlayers + " in " + arena.getName());
+            }
+
+            private Arena getArenaFromCurrentWorld(Player player) {
+                String currentWorldName = player.getWorld().getName();
+                return ArenaManager.getGame(currentWorldName);
+            }
+
+        }
+
     }
 
     @Subcommand("reload")
@@ -286,6 +544,67 @@ public class SkyWarsCommand extends BaseCommand {
     @Subcommand("hologram")
     @CommandPermission("skywars.admin.hologram")
     public static class HologramCommand extends BaseCommand {
+
+        @Subcommand("add")
+        @CommandPermission("skywars.admin.hologram.add")
+        public void add(Player player) {
+            List<String> locations = new ArrayList<>(ConfigManager.score.getStringList("hologram.locations"));
+            locations.add(LocationUtil.getString(player.getLocation(), true));
+
+            ConfigManager.score.set("hologram.locations", locations);
+            ConfigManager.score.save();
+
+            reloadHologramLocations();
+            recreateHologramsInWorld(player.getWorld().getName());
+
+            player.sendMessage("§aHologram added (" + locations.size() + ")");
+        }
+
+        @Subcommand("remove")
+        @CommandPermission("skywars.admin.hologram.remove")
+        @Syntax("<index>")
+        public void remove(Player player, @Optional Integer index) {
+            List<String> locations = new ArrayList<>(ConfigManager.score.getStringList("hologram.locations"));
+            if (locations.isEmpty()) {
+                player.sendMessage("§cThis server don't have hologram(s)");
+                return;
+            }
+
+            int indexToRemove = index == null ? locations.size(): index;
+
+            if (indexToRemove < 1 || indexToRemove > locations.size()) {
+                player.sendMessage("§cInvalid hologram index. Choose between 1 and " + locations.size() + ".");
+                return;
+            }
+
+            locations.remove(indexToRemove - 1);
+            ConfigManager.score.set("hologram.locations", locations);
+            ConfigManager.score.save();
+
+            reloadHologramLocations();
+            recreateHologramsInWorld(player.getWorld().getName());
+
+            player.sendMessage("§aHologram #" + indexToRemove + " was removed");
+        }
+
+        private void reloadHologramLocations() {
+            SkyWars.hologram.clear();
+            for (String serializedLocation : ConfigManager.score.getStringList("hologram.locations")) {
+                Location location = LocationUtil.getLocation(serializedLocation);
+                if (location != null) {
+                    SkyWars.hologram.add(location);
+                }
+            }
+        }
+
+        private void recreateHologramsInWorld(String worldName) {
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                if (online.getWorld() != null && online.getWorld().getName().equals(worldName)) {
+                    SkyPlayer skyPlayer = SkyWars.getSkyPlayer(online);
+                    SkyHologram.createHologram(skyPlayer);
+                }
+            }
+        }
 
     }
 

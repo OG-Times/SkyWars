@@ -23,6 +23,7 @@ public class CommandManager {
         this.instance = instance;
 
         this.manager = new BukkitCommandManager(instance);
+        this.manager.enableUnstableAPI("help");
 
         this.registerContexts();
         this.registerCompletions();
