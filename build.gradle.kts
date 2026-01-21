@@ -23,6 +23,7 @@ allprojects {
         maven("https://repo.lunarclient.dev")
         maven("https://jitpack.io")
         maven("https://repo.codemc.io/repository/maven-public/")
+        maven("https://repo.aikar.co/content/groups/aikar/")
     }
 }
 

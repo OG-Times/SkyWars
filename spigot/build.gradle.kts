@@ -14,6 +14,7 @@ dependencies {
     implementation("org.jetbrains:annotations:26.0.2-1")
     implementation("net.kyori:adventure-api:4.26.1")
     implementation("net.kyori:adventure-platform-bukkit:4.4.1")
+    implementation("co.aikar:acf-bukkit:0.5.1-SNAPSHOT")
 
     compileOnly("me.clip:placeholderapi:2.11.7")
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
@@ -23,5 +24,8 @@ dependencies {
 }
 
 tasks.shadowJar {
+    minimize()
+
     relocate("net.kyori", "fun.ogtimes.skywars.libs.kyori")
+    relocate("co.aikar", "fun.ogtimes.skywars.libs.aikar")
 }
