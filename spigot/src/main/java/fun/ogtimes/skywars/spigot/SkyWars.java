@@ -6,7 +6,7 @@ import fun.ogtimes.skywars.spigot.arena.ArenaManager;
 import fun.ogtimes.skywars.spigot.arena.ArenaState;
 import fun.ogtimes.skywars.spigot.arena.chest.ChestTypeManager;
 import fun.ogtimes.skywars.spigot.box.BoxManager;
-import fun.ogtimes.skywars.spigot.commands.CmdExecutor;
+import fun.ogtimes.skywars.spigot.commands.CommandManager;
 import fun.ogtimes.skywars.spigot.commands.user.CmdOthers;
 import fun.ogtimes.skywars.spigot.config.ConfigManager;
 import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
@@ -94,6 +94,7 @@ public class SkyWars extends JavaPlugin implements Listener {
 
     private Metrics metrics;
     private BukkitAudiences adventure;
+    private CommandManager commandManager;
 
     public static void reloadMessages() {
         CustomConfig customConfig = new CustomConfig(SkyWars.getPlugin());
@@ -503,8 +504,7 @@ public class SkyWars extends JavaPlugin implements Listener {
                     " &aHologram(s))");
         }
 
-        getCommand("sw").setExecutor(new CmdExecutor());
-        getCommand("sw").setTabCompleter(new CmdExecutor());
+        commandManager = new CommandManager(this);
 
         Bukkit.setSpawnRadius(0);
 
