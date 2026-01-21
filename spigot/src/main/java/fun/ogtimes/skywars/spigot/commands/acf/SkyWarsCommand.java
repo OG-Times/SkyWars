@@ -98,6 +98,7 @@ public class SkyWarsCommand extends BaseCommand {
     @Subcommand("forcestart")
     @CommandPermission("skywars.admin.forcestart")
     public void forceStart(Player player) {
+        if (SkyWars.isProxyMode()) return;
         SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
         if (skyPlayer == null) {
             return;
@@ -118,6 +119,7 @@ public class SkyWarsCommand extends BaseCommand {
     @Subcommand("lobbyspawn")
     @CommandPermission("skywars.admin.lobbyspawn")
     public void lobbySpawn(Player player) {
+        if (SkyWars.isProxyMode()) return;
         SkyWars.getPlugin().getConfig().set("spawn", LocationUtil.getString(player.getLocation(), true));
         ConfigManager.main.set("spawn", LocationUtil.getString(player.getLocation(), true));
         ConfigManager.main.save();
@@ -130,6 +132,7 @@ public class SkyWarsCommand extends BaseCommand {
     @Syntax("<world>")
     @CommandCompletion("@worlds")
     public void tp(Player player, World world) {
+        if (SkyWars.isProxyMode()) return;
         SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
         if (skyPlayer == null) {
             return;
@@ -153,6 +156,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Syntax("<arena>")
         @CommandCompletion("@arenas")
         public void load(CommandSender sender, String worldName) {
+            if (SkyWars.isLobbyMode()) return;
             File mapsFolder = new File(SkyWars.maps);
 
             if (!mapsFolder.exists() || !mapsFolder.isDirectory()) {
@@ -204,6 +208,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Subcommand("create")
         @CommandPermission("skywars.admin.arena.create")
         public void create(CommandSender sender, String arenaName) {
+            if (SkyWars.isLobbyMode()) return;
             Arena existingArena = ArenaManager.getGame(arenaName);
             if (existingArena != null) {
                 sender.sendMessage("§cThis arena already exists!");
@@ -219,6 +224,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Syntax("<arena>")
         @CommandCompletion("@arenas")
         public void disable(CommandSender sender, Arena arena) {
+            if (SkyWars.isLobbyMode()) return;
             if (arena.isDisabled()) {
                 sender.sendMessage("§cThe arena is already disabled");
                 return;
@@ -234,6 +240,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Syntax("<arena>")
         @CommandCompletion("@arenas")
         public void reload(CommandSender sender, Arena arena) {
+            if (SkyWars.isLobbyMode()) return;
             arena.setDisabled(false);
             arena.restart();
             sender.sendMessage("§a" + arena.getName() + " has been reloaded" + (arena.isDisabled() ? " §aand now is enabled" : ""));
@@ -244,6 +251,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Syntax("<arena>")
         @CommandCompletion("@arenas")
         public void save(CommandSender sender, Arena arena) {
+            if (SkyWars.isLobbyMode()) return;
             if (!arena.isDisabled()) {
                 sender.sendMessage("§cYou can't save an arena if it is not disabled");
                 return;
@@ -273,6 +281,7 @@ public class SkyWarsCommand extends BaseCommand {
 
             @Subcommand("add")
             public void add(Player player) {
+                if (SkyWars.isLobbyMode()) return;
                 Arena arena = getArenaFromCurrentWorld(player);
                 if (arena == null) {
                     player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
@@ -293,6 +302,7 @@ public class SkyWarsCommand extends BaseCommand {
 
             @Subcommand("remove")
             public void remove(Player player, @Optional Integer index) {
+                if (SkyWars.isLobbyMode()) return;
                 Arena arena = getArenaFromCurrentWorld(player);
                 if (arena == null) {
                     player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
@@ -323,7 +333,8 @@ public class SkyWarsCommand extends BaseCommand {
             }
 
             @Subcommand("spectator|spect")
-            public void spectator(Player player, String arenaName) {
+            public void spectator(Player player) {
+                if (SkyWars.isLobbyMode()) return;
                 Arena arena = getArenaFromCurrentWorld(player);
                 if (arena == null) {
                     player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
@@ -353,6 +364,7 @@ public class SkyWarsCommand extends BaseCommand {
 
             @Subcommand("max")
             public void add(Player player, int maxPlayers) {
+                if (SkyWars.isLobbyMode()) return;
                 Arena arena = getArenaFromCurrentWorld(player);
                 if (arena == null) {
                     player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
@@ -371,6 +383,7 @@ public class SkyWarsCommand extends BaseCommand {
 
             @Subcommand("min")
             public void min(Player player, int minPlayers) {
+                if (SkyWars.isLobbyMode()) return;
                 Arena arena = getArenaFromCurrentWorld(player);
                 if (arena == null) {
                     player.sendMessage("§cFirst you need create the arena (/sw arena create <name>)");
@@ -529,6 +542,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Subcommand("lshop")
         @CommandPermission("skywars.cmd.open.lshop")
         public void lshop(Player player) {
+            if (SkyWars.isProxyMode()) return;
             SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
             if (skyPlayer == null) {
                 return;
@@ -548,6 +562,7 @@ public class SkyWarsCommand extends BaseCommand {
         @Subcommand("add")
         @CommandPermission("skywars.admin.hologram.add")
         public void add(Player player) {
+            if (SkyWars.isProxyMode() && !SkyWars.holo) return;
             List<String> locations = new ArrayList<>(ConfigManager.score.getStringList("hologram.locations"));
             locations.add(LocationUtil.getString(player.getLocation(), true));
 
@@ -564,6 +579,7 @@ public class SkyWarsCommand extends BaseCommand {
         @CommandPermission("skywars.admin.hologram.remove")
         @Syntax("<index>")
         public void remove(Player player, @Optional Integer index) {
+            if (SkyWars.isProxyMode() && !SkyWars.holo) return;
             List<String> locations = new ArrayList<>(ConfigManager.score.getStringList("hologram.locations"));
             if (locations.isEmpty()) {
                 player.sendMessage("§cThis server don't have hologram(s)");
