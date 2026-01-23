@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 
 public class CmdCoins implements BaseCommand {
     public void onCommand(CommandSender sender, String[] args) {
-        Player var3 = null;
-        SkyPlayer var4 = null;
+        Player player = null;
+        SkyPlayer skyPlayer = null;
         boolean var5 = false;
         if (sender instanceof Player) {
-            var3 = (Player) sender;
-            var4 = SkyWars.getSkyPlayer(var3);
-            if (var4 == null) {
+            player = (Player) sender;
+            skyPlayer = SkyWars.getSkyPlayer(player);
+            if (skyPlayer == null) {
                 return;
             }
 
@@ -29,24 +29,24 @@ public class CmdCoins implements BaseCommand {
             sender.sendMessage("§cYou don't have permission!");
         } else if (args.length == 0) {
             if (var5) {
-                double var12 = var4.getCoins();
-                var4.sendMessage("&aCoins: &e" + var12);
+                double coins = skyPlayer.getCoins();
+                skyPlayer.sendMessage("&aCoins: &e" + coins);
             } else {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.help(sender)));
             }
 
         } else {
             if (args.length >= 1 && sender.hasPermission("skywars.admin.coins")) {
-                String var6 = args[0].toLowerCase();
+                String firstArg = args[0].toLowerCase();
                 byte var7 = -1;
-                switch(var6.hashCode()) {
+                switch(firstArg.hashCode()) {
                     case -934610812:
-                        if (var6.equals("remove")) {
+                        if (firstArg.equals("remove")) {
                             var7 = 1;
                         }
                         break;
                     case 96417:
-                        if (var6.equals("add")) {
+                        if (firstArg.equals("add")) {
                             var7 = 0;
                         }
                 }
@@ -66,7 +66,7 @@ public class CmdCoins implements BaseCommand {
                         if (args.length == 2) {
                             if (var5) {
                                 var13 = Integer.parseInt(args[1]);
-                                SkyEconomyManager.addCoins(var4.getPlayer(), var13, false);
+                                SkyEconomyManager.addCoins(skyPlayer.getPlayer(), var13, false);
                             } else {
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins add <amount> [PlayerName]"));
                             }
@@ -102,7 +102,7 @@ public class CmdCoins implements BaseCommand {
                         if (args.length == 2) {
                             if (var5) {
                                 var13 = Integer.parseInt(args[1]);
-                                SkyEconomyManager.removeCoins(var4.getPlayer(), var13);
+                                SkyEconomyManager.removeCoins(skyPlayer.getPlayer(), var13);
                             } else {
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cType: /sw coins remove <amount> [PlayerName]"));
                             }
