@@ -11,96 +11,115 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 
 public class Server extends Game {
-   public Server(String var1) {
-      super(var1, "", 0, true, ArenaState.WAITING);
-      this.getData(false);
-   }
+    public Server(String name) {
+        super(name, "", 0, true, ArenaState.WAITING);
+        this.getData(false);
+    }
 
-   public void getData(boolean var1) {
-      PreparedStatement var2 = null;
-      ResultSet var3 = null;
+    public void getData(boolean var1) {
+        PreparedStatement statement = null;
+        ResultSet result = null;
 
-      try {
-         Connection var4 = DatabaseHandler.getDS().getConnection();
-         Throwable var5 = null;
+        try {
+            Connection connection = DatabaseHandler.getDS().getConnection();
+            Throwable ex = null;
 
-         try {
-            var2 = var4.prepareStatement(String.format("SELECT * FROM %s WHERE bungeeid=?", DatabaseHandler.getDS().TABLE_SERVER));
-            var2.setString(1, this.name);
-            var2.execute();
-            var3 = var2.getResultSet();
-            if (var3.next()) {
-               ArrayList var6 = new ArrayList();
-               String var7 = var3.getString("bungeeid");
-               int var8 = var3.getInt("players");
-               int var9 = var3.getInt("max_players");
-               int var10 = var3.getInt("loading");
-               int var11 = this.loading ? 1 : 0;
-               String var12 = var3.getString("state");
-               String var13 = var3.getString("map");
-               if (this.alivePlayers != var8 || this.maxPlayers != var9) {
-                  var6.add(SkySignUpdateCause.PLAYERS);
-               }
+            try {
+                statement = connection.prepareStatement(String.format("SELECT * FROM %s WHERE bungeeid= ?", DatabaseHandler.getDS().TABLE_SERVER));
+                statement.setString(1, this.name);
+                statement.execute();
+                result = statement.getResultSet();
+                if (result.next()) {
+                    List<SkySignUpdateCause> var6 = new ArrayList<>();
+                    String bungeeId = result.getString("bungeeid");
+                    int alivePlayers = result.getInt("players");
+                    int maxPlayers = result.getInt("max_players");
+                    int loading = result.getInt("loading");
+                    int var11 = this.loading ? 1 : 0;
+                    String state = result.getString("state");
+                    String displayName = result.getString("map");
 
-               if (var11 != var10) {
-                  var6.add(SkySignUpdateCause.LOADING);
-               }
+                    if (this.alivePlayers != alivePlayers || this.maxPlayers != maxPlayers) {
+                        var6.add(SkySignUpdateCause.PLAYERS);
+                    }
 
-               if (!this.state.toString().equals(var12)) {
-                  var6.add(SkySignUpdateCause.STATE);
-               }
+                    if (var11 != loading) {
+                        var6.add(SkySignUpdateCause.LOADING);
+                    }
 
-               if (!this.displayName.equals(var13)) {
-                  var6.add(SkySignUpdateCause.MAP);
-               }
+                    if (state != null) {
+                        if (!this.state.name().equalsIgnoreCase(state.trim())) {
+                            var6.add(SkySignUpdateCause.STATE);
+                        }
+                    }
 
-               SkySignUpdateCause var14 = null;
-               if (var6.size() == 1) {
-                  var14 = (SkySignUpdateCause)var6.getFirst();
-               }
+                    if (displayName != null) {
+                        if (!Objects.equals(this.displayName, displayName)) {
+                            var6.add(SkySignUpdateCause.MAP);
+                        }
+                    } else {
+                        if (this.displayName != null && !this.displayName.isEmpty()) {
+                            var6.add(SkySignUpdateCause.MAP);
+                        }
+                    }
 
-               if (var6.size() >= 2) {
-                  var14 = SkySignUpdateCause.ALL;
-               }
+                    SkySignUpdateCause signUpdateCause = null;
+                    if (var6.size() == 1) {
+                        signUpdateCause = var6.get(0);
+                    }
 
-               this.alivePlayers = var8;
-               this.maxPlayers = var9;
-               this.loading = var10 == 1;
-               this.state = ArenaState.valueOf(var12);
-               this.displayName = var13;
-               if (!var6.isEmpty() && var1) {
-                  SkySignUpdateCause finalVar1 = var14;
-                  Bukkit.getScheduler().runTask(SkyWars.getPlugin(), () -> Bukkit.getServer().getPluginManager().callEvent(new SkySignUpdateEvent(var7, finalVar1)));
-               }
+                    if (var6.size() >= 2) {
+                        signUpdateCause = SkySignUpdateCause.ALL;
+                    }
 
-               var2.close();
+                    this.alivePlayers = alivePlayers;
+                    this.maxPlayers = maxPlayers;
+                    this.loading = loading == 1;
+                    if (state != null) {
+                        try {
+                            this.state = ArenaState.valueOf(state.trim().toUpperCase());
+                        } catch (IllegalArgumentException iae) {
+                            SkyWars.getPlugin().getLogger().warning("Invalid ArenaState in DB for server " + this.name + ": " + state);
+                        }
+                    }
+                    this.displayName = (displayName == null) ? this.displayName : displayName;
+                    if (!var6.isEmpty() && var1) {
+                        SkySignUpdateCause finalVar1 = signUpdateCause;
+                        Bukkit.getScheduler().runTask(SkyWars.getPlugin(), () -> Bukkit.getServer().getPluginManager().callEvent(new SkySignUpdateEvent(bungeeId, finalVar1)));
+                    }
+
+                    statement.close();
+                }
+            } catch (Throwable throwable) {
+                ex = throwable;
+                throw throwable;
+            } finally {
+                if (connection != null) {
+                    if (ex != null) {
+                        try {
+                            connection.close();
+                        } catch (Throwable var31) {
+                            ex.addSuppressed(var31);
+                        }
+                    } else {
+                        connection.close();
+                    }
+                }
+
             }
-         } catch (Throwable var32) {
-            var5 = var32;
-            throw var32;
-         } finally {
-            if (var4 != null) {
-               if (var5 != null) {
-                  try {
-                     var4.close();
-                  } catch (Throwable var31) {
-                     var5.addSuppressed(var31);
-                  }
-               } else {
-                  var4.close();
-               }
-            }
+        } catch (SQLException ex) {
+            SkyWars.getPlugin().getLogger().log(Level.SEVERE, "SQL error while getting server data for " + this.name, ex);
+        } finally {
+            DatabaseHandler.getDS().close(result);
+            DatabaseHandler.getDS().close(statement);
+        }
 
-         }
-      } catch (SQLException var34) {
-         var34.printStackTrace();
-      } finally {
-         DatabaseHandler.getDS().close(var3);
-         DatabaseHandler.getDS().close(var2);
-      }
-
-   }
+    }
 }

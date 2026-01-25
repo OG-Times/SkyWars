@@ -3,5 +3,6 @@ rootProject.name = "SkyWars"
 include(
     "spigot",
     "bungee",
-    "velocity"
+    "velocity",
+    "common"
 )
