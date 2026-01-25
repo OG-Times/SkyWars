@@ -53,6 +53,7 @@ public class SkyPlayer extends SkyData {
     private final Set<AbilityType> disabledAbilities = new HashSet<>();
     private Location arenaSpawn;
     private boolean spectating;
+    private boolean rushmode;
     private int wins = 0;
     private int kills = 0;
     private int deaths = 0;
@@ -172,6 +173,10 @@ public class SkyPlayer extends SkyData {
             Bukkit.getServer().getPluginManager().callEvent(var3);
         }
 
+    }
+
+    public void setRushMode(boolean rushMode) {
+        this.rushmode = rushMode;
     }
 
     public boolean isInArena() {
