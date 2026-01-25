@@ -3,6 +3,7 @@ package fun.ogtimes.skywars.spigot.database;
 import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.database.types.MySQL;
 import fun.ogtimes.skywars.spigot.database.types.SQLite;
+import fun.ogtimes.skywars.spigot.config.ConfigManager;
 
 import java.sql.SQLException;
 
@@ -10,16 +11,24 @@ public class DatabaseHandler {
     private static DataSource manager;
 
     public DatabaseHandler() throws SQLException, ClassNotFoundException {
-        String var1 = SkyWars.getPlugin().getConfig().getString("data.type").toLowerCase();
+        String type = "sqlite";
+        try {
+            if (ConfigManager.database != null && ConfigManager.database.isSet("type")) {
+                type = ConfigManager.database.getString("type", "SQLite").toLowerCase();
+            } else if (ConfigManager.main != null && ConfigManager.main.isSet("data.type")) {
+                type = ConfigManager.main.getString("data.type", "SQLite").toLowerCase();
+            }
+        } catch (Exception ignored) {
+        }
         byte var2 = -1;
-        switch(var1.hashCode()) {
+        switch(type.hashCode()) {
             case -894935028:
-                if (var1.equals("sqlite")) {
+                if (type.equals("sqlite")) {
                     var2 = 1;
                 }
                 break;
             case 104382626:
-                if (var1.equals("mysql")) {
+                if (type.equals("mysql")) {
                     var2 = 0;
                 }
         }
