@@ -14,10 +14,10 @@ public class ArenaJoinEvent extends Event {
    private final Arena game;
    private final ArenaJoinCause cause;
 
-   public ArenaJoinEvent(SkyPlayer var1, Arena var2, ArenaJoinCause var3) {
-      this.player = var1;
-      this.game = var2;
-      this.cause = var3;
+   public ArenaJoinEvent(SkyPlayer player, Arena arena, ArenaJoinCause cause) {
+      this.player = player;
+      this.game = arena;
+      this.cause = cause;
    }
 
     public HandlerList getHandlers() {

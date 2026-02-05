@@ -192,33 +192,33 @@ public class Arena extends Game {
 
     }
 
-    public void addPlayer(SkyPlayer var1, ArenaJoinCause var2) {
-        if (null == var1) {
+    public void addPlayer(SkyPlayer skyPlayer, ArenaJoinCause cause) {
+        if (null == skyPlayer) {
             SkyWars.log("Arena.addPlayer - Trying to add a NULL Player");
         } else if (this.disabled) {
-            if (var1.getPlayer().hasPermission("skywars.admin")) {
-                var1.teleport(this.getWorld().getSpawnLocation());
+            if (skyPlayer.getPlayer().hasPermission("skywars.admin")) {
+                skyPlayer.teleport(this.getWorld().getSpawnLocation());
             } else if (SkyWars.isProxyMode()) {
-                var1.getPlayer().kickPlayer("You don't have permissions to enter to edit this game");
+                skyPlayer.getPlayer().kickPlayer("You don't have permissions to enter to edit this game");
             } else {
-                var1.sendMessage("&cYou don't have permissions to enter to edit this game");
+                skyPlayer.sendMessage("&cYou don't have permissions to enter to edit this game");
             }
 
         } else if (this.isLoading()) {
             SkyWars.log("Arena.addPlayer - Trying to join Player when game is Reloading");
             if (SkyWars.isProxyMode()) {
-                var1.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_LOADING));
+                skyPlayer.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_LOADING));
             } else {
-                var1.sendMessage(SkyWars.getMessage(Messages.GAME_LOADING));
+                skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_LOADING));
             }
 
         } else {
-            if (!var1.getPlayer().hasPermission("skywars.admin.spectate")) {
+            if (!skyPlayer.getPlayer().hasPermission("skywars.admin.spectate")) {
                 if (this.state == ArenaState.INGAME) {
                     if (SkyWars.isProxyMode()) {
-                        var1.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
+                        skyPlayer.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
                     } else {
-                        var1.sendMessage(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
+                        skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
                     }
 
                     return;
@@ -226,17 +226,17 @@ public class Arena extends Game {
 
                 if (this.getAlivePlayers() >= this.maxPlayers) {
                     if (SkyWars.isProxyMode()) {
-                        var1.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_FULL_MESSAGE));
+                        skyPlayer.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_FULL_MESSAGE));
                     } else {
-                        var1.sendMessage(SkyWars.getMessage(Messages.GAME_FULL_MESSAGE));
+                        skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_FULL_MESSAGE));
                     }
 
                     return;
                 }
             }
 
-            ArenaJoinEvent var3 = new ArenaJoinEvent(var1, this, var2);
-            Bukkit.getServer().getPluginManager().callEvent(var3);
+            ArenaJoinEvent event = new ArenaJoinEvent(skyPlayer, this, cause);
+            Bukkit.getServer().getPluginManager().callEvent(event);
             this.playSignUpdate(SkySignUpdateCause.PLAYERS);
         }
     }
@@ -382,12 +382,23 @@ public class Arena extends Game {
                                     .clickEvent(ClickEvent.runCommand("/salir"))
                             )
                             .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .match("<rush>")
+                            .replacement(Utils.component(SkyWars.getMessage(Messages.RUSH_MODE))
+                                    .clickEvent(ClickEvent.runCommand("/sw rush"))
+                            )
+                            .build()
                     );
 
             winner.sendMessage("        &m----------------------------------");
             winner.sendMessage(SkyWars.getMessage(Messages.PLAY_AGAIN_1));
             killedAudience.sendMessage(secondLine);
             winner.sendMessage("        &m----------------------------------");
+
+            if (winner.isRushMode()) {
+                winner.doRushMode();
+            }
 
             Bukkit.getPluginManager().callEvent(new ArenaFinishEvent(this, winner));
         }

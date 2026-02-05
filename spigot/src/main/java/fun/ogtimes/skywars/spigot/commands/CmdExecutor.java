@@ -7,10 +7,8 @@ import fun.ogtimes.skywars.spigot.commands.admin.edit.arena.CmdArena;
 import fun.ogtimes.skywars.spigot.commands.admin.edit.arena.CmdTp;
 import fun.ogtimes.skywars.spigot.commands.admin.edit.lobby.CmdHologram;
 import fun.ogtimes.skywars.spigot.commands.admin.edit.lobby.CmdLobbySpawn;
-import fun.ogtimes.skywars.spigot.commands.user.CmdCoins;
-import fun.ogtimes.skywars.spigot.commands.user.CmdForceStart;
-import fun.ogtimes.skywars.spigot.commands.user.CmdJoin;
-import fun.ogtimes.skywars.spigot.commands.user.CmdOpen;
+import fun.ogtimes.skywars.spigot.commands.user.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +61,7 @@ public class CmdExecutor implements CommandExecutor, TabCompleter {
       this.commands.put("coins", new CmdCoins());
       this.commands.put("reload", new CmdReload());
       this.commands.put("hide", new CmdHide());
+      this.commands.put("rush", new CmdRushMode());
    }
 
    public boolean onCommand(CommandSender var1, Command var2, String var3, String[] var4) {
