@@ -382,12 +382,23 @@ public class Arena extends Game {
                                     .clickEvent(ClickEvent.runCommand("/salir"))
                             )
                             .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .match("<rush>")
+                            .replacement(Utils.component(SkyWars.getMessage(Messages.RUSH_MODE))
+                                    .clickEvent(ClickEvent.runCommand("/sw rush"))
+                            )
+                            .build()
                     );
 
             winner.sendMessage("        &m----------------------------------");
             winner.sendMessage(SkyWars.getMessage(Messages.PLAY_AGAIN_1));
             killedAudience.sendMessage(secondLine);
             winner.sendMessage("        &m----------------------------------");
+
+            if (winner.isRushMode()) {
+                winner.doRushMode();
+            }
 
             Bukkit.getPluginManager().callEvent(new ArenaFinishEvent(this, winner));
         }
