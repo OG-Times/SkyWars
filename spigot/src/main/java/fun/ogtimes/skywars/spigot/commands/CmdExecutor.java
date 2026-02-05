@@ -61,7 +61,7 @@ public class CmdExecutor implements CommandExecutor, TabCompleter {
       this.commands.put("coins", new CmdCoins());
       this.commands.put("reload", new CmdReload());
       this.commands.put("hide", new CmdHide());
-      this.commands.put("rushmode", new CmdRushMode());
+      this.commands.put("rush", new CmdRushMode());
    }
 
    public boolean onCommand(CommandSender var1, Command var2, String var3, String[] var4) {

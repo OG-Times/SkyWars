@@ -59,7 +59,7 @@ public class CmdOthers implements CommandExecutor {
 
                     if (SkyWars.isMultiArenaMode()) {
                         Arena arena = (Arena)game;
-                        arena.addPlayer(skyPlayer, ArenaJoinCause.COMMAND);
+                        arena.addPlayer(skyPlayer, ArenaJoinCause.PLAY_AGAIN);
                     } else if (SkyWars.isLobbyMode()) {
                         ProxyUtils.teleToServer(skyPlayer.getPlayer(), "", game.getName());
                     }

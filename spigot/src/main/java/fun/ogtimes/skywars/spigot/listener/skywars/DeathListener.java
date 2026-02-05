@@ -4,9 +4,12 @@ import fun.ogtimes.skywars.spigot.SkyWars;
 import fun.ogtimes.skywars.spigot.arena.Arena;
 import fun.ogtimes.skywars.spigot.arena.GameQueue;
 import fun.ogtimes.skywars.spigot.events.SkyPlayerDeathEvent;
+import fun.ogtimes.skywars.spigot.events.enums.ArenaJoinCause;
 import fun.ogtimes.skywars.spigot.listener.DamageListener;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
+import fun.ogtimes.skywars.spigot.utils.Game;
 import fun.ogtimes.skywars.spigot.utils.Messages;
+import fun.ogtimes.skywars.spigot.utils.ProxyUtils;
 import fun.ogtimes.skywars.spigot.utils.Utils;
 import fun.ogtimes.skywars.spigot.utils.economy.SkyEconomyManager;
 import net.kyori.adventure.audience.Audience;
@@ -43,6 +46,13 @@ public class DeathListener implements Listener {
                                     .clickEvent(ClickEvent.runCommand("/salir"))
                             )
                             .build()
+                    )
+                    .replaceText(TextReplacementConfig.builder()
+                            .match("<rush>")
+                            .replacement(Utils.component(SkyWars.getMessage(Messages.RUSH_MODE))
+                                    .clickEvent(ClickEvent.runCommand("/sw rush"))
+                            )
+                            .build()
                     );
 
             killed.sendMessage("        &m----------------------------------");
@@ -70,36 +80,8 @@ public class DeathListener implements Listener {
                 ArenaListener.checkWinner(arena);
                 arena.getAlivePlayer().forEach(alive -> SkyEconomyManager.addCoins(alive.getPlayer(), SkyWars.getPlugin().getConfig().getInt("reward.death"), true));
 
-                if (killed.isRushmode()) {
-                    new BukkitRunnable() {
-
-                        int seconds = 3;
-
-                        @Override
-                        public void run() {
-
-                            if (seconds <= 0) {
-                                cancel();
-
-                                if (GameQueue.withoutGames()) {
-                                    killed.sendMessage(SkyWars.getMessage(Messages.GAME_NOT_AVAILABLE));
-                                    return;
-                                }
-
-                                killed.clearInventory(false);
-                                killed.setSpectating(false, null);
-
-                                GameQueue.addPlayer(killed);
-                                killed.sendMessage(SkyWars.getMessage(Messages.SEARCHING_GAME));
-                                return;
-                            }
-
-                            killed.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a" + seconds));
-
-                            seconds--;
-                        }
-
-                    }.runTaskTimer(SkyWars.getPlugin(), 0L, 20L);
+                if (killed.isRushMode()) {
+                    killed.doRushMode();
                 }
             });
         });

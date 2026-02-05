@@ -7,14 +7,17 @@ import fun.ogtimes.skywars.spigot.abilities.AbilityManager;
 import fun.ogtimes.skywars.spigot.abilities.AbilityType;
 import fun.ogtimes.skywars.spigot.arena.Arena;
 import fun.ogtimes.skywars.spigot.arena.ArenaBox;
+import fun.ogtimes.skywars.spigot.arena.GameQueue;
 import fun.ogtimes.skywars.spigot.arena.chest.ChestType;
 import fun.ogtimes.skywars.spigot.arena.chest.ChestTypeManager;
 import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.events.SkyPlayerSpectatorEvent;
+import fun.ogtimes.skywars.spigot.events.enums.ArenaJoinCause;
 import fun.ogtimes.skywars.spigot.events.enums.ArenaLeaveCause;
 import fun.ogtimes.skywars.spigot.events.enums.SpectatorReason;
 import fun.ogtimes.skywars.spigot.kit.Kit;
 import fun.ogtimes.skywars.spigot.listener.DamageListener;
+import fun.ogtimes.skywars.spigot.utils.Game;
 import fun.ogtimes.skywars.spigot.utils.Messages;
 import fun.ogtimes.skywars.spigot.utils.ProxyUtils;
 import fun.ogtimes.skywars.spigot.utils.Utils;
@@ -53,7 +56,7 @@ public class SkyPlayer extends SkyData {
     private final Set<AbilityType> disabledAbilities = new HashSet<>();
     private Location arenaSpawn;
     private boolean spectating;
-    private boolean rushmode;
+    private boolean rushMode;
     private int wins = 0;
     private int kills = 0;
     private int deaths = 0;
@@ -173,10 +176,6 @@ public class SkyPlayer extends SkyData {
             Bukkit.getServer().getPluginManager().callEvent(var3);
         }
 
-    }
-
-    public void setRushMode(boolean rushMode) {
-        this.rushmode = rushMode;
     }
 
     public boolean isInArena() {
@@ -527,5 +526,43 @@ public class SkyPlayer extends SkyData {
         if (SkyWars.isProxyMode()) {
             ProxyUtils.teleToServer(getPlayer(), SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
         }
+    }
+
+    /**
+     * Tries to join a new game after leaving the current one. If no games are available, adds the player to the queue.
+     * @return true if the player successfully joined a new game, false if they were added to the queue or an error occurred.
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean doRushMode() {
+        leave();
+
+        try {
+            if (!isInArena()) {
+                if (GameQueue.withoutGames()) {
+                    GameQueue.addPlayer(this);
+                    sendMessage("&cNo games available, you have been added to the queue");
+                    return false;
+                }
+            }
+
+            Game game = GameQueue.getJoinableGame();
+            if (game == null) {
+                GameQueue.addPlayer(this);
+                sendMessage("&cNo games available, you have been added to the queue");
+                return false;
+            }
+
+            if (SkyWars.isMultiArenaMode()) {
+                Arena newArena = (Arena) game;
+                newArena.addPlayer(this, ArenaJoinCause.RUSH_MODE);
+            } else if (SkyWars.isLobbyMode()) {
+                ProxyUtils.teleToServer(getPlayer(), "", game.getName());
+            }
+
+        } catch (Exception e) {
+            sendMessage("&cAn error occurred while trying to join a new game.");
+            return false;
+        }
+        return true;
     }
 }

@@ -141,6 +141,7 @@ public enum Messages {
 
     AGAIN("again"),
     LEAVE("leave"),
+    RUSH_MODE("rush.mode"),
 
     SEARCHING_GAME("search.game"),
     GAME_NOT_AVAILABLE("game.not.available"),
