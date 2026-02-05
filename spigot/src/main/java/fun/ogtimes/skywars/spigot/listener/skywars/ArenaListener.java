@@ -64,99 +64,87 @@ public class ArenaListener implements Listener {
 
     @EventHandler
     public void onSkyPlayerArenaJoinEvent(ArenaJoinEvent var1) {
-        SkyPlayer var2 = var1.getPlayer();
-        Arena var3 = var1.getGame();
-        if (Bukkit.getPluginManager().isPluginEnabled("FeatherBoard")) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "fb off " + var2.getName() + " -s");
-        }
+        SkyPlayer skyPlayer = var1.getPlayer();
+        Arena arena = var1.getGame();
 
-        if (var3.getState() == ArenaState.INGAME && var2.getPlayer().hasPermission("skywars.admin.spectate")) {
-            var2.clearInventory(true);
-            var2.setArena(var3);
-            var2.teleport(var3.getSpawn());
-            var2.setSpectating(true, SpectatorReason.JOIN);
-            SkyHologram.removeHologram(var2);
+        if (arena.getState() == ArenaState.INGAME && skyPlayer.getPlayer().hasPermission("skywars.admin.spectate")) {
+            skyPlayer.clearInventory(true);
+            skyPlayer.setArena(arena);
+            skyPlayer.teleport(arena.getSpawn());
+            skyPlayer.setSpectating(true, SpectatorReason.JOIN);
+            SkyHologram.removeHologram(skyPlayer);
         } else {
-            if (var3.getArenaMode() == ArenaMode.SOLO) {
-                Location var4 = var3.getSpawnPoint();
-                SkyWars.log("Arena.addPlayer - Get Spawn Point " + var4);
-                if (var4 == null) {
-                    SkyWars.log("Arena.addPlayer - Trying to add a Player in a spawn point used");
-                    if (SkyWars.isProxyMode()) {
-                        var2.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_SPAWN_USED));
-                        return;
-                    }
+            if (arena.getArenaMode() == ArenaMode.SOLO) {
+                Location location = arena.acquireSpawn();
+                SkyWars.log("Arena.addPlayer - Acquire Spawn " + location);
 
-                    var2.sendMessage(SkyWars.getMessage(Messages.GAME_SPAWN_USED));
-                    return;
+                if (location == null) {
+                    // Ultra fallback: no hay spawns configurados.
+                    SkyWars.logError("Arena.addPlayer - No spawnpoints configured for arena '" + arena.getName() + "'. Using spectator/world spawn.");
+                    location = arena.getSpawn();
                 }
 
-                for (ArenaBox var6 : var3.getGlassBoxes()) {
-                    Location var7 = var6.getLocation();
-                    if (var7.equals(var4)) {
-                        SkyWars.log("Arena.addPlayer - Selected box - " + var7);
-                        var2.setBox(var6);
+                for (ArenaBox arenaBox : arena.getGlassBoxes()) {
+                    Location boxLocation = arenaBox.getLocation();
+                    if (boxLocation.equals(location)) {
+                        SkyWars.log("Arena.addPlayer - Selected box - " + boxLocation);
+                        skyPlayer.setBox(arenaBox);
                     }
                 }
 
-                SkyWars.log("Arena.addPlayer - " + var2.getName() + " is teleporting to " + var4);
-                var3.setUsed(var4, true);
-                var2.setArenaSpawn(var4);
-                var2.teleport(var4);
-                String var11 = var2.getBoxSection();
-                if (var2.getBoxSection() != null && !var11.equalsIgnoreCase(SkyWars.boxes.getString("default"))) {
-                    int var8;
-                    ArenaBox var9;
-                    String var13;
-                    int var15;
-                    if (var2.getBoxItem(var2.getBoxSection()) != 0) {
-                        var13 = var2.getBoxSection();
-                        var15 = var2.getBoxItem(var13);
-                        var8 = var2.getBoxData(var13);
-                        var9 = var2.getBox();
-                        SkyWars.log("Arena.addPlayer - Box Section=" + var13 + ", Box Item=" + var15 + ", Box Data=" + var8 + ", Box=" + var9);
-                        var9.setBox(var15, var8);
+                SkyWars.log("Arena.addPlayer - " + skyPlayer.getName() + " is teleporting to " + location);
+                arena.setUsed(location, true);
+                skyPlayer.setArenaSpawn(location);
+                skyPlayer.teleport(location);
+                String var11 = skyPlayer.getBoxSection();
+                if (skyPlayer.getBoxSection() != null && !var11.equalsIgnoreCase(SkyWars.boxes.getString("default"))) {
+                    int boxData;
+                    ArenaBox box;
+                    String boxSection;
+                    int boxItem;
+                    if (skyPlayer.getBoxItem(skyPlayer.getBoxSection()) != 0) {
+                        boxSection = skyPlayer.getBoxSection();
                     } else {
-                        var2.getPlayer().setMetadata("upload_me", new FixedMetadataValue(SkyWars.getPlugin(), true));
-                        var13 = SkyWars.boxes.getString("default");
-                        var2.setBoxSection(var13, true);
-                        var15 = var2.getBoxItem(var13);
-                        var8 = var2.getBoxData(var13);
-                        var9 = var2.getBox();
-                        SkyWars.log("Arena.addPlayer - Box Section=" + var13 + ", Box Item=" + var15 + ", Box Data=" + var8 + ", Box=" + var9);
-                        var9.setBox(var15, var8);
+                        skyPlayer.getPlayer().setMetadata("upload_me", new FixedMetadataValue(SkyWars.getPlugin(), true));
+                        boxSection = SkyWars.boxes.getString("default");
+                        skyPlayer.setBoxSection(boxSection, true);
                     }
+                    boxItem = skyPlayer.getBoxItem(boxSection);
+                    boxData = skyPlayer.getBoxData(boxSection);
+                    box = skyPlayer.getBox();
+                    SkyWars.log("Arena.addPlayer - Box Section=" + boxSection + ", Box Item=" + boxItem + ", Box Data=" + boxData + ", Box=" + box);
+                    box.setBox(boxItem, boxData);
                 }
             } else {
-                var2.teleport(var3.getTeamLobby());
+                skyPlayer.teleport(arena.getTeamLobby());
             }
 
-            var2.clearInventory(true);
-            var2.setArena(var3);
-            SkyWars.log("Arena.addPlayer - Player already in list: " + var3.getPlayers().contains(var2));
-            if (!var3.getPlayers().contains(var2)) {
-                var3.getPlayers().add(var2);
+            skyPlayer.clearInventory(true);
+            skyPlayer.setArena(arena);
+            SkyWars.log("Arena.addPlayer - Player already in list: " + arena.getPlayers().contains(skyPlayer));
+            if (!arena.getPlayers().contains(skyPlayer)) {
+                arena.getPlayers().add(skyPlayer);
                 SkyWars.log("Arena.addPlayer - Player add in list");
             }
 
-            if (var2.getPlayer().getGameMode() != GameMode.SURVIVAL) {
-                var2.getPlayer().setGameMode(GameMode.SURVIVAL);
+            if (skyPlayer.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+                skyPlayer.getPlayer().setGameMode(GameMode.SURVIVAL);
             }
 
-            for (SkyPlayer var12 : var3.getPlayers()) {
+            for (SkyPlayer var12 : arena.getPlayers()) {
                 Player var14 = var12.getPlayer();
-                Player var16 = var2.getPlayer();
-                if (var14 != null && var16 != null && var12 != var2) {
+                Player var16 = skyPlayer.getPlayer();
+                if (var14 != null && var16 != null && var12 != skyPlayer) {
                     var14.showPlayer(var16);
                 }
             }
 
-            this.setInventoryItems(var2, var3);
-            SkyWars.log("Arena.addPlayer - Successfull add " + var2.getName() + " to " + var2.getArena().getName());
-            var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_JOIN), var2.getName(), var3.getAlivePlayers(), var3.getMaxPlayers()));
-            var2.setSpectating(false, SpectatorReason.JOIN);
-            SkyHologram.removeHologram(var2);
-            GameQueue.removePlayer(var2);
+            this.setInventoryItems(skyPlayer, arena);
+            SkyWars.log("Arena.addPlayer - Successfull add " + skyPlayer.getName() + " to " + skyPlayer.getArena().getName());
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_JOIN), skyPlayer.getName(), arena.getAlivePlayers(), arena.getMaxPlayers()));
+            skyPlayer.setSpectating(false, SpectatorReason.JOIN);
+            SkyHologram.removeHologram(skyPlayer);
+            GameQueue.removePlayer(skyPlayer);
         }
     }
 
@@ -226,33 +214,30 @@ public class ArenaListener implements Listener {
 
     @EventHandler
     public void onSkyPlayerArenaLeaveEvent(ArenaLeaveEvent var1) {
-        SkyPlayer var2 = var1.getPlayer();
-        Arena var3 = var1.getGame();
-        Player var4 = var2.getPlayer();
-        if (!var2.isSpectating() && var1.getCause() != ArenaLeaveCause.RESTART) {
-            var3.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_QUIT), var2.getName(), var3.getAlivePlayers(), var3.getMaxPlayers()));
+        SkyPlayer skyPlayer = var1.getPlayer();
+        Arena arena = var1.getGame();
+        Player var4 = skyPlayer.getPlayer();
+        if (!skyPlayer.isSpectating() && var1.getCause() != ArenaLeaveCause.RESTART) {
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_QUIT), skyPlayer.getName(), arena.getAlivePlayers() - 1, arena.getMaxPlayers()));
         }
 
-        var2.setSpectating(false, SpectatorReason.LEAVE);
-        SkyWars.log("Arena.removePlayer - Removing to " + var2.getName() + " from " + var3.getName() + " cause: " + var1.getCause());
+        skyPlayer.setSpectating(false, SpectatorReason.LEAVE);
+        SkyWars.log("Arena.removePlayer - Removing to " + skyPlayer.getName() + " from " + arena.getName() + " cause: " + var1.getCause());
         if (var4.isOnline()) {
-            var3.getPlayers().remove(var2);
-            SkyWars.log("Arena.removePlayer - Successful remove to " + var2.getName() + " from " + var3.getName());
+            arena.getPlayers().remove(skyPlayer);
+            SkyWars.log("Arena.removePlayer - Successful remove to " + skyPlayer.getName() + " from " + arena.getName());
         }
 
         String var5 = SkyWars.boxes.getString("default");
-        if (var2.getBox() != null) {
-            var2.getBox().setBox(var2.getBoxItem(var5), var2.getBoxData(var5));
+        if (skyPlayer.getBox() != null) {
+            skyPlayer.getBox().setBox(skyPlayer.getBoxItem(var5), skyPlayer.getBoxData(var5));
         }
 
-        var3.resetPlayer(var2);
+        arena.resetPlayer(skyPlayer);
         if (!SkyWars.isProxyMode()) {
-            var2.upload(false);
-            SkyWars.goToSpawn(var2);
+            skyPlayer.upload(false);
+            SkyWars.goToSpawn(skyPlayer);
             var4.setFallDistance(0.0F);
-            if (Bukkit.getPluginManager().isPluginEnabled("FeatherBoard")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "fb on " + var2.getName() + " -s");
-            }
         }
 
     }

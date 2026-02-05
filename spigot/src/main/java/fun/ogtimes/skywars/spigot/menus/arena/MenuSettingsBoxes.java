@@ -17,21 +17,21 @@ public class MenuSettingsBoxes extends Menu {
       super(var1, "settingsBoxes", SkyWars.getMessage(Messages.SETTINGS_MENU_BOXES_TITLE), SkyWars.boxes.getInt("menu_rows"));
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
+   public void onClick(InventoryClickEvent event) {
       SkyPlayer var2 = SkyWars.getSkyPlayer(this.getPlayer());
       if (var2 != null) {
          Box[] var3 = BoxManager.getBoxes();
          int var4 = var3.length;
 
           for (Box var6 : var3) {
-              if (var1.getCurrentItem().isSimilar(var6.getItemBuilder().build())) {
+              if (event.getCurrentItem().isSimilar(var6.getItemBuilder().build())) {
                   if (!var6.getSection().equals(SkyWars.boxes.getString("default")) && !var2.hasPermission("skywars.settings.colour." + var6.getSection())) {
                       var2.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_SETTINGS_COLOUR));
                       return;

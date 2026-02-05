@@ -21,14 +21,14 @@ public class MenuKitSelector extends Menu {
       super(var1, "kitSelector", SkyWars.getMessage(Messages.KITS_MENU_TITLE), ConfigManager.main.getInt("kitmenu_rows"));
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
+   public void onClick(InventoryClickEvent event) {
       SkyPlayer var2 = SkyWars.getSkyPlayer(this.getPlayer());
       if (var2 != null) {
          Kit var3 = null;
@@ -36,7 +36,7 @@ public class MenuKitSelector extends Menu {
          int var5 = var4.length;
 
           for (Kit var7 : var4) {
-              if (var7.getSlot() == var1.getSlot()) {
+              if (var7.getSlot() == event.getSlot()) {
                   var3 = var7;
               }
           }

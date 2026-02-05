@@ -26,15 +26,15 @@ public class MenuSettingsTrails extends Menu {
       super(var1, "settingsTrails", SkyWars.getMessage(Messages.SETTINGS_MENU_TRAILS_TITLE), 1);
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
-      ItemStack var2 = var1.getCurrentItem();
+   public void onClick(InventoryClickEvent event) {
+      ItemStack var2 = event.getCurrentItem();
       SkyPlayer var3 = SkyWars.getSkyPlayer(this.getPlayer());
       if (var2.isSimilar(this.none.build())) {
          var3.setTrail(null);

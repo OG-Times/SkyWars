@@ -9,22 +9,22 @@ import org.bukkit.event.HandlerList;
 
 @Getter
 public class ArenaJoinEvent extends Event {
-   private static final HandlerList handlers = new HandlerList();
-   private final SkyPlayer player;
-   private final Arena game;
-   private final ArenaJoinCause cause;
+    private static final HandlerList handlers = new HandlerList();
+    private final SkyPlayer player;
+    private final Arena game;
+    private final ArenaJoinCause cause;
 
-   public ArenaJoinEvent(SkyPlayer player, Arena arena, ArenaJoinCause cause) {
-      this.player = player;
-      this.game = arena;
-      this.cause = cause;
-   }
+    public ArenaJoinEvent(SkyPlayer player, Arena arena, ArenaJoinCause cause) {
+        this.player = player;
+        this.game = arena;
+        this.cause = cause;
+    }
 
     public HandlerList getHandlers() {
-      return handlers;
-   }
+        return handlers;
+    }
 
-   public static HandlerList getHandlerList() {
-      return handlers;
-   }
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

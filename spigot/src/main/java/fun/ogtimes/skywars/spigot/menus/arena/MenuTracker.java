@@ -21,15 +21,15 @@ public class MenuTracker extends Menu {
       super(var1, "tracker", SkyWars.getMessage(Messages.TRACKER_MENU_TITLE), 3);
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
-      ItemStack var2 = var1.getCurrentItem();
+   public void onClick(InventoryClickEvent event) {
+      ItemStack var2 = event.getCurrentItem();
       if (var2.getType() == Material.SKULL_ITEM) {
          SkyPlayer var3 = SkyWars.getSkyPlayer(this.getPlayer());
          Player var4 = Bukkit.getPlayer(ChatColor.stripColor(var2.getItemMeta().getDisplayName()));

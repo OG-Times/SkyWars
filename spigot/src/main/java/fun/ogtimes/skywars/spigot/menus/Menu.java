@@ -15,13 +15,11 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+@Getter @Setter
 public abstract class Menu {
-    @Getter
     private final String menuId;
     private Inventory inv;
     private final String player;
-    @Setter
-    @Getter
     private String back;
 
     public Menu(Player player, String id, String title, int rows) {
@@ -44,27 +42,27 @@ public abstract class Menu {
         MenuListener.menus.put(player.getName(), var6);
     }
 
-    public Menu addItem(ItemStack var1) {
-        this.inv.addItem(var1);
+    public Menu addItem(ItemStack item) {
+        this.inv.addItem(item);
         return this;
     }
 
-    public Menu addItem(ItemBuilder var1) {
-        return this.addItem(var1.build());
+    public Menu addItem(ItemBuilder item) {
+        return this.addItem(item.build());
     }
 
-    public Menu setItem(int var1, ItemBuilder var2) {
-        this.inv.setItem(var1, var2.build());
+    public Menu setItem(int slot, ItemBuilder item) {
+        this.inv.setItem(slot, item.build());
         return this;
     }
 
-    public Menu setItem(int var1, int var2, ItemBuilder var3) {
-        this.inv.setItem((var1 - 1) * 9 + (var2 - 1), var3.build());
+    public Menu setItem(int x, int y, ItemBuilder item) {
+        this.inv.setItem((x - 1) * 9 + (y - 1), item.build());
         return this;
     }
 
-    public Menu setItem(int var1, int var2, ItemStack var3) {
-        this.inv.setItem(var1 * 9 + var2, var3);
+    public Menu setItem(int x, int y, ItemStack item) {
+        this.inv.setItem(x * 9 + y, item);
         return this;
     }
 
@@ -83,17 +81,17 @@ public abstract class Menu {
     public void addFullLine(int var1, ItemBuilder var2) {
         var2.setTitle(" &r");
 
-        for(int var3 = 1; var3 < 10; ++var3) {
-            this.setItem(var1, var3, var2);
+        for(int i = 1; i < 10; ++i) {
+            this.setItem(var1, i, var2);
         }
 
     }
 
-    public abstract void onOpen(InventoryOpenEvent var1);
+    public abstract void onOpen(InventoryOpenEvent event);
 
-    public abstract void onClose(InventoryCloseEvent var1);
+    public abstract void onClose(InventoryCloseEvent event);
 
-    public abstract void onClick(InventoryClickEvent var1);
+    public abstract void onClick(InventoryClickEvent event);
 
     public abstract void update();
 }

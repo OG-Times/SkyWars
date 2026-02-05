@@ -20,19 +20,19 @@ public class MenuVote extends Menu {
       new MenuVoteTime(var1);
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
-      if (var1.getCurrentItem().getType() == Material.CHEST) {
+   public void onClick(InventoryClickEvent event) {
+      if (event.getCurrentItem().getType() == Material.CHEST) {
          this.getPlayer().openInventory(MenuListener.getPlayerMenu(this.getPlayer(), "voteChest").getInventory());
       }
 
-      if (var1.getCurrentItem().getType() == Material.WATCH) {
+      if (event.getCurrentItem().getType() == Material.WATCH) {
          this.getPlayer().openInventory(MenuListener.getPlayerMenu(this.getPlayer(), "voteTime").getInventory());
       }
 

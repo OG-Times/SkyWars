@@ -30,9 +30,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
@@ -50,7 +49,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -58,6 +56,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Arena extends Game {
     private final List<SkyPlayer> players = new ArrayList<>();
     private final LinkedHashMap<Location, Boolean> spawnPoints = new LinkedHashMap<>();
+    private final ConcurrentLinkedDeque<Location> availableSpawns = new ConcurrentLinkedDeque<>();
     private final List<ArenaBox> glassBoxes = new ArrayList<>();
     private final List<String> selectedChest = new ArrayList<>();
     private final List<String> selectedTime = new ArrayList<>();
@@ -103,7 +102,8 @@ public class Arena extends Game {
         }
 
         if (this.config.getString("options.mode").equalsIgnoreCase("TEAM")) {
-            this.mode = ArenaMode.SOLO;
+            SkyWars.getPlugin().getLogger().warning("Arena '" + name + "' is set to TEAM mode, this mode is currently in development.");
+            this.mode = ArenaMode.TEAM;
         } else {
             this.mode = ArenaMode.SOLO;
         }
@@ -114,14 +114,14 @@ public class Arena extends Game {
             this.loadSpawnPoints();
             this.loadGlassBoxes();
         } else {
-            for(int var2 = 1; var2 <= this.config.getInt("team.teams"); ++var2) {
-                this.teams.put(var2, new ArenaTeam(var2, this.config.getInt("team.teams_size"), LocationUtil.getLocation(this.config.getStringList("spawnpoints").get(var2 - 1))));
+            for(int i = 1; i <= this.config.getInt("team.teams"); ++i) {
+                this.teams.put(i, new ArenaTeam(i, this.config.getInt("team.teams_size"), LocationUtil.getLocation(this.config.getStringList("spawnpoints").get(i - 1))));
             }
 
             this.minPlayers = this.config.getInt("min_players");
             this.maxPlayers = this.teams.size() * this.config.getInt("team.teams_size");
-            String var7 = this.config.getString("team.waiting_lobby");
-            if (var7 != null && !var7.isEmpty()) {
+            String teamWaitingLobby = this.config.getString("team.waiting_lobby");
+            if (teamWaitingLobby != null && !teamWaitingLobby.isEmpty()) {
                 this.teamLobby = LocationUtil.getLocation(this.config.getString("team.waiting_lobby"));
             } else {
                 this.teamLobby = this.getSpawn();
@@ -654,107 +654,43 @@ public class Arena extends Game {
 
     public final void loadSpawnPoints() {
         this.spawnPoints.clear();
+        this.availableSpawns.clear();
 
         for (Object spawnpoint : this.config.getList("spawnpoints")) {
-            this.spawnPoints.put(LocationUtil.getLocation(spawnpoint.toString()), false);
+            Location location = LocationUtil.getLocation(spawnpoint.toString());
+            if (location == null || location.getWorld() == null) {
+                SkyWars.logError("Invalid spawnpoint in arena '" + this.name + "': " + spawnpoint);
+                continue;
+            }
+            this.spawnPoints.put(location, false);
+            this.availableSpawns.addLast(location);
         }
 
     }
 
-    public final World loadFirstWorld() {
-        if (this.getWorld() != null) {
-            if (!Bukkit.unloadWorld(this.getWorld(), false)) {
-                Console.debugWarn(this.name + " is already loaded but SkyWars is trying to unload the world for resetting (something is keeping the world loaded)");
-                ++this.loadWorldTries;
-                if (this.loadWorldTries >= 10) {
-                    SkyWars.logError(this.name + " can not be unloaded, SkyWars tried 10 times but another instance keep the world loaded");
-                    this.loadWorldTries = 0;
-                    return this.getWorld();
-                }
-            }
-
-            return this.loadFirstWorld();
-        } else {
-            WorldCreator creator = new WorldCreator(this.name);
-            creator.generateStructures(false);
-            creator.generator(SkyWars.getVoidGenerator());
-            World world = creator.createWorld();
-            world.setAutoSave(false);
-            world.setGameRuleValue("doMobSpawning", "false");
-            world.setGameRuleValue("doDaylightCycle", "false");
-            world.setGameRuleValue("commandBlockOutput", "false");
-            world.setTime(0L);
-            world.setDifficulty(Difficulty.NORMAL);
-
-            try {
-                world.setKeepSpawnInMemory(false);
-            } catch (Exception ex) {
-                SkyWars.logError("An error has occurred while trying to load the world: " + this.name);
-                SkyWars.logError("Error message: " + ex.getMessage());
-            }
-
-            this.loadWorldTries = 0;
-            return world;
+    public Location acquireSpawn() {
+        Location spawn = this.availableSpawns.pollFirst();
+        if (spawn != null) {
+            return spawn;
         }
+        if (!this.spawnPoints.isEmpty()) {
+            return this.spawnPoints.keySet().iterator().next();
+        }
+        return null;
     }
 
-    public void reloadWorld() {
-
-        for (Player player : this.getWorld().getPlayers()) {
-            if (SkyWars.isProxyMode()) {
-                ProxyUtils.teleToServer(player, SkyWars.getMessage(Messages.PLAYER_TELEPORT_LOBBY), SkyWars.getRandomLobby());
-            } else {
-                SkyPlayer skyPlayer = SkyWars.getSkyPlayer(player);
-                if (skyPlayer == null) {
-                    player.kickPlayer("Do you have lag?\nWe need reset the world :)");
-                } else {
-                    SkyWars.goToSpawn(skyPlayer);
-                    player.setFallDistance(0.0F);
-                }
-            }
+    public void releaseSpawn(Location spawn) {
+        if (spawn == null) {
+            return;
         }
-
-        if (!Bukkit.unloadWorld(this.getWorld(), false)) {
-            SkyWars.logError(this.name + " was unsuccessful unloaded before the world reset (this can cause some problems and it's not a SkyWars problem)");
+        if (this.spawnPoints.containsKey(spawn) && !this.availableSpawns.contains(spawn)) {
+            this.availableSpawns.addLast(spawn);
         }
-
-        if (this.hardReset) {
-            File mapsFolder = new File(SkyWars.maps);
-            File[] mapsFiles = mapsFolder.listFiles();
-
-            for (File mapFile : mapsFiles) {
-                if (mapFile.getName().equals(this.getName()) && mapFile.isDirectory()) {
-                    try {
-                        ArenaManager.delete(new File(mapFile.getName()));
-                        ArenaManager.copyFolder(mapFile, new File(mapFile.getName()));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        this.loadFirstWorld();
-        this.loadSpawnPoints();
-        this.loadGlassBoxes();
-        this.loading = false;
-        this.hardReset = false;
-    }
-
-    public void removePlayer(SkyPlayer skyPlayer, ArenaLeaveCause cause) {
-        ArenaLeaveEvent var3 = new ArenaLeaveEvent(skyPlayer, this, cause);
-        Bukkit.getServer().getPluginManager().callEvent(var3);
-        if (cause != ArenaLeaveCause.RESTART) {
-            this.playSignUpdate(SkySignUpdateCause.PLAYERS);
-        }
-
-    }
-
-    public void removeTimer(BukkitRunnable runnable) {
-        this.tickers.remove(runnable);
     }
 
     public void resetPlayer(SkyPlayer skyPlayer) {
+        this.releaseSpawn(skyPlayer.getArenaSpawn());
+
         this.setUsed(skyPlayer.getArenaSpawn(), false);
         skyPlayer.playedTimeEnd();
         skyPlayer.distanceWalkedConvert();
@@ -765,6 +701,15 @@ public class Arena extends Game {
         skyPlayer.resetVotes();
         skyPlayer.setArena(null);
         skyPlayer.getPlayer().updateInventory();
+    }
+
+    public void reloadWorld() {
+
+        this.loadFirstWorld();
+        this.loadSpawnPoints();
+        this.loadGlassBoxes();
+        this.loading = false;
+        this.hardReset = false;
     }
 
     public void restart() {
@@ -991,6 +936,45 @@ public class Arena extends Game {
                     this.playerTeam.put(skyPlayer, team);
                 }
             }
+        }
+    }
+
+    public final World loadFirstWorld() {
+        if (this.getWorld() != null) {
+            return this.getWorld();
+        }
+
+        WorldCreator creator = new WorldCreator(this.name);
+        creator.generateStructures(false);
+        creator.generator(SkyWars.getVoidGenerator());
+        World world = creator.createWorld();
+        if (world != null) {
+            world.setAutoSave(false);
+            world.setGameRuleValue("doMobSpawning", "false");
+            world.setGameRuleValue("doDaylightCycle", "false");
+            world.setGameRuleValue("commandBlockOutput", "false");
+            world.setTime(0L);
+            world.setDifficulty(Difficulty.NORMAL);
+
+            world.getEntities().forEach(entity -> {
+                if (!(entity instanceof Player)) entity.remove();
+            });
+
+            try {
+                world.setKeepSpawnInMemory(false);
+            } catch (Exception ex) {
+                SkyWars.logError("An error has occurred while trying to load the world: " + this.name);
+                SkyWars.logError("Error message: " + ex.getMessage());
+            }
+        }
+        return world;
+    }
+
+    public void removePlayer(SkyPlayer skyPlayer, ArenaLeaveCause cause) {
+        ArenaLeaveEvent event = new ArenaLeaveEvent(skyPlayer, this, cause);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (cause != ArenaLeaveCause.RESTART) {
+            this.playSignUpdate(SkySignUpdateCause.PLAYERS);
         }
     }
 

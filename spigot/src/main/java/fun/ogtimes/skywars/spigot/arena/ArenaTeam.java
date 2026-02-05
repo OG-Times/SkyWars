@@ -23,10 +23,10 @@ public class ArenaTeam {
    private LinkedHashMap<Location, Boolean> spawns = new LinkedHashMap<>();
    private List<ArenaBox> cages = new ArrayList<>();
 
-   public ArenaTeam(int var1, int var2, Location var3) {
-      this.number = var1;
-      this.maximumSize = var2;
-      this.base = var3;
+   public ArenaTeam(int number, int maxSize, Location base) {
+      this.number = number;
+      this.maximumSize = maxSize;
+      this.base = base;
       this.loadSpawns();
       this.loadCages();
    }

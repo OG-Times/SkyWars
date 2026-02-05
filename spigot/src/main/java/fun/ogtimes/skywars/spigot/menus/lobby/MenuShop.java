@@ -30,16 +30,16 @@ public class MenuShop extends Menu {
 
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
-      int var2 = var1.getSlot();
-      if (var1.getCurrentItem() != null && var1.getCurrentItem().getType() != Material.AIR) {
+   public void onClick(InventoryClickEvent event) {
+      int var2 = event.getSlot();
+      if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
          Iterator var3 = ConfigManager.shop.getConfigurationSection("all").getKeys(false).iterator();
 
          String var4;

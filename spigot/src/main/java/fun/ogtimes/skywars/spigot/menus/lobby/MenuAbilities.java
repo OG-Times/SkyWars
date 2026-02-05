@@ -36,16 +36,16 @@ public class MenuAbilities extends Menu {
       this.pages = var3;
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
-      int var2 = var1.getSlot();
-      if (var1.getCurrentItem() != null && var1.getCurrentItem().getType() != Material.AIR) {
+   public void onClick(InventoryClickEvent event) {
+      int var2 = event.getSlot();
+      if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
          if (var2 == ConfigManager.shop.getInt("submenu.abilities.next.slot") - 1) {
             this.getPlayer().openInventory(MenuListener.getPlayerMenu(this.getPlayer(), "abilities" + (this.page + 1)).getInventory());
          } else if (var2 == ConfigManager.shop.getInt("submenu.abilities.previous.slot") - 1) {
@@ -58,7 +58,7 @@ public class MenuAbilities extends Menu {
 
                 for (Ability var7 : var4) {
                     String var8 = ChatColor.translateAlternateColorCodes('&', ConfigManager.abilities.getString("abilities." + var7.getName() + ".name"));
-                    String var9 = var1.getCurrentItem().getItemMeta().getDisplayName();
+                    String var9 = event.getCurrentItem().getItemMeta().getDisplayName();
                     String var10 = ConfigManager.abilities.getString("abilities." + var7.getName() + ".name");
                     if (var9.equals(var8)) {
                         if (var3.isAbilityDisabled(var7.getType())) {
@@ -74,7 +74,7 @@ public class MenuAbilities extends Menu {
                     }
 
                     if (var9.contains(var8)) {
-                        ItemStack var11 = var1.getCurrentItem();
+                        ItemStack var11 = event.getCurrentItem();
                         if (this.itemCompare(var11, "purchase")) {
                             if (!var3.hasAbility(var7.getType())) {
                                 this.buyAbility(var3, 1, var7, var10, var2);

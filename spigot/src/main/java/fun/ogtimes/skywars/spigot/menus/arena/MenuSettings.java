@@ -18,19 +18,19 @@ public class MenuSettings extends Menu {
       new MenuSettingsTrails(var1);
    }
 
-   public void onOpen(InventoryOpenEvent var1) {
+   public void onOpen(InventoryOpenEvent event) {
       this.update();
    }
 
-   public void onClose(InventoryCloseEvent var1) {
+   public void onClose(InventoryCloseEvent event) {
    }
 
-   public void onClick(InventoryClickEvent var1) {
-      if (var1.getCurrentItem().getType() == Material.GLASS) {
+   public void onClick(InventoryClickEvent event) {
+      if (event.getCurrentItem().getType() == Material.GLASS) {
          this.getPlayer().openInventory(MenuListener.getPlayerMenu(this.getPlayer(), "settingsBoxes").getInventory());
       }
 
-      if (var1.getCurrentItem().getType() == Material.ARROW) {
+      if (event.getCurrentItem().getType() == Material.ARROW) {
          this.getPlayer().openInventory(MenuListener.getPlayerMenu(this.getPlayer(), "settingsTrails").getInventory());
       }
 
