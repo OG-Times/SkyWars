@@ -15,8 +15,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class MenuVoteTime extends Menu {
-   public MenuVoteTime(Player var1) {
-      super(var1, "voteTime", SkyWars.getMessage(Messages.VOTE_TIME_TITLE), 3);
+   public MenuVoteTime(Player player) {
+      super(player, "voteTime", SkyWars.getMessage(Messages.VOTE_TIME_TITLE), 3);
    }
 
    public void onOpen(InventoryOpenEvent event) {
@@ -27,70 +27,116 @@ public class MenuVoteTime extends Menu {
    }
 
    public void onClick(InventoryClickEvent event) {
-      ItemStack var2 = event.getCurrentItem();
-      SkyPlayer var3 = SkyWars.getSkyPlayer(this.getPlayer());
-      if (var3.isInArena()) {
-         Arena var4 = var3.getArena();
-         if (var2.getType() == Material.STAINED_CLAY && var2.getDurability() == 4) {
-            if (!var3.hasPermission("skywars.vote.time.day")) {
-               var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
+      ItemStack item = event.getCurrentItem();
+      SkyPlayer skyPlayer = SkyWars.getSkyPlayer(this.getPlayer());
+      if (item == null) {
+         return;
+      }
+
+      if (skyPlayer.isInArena()) {
+         Arena arena = skyPlayer.getArena();
+
+         String prev = skyPlayer.getString("voted_time_type");
+
+         if (item.getType() == Material.STAINED_CLAY && item.getDurability() == 4) {
+            if (!skyPlayer.hasPermission("skywars.vote.time.day")) {
+               skyPlayer.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
                this.getPlayer().closeInventory();
                return;
             }
 
-            if (var3.hasData("voted_time")) {
-               var3.sendMessage(SkyWars.getMessage(Messages.VOTE_ONLY1));
-               this.getPlayer().closeInventory();
-               return;
+            if (prev != null && !prev.isEmpty()) {
+               if (prev.equalsIgnoreCase("day")) {
+                  this.getPlayer().closeInventory();
+                  return;
+               }
+               int c;
+               if (prev.equalsIgnoreCase("night")) {
+                  c = arena.getInt("vote_time_night");
+                  if (c > 0) arena.addData("vote_time_night", c - 1);
+               } else if (prev.equalsIgnoreCase("sunset")) {
+                  c = arena.getInt("vote_time_sunset");
+                  if (c > 0) arena.addData("vote_time_sunset", c - 1);
+               } else if (prev.equalsIgnoreCase("day")) {
+                  c = arena.getInt("vote_time_day");
+                  if (c > 0) arena.addData("vote_time_day", c - 1);
+               }
             }
 
-            var3.addData("voted_time", true);
-            var3.addData("voted_time_day", true);
-            var4.addData("vote_time_day", var4.getInt("vote_time_day") + 1);
-            var3.sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUCCESSFUL), ChatColor.stripColor(SkyWars.getMessage(Messages.VOTE_TIME_DAY_NAME))));
-            var4.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_TIME), this.getPlayer().getName(), SkyWars.getMessage(Messages.SELECTED_TIME_DAY), var4.getInt("vote_time_day")));
+            skyPlayer.addData("voted_time", true);
+            skyPlayer.addData("voted_time_type", "day");
+            skyPlayer.addData("voted_time_day", true);
+            arena.addData("vote_time_day", arena.getInt("vote_time_day") + 1);
+            skyPlayer.sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUCCESSFUL), ChatColor.stripColor(SkyWars.getMessage(Messages.VOTE_TIME_DAY_NAME))));
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_TIME), this.getPlayer().getName(), SkyWars.getMessage(Messages.SELECTED_TIME_DAY), arena.getInt("vote_time_day")));
             this.getPlayer().closeInventory();
          }
 
-         if (var2.getType() == Material.STAINED_CLAY && var2.getDurability() == 15) {
-            if (!var3.hasPermission("skywars.vote.time.night")) {
-               var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
+         if (item.getType() == Material.STAINED_CLAY && item.getDurability() == 15) {
+            if (!skyPlayer.hasPermission("skywars.vote.time.night")) {
+               skyPlayer.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
                this.getPlayer().closeInventory();
                return;
             }
 
-            if (var3.hasData("voted_time")) {
-               var3.sendMessage(SkyWars.getMessage(Messages.VOTE_ONLY1));
-               this.getPlayer().closeInventory();
-               return;
+            if (prev != null && !prev.isEmpty()) {
+               if (prev.equalsIgnoreCase("night")) {
+                  this.getPlayer().closeInventory();
+                  return;
+               }
+               int c;
+               if (prev.equalsIgnoreCase("day")) {
+                  c = arena.getInt("vote_time_day");
+                  if (c > 0) arena.addData("vote_time_day", c - 1);
+               } else if (prev.equalsIgnoreCase("sunset")) {
+                  c = arena.getInt("vote_time_sunset");
+                  if (c > 0) arena.addData("vote_time_sunset", c - 1);
+               } else if (prev.equalsIgnoreCase("night")) {
+                  c = arena.getInt("vote_time_night");
+                  if (c > 0) arena.addData("vote_time_night", c - 1);
+               }
             }
 
-            var3.addData("voted_time", true);
-            var3.addData("voted_time_night", true);
-            var4.addData("vote_time_night", var4.getInt("vote_time_night") + 1);
-            var3.sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUCCESSFUL), ChatColor.stripColor(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_NAME))));
-            var4.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_TIME), this.getPlayer().getName(), SkyWars.getMessage(Messages.SELECTED_TIME_NIGHT), var4.getInt("vote_time_night")));
+            skyPlayer.addData("voted_time", true);
+            skyPlayer.addData("voted_time_type", "night");
+            skyPlayer.addData("voted_time_night", true);
+            arena.addData("vote_time_night", arena.getInt("vote_time_night") + 1);
+            skyPlayer.sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUCCESSFUL), ChatColor.stripColor(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_NAME))));
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_TIME), this.getPlayer().getName(), SkyWars.getMessage(Messages.SELECTED_TIME_NIGHT), arena.getInt("vote_time_night")));
             this.getPlayer().closeInventory();
          }
 
-         if (var2.getType() == Material.STAINED_CLAY && var2.getDurability() == 14) {
-            if (!var3.hasPermission("skywars.vote.time.sunset")) {
-               var3.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
+         if (item.getType() == Material.STAINED_CLAY && item.getDurability() == 14) {
+            if (!skyPlayer.hasPermission("skywars.vote.time.sunset")) {
+               skyPlayer.sendMessage(SkyWars.getMessage(Messages.PLAYER_NEEDPERMISSIONS_VOTE_TIME));
                this.getPlayer().closeInventory();
                return;
             }
 
-            if (var3.hasData("voted_time")) {
-               var3.sendMessage(SkyWars.getMessage(Messages.VOTE_ONLY1));
-               this.getPlayer().closeInventory();
-               return;
+            if (prev != null && !prev.isEmpty()) {
+               if (prev.equalsIgnoreCase("sunset")) {
+                  this.getPlayer().closeInventory();
+                  return;
+               }
+               int c;
+               if (prev.equalsIgnoreCase("day")) {
+                  c = arena.getInt("vote_time_day");
+                  if (c > 0) arena.addData("vote_time_day", c - 1);
+               } else if (prev.equalsIgnoreCase("night")) {
+                  c = arena.getInt("vote_time_night");
+                  if (c > 0) arena.addData("vote_time_night", c - 1);
+               } else if (prev.equalsIgnoreCase("sunset")) {
+                  c = arena.getInt("vote_time_sunset");
+                  if (c > 0) arena.addData("vote_time_sunset", c - 1);
+               }
             }
 
-            var3.addData("voted_time", true);
-            var3.addData("voted_time_sunset", true);
-            var4.addData("vote_time_sunset", var4.getInt("vote_time_sunset") + 1);
-            var3.sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUCCESSFUL), ChatColor.stripColor(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_NAME))));
-            var4.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_TIME), this.getPlayer().getName(), SkyWars.getMessage(Messages.SELECTED_TIME_SUNSET), var4.getInt("vote_time_sunset")));
+            skyPlayer.addData("voted_time", true);
+            skyPlayer.addData("voted_time_type", "sunset");
+            skyPlayer.addData("voted_time_sunset", true);
+            arena.addData("vote_time_sunset", arena.getInt("vote_time_sunset") + 1);
+            skyPlayer.sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUCCESSFUL), ChatColor.stripColor(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_NAME))));
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_TIME), this.getPlayer().getName(), SkyWars.getMessage(Messages.SELECTED_TIME_SUNSET), arena.getInt("vote_time_sunset")));
             this.getPlayer().closeInventory();
          }
       }
@@ -98,12 +144,12 @@ public class MenuVoteTime extends Menu {
    }
 
    public void update() {
-      SkyPlayer var1 = SkyWars.getSkyPlayer(this.getPlayer());
-      if (var1.isInArena()) {
-         Arena var2 = var1.getArena();
-         this.setItem(10, (new ItemBuilder(Material.STAINED_CLAY, (short)4)).setTitle(SkyWars.getMessage(Messages.VOTE_TIME_DAY_NAME)).addLore(SkyWars.getMessage(Messages.VOTE_TIME_DAY_LORE1)).addLore(String.format(SkyWars.getMessage(Messages.VOTE_TIME_DAY_LORE2), var2.getInt("vote_time_day"))));
-         this.setItem(13, (new ItemBuilder(Material.STAINED_CLAY, (short)15)).setTitle(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_NAME)).addLore(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_LORE1)).addLore(String.format(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_LORE2), var2.getInt("vote_time_night"))));
-         this.setItem(16, (new ItemBuilder(Material.STAINED_CLAY, (short)14)).setTitle(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_NAME)).addLore(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_LORE1)).addLore(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_LORE2), var2.getInt("vote_time_sunset"))));
+      SkyPlayer skyPlayer = SkyWars.getSkyPlayer(this.getPlayer());
+      if (skyPlayer.isInArena()) {
+         Arena arena = skyPlayer.getArena();
+         this.setItem(10, (new ItemBuilder(Material.STAINED_CLAY, (short)4)).setTitle(SkyWars.getMessage(Messages.VOTE_TIME_DAY_NAME)).addLore(SkyWars.getMessage(Messages.VOTE_TIME_DAY_LORE1)).addLore(String.format(SkyWars.getMessage(Messages.VOTE_TIME_DAY_LORE2), arena.getInt("vote_time_day"))));
+         this.setItem(13, (new ItemBuilder(Material.STAINED_CLAY, (short)15)).setTitle(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_NAME)).addLore(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_LORE1)).addLore(String.format(SkyWars.getMessage(Messages.VOTE_TIME_NIGHT_LORE2), arena.getInt("vote_time_night"))));
+         this.setItem(16, (new ItemBuilder(Material.STAINED_CLAY, (short)14)).setTitle(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_NAME)).addLore(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_LORE1)).addLore(String.format(SkyWars.getMessage(Messages.VOTE_TIME_SUNSET_LORE2), arena.getInt("vote_time_sunset"))));
       }
 
    }

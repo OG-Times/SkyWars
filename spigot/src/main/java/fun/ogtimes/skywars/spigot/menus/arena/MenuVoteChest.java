@@ -34,6 +34,10 @@ public class MenuVoteChest extends Menu {
             Arena arena = skyPlayer.getArena();
             ChestType[] chestTypes = ChestTypeManager.getChestTypes();
 
+            if (event.getCurrentItem() == null) {
+                return;
+            }
+
             for (ChestType chestType : chestTypes) {
                 if (event.getCurrentItem().getType() == chestType.getItem() && event.getSlot() == chestType.getSlot()) {
                     if (!skyPlayer.hasPermission("skywars.vote.chest." + chestType.getName())) {
@@ -42,14 +46,23 @@ public class MenuVoteChest extends Menu {
                         return;
                     }
 
-                    if (skyPlayer.hasData("voted_chest")) {
-                        skyPlayer.sendMessage(SkyWars.getMessage(Messages.VOTE_ONLY1));
-                        this.getPlayer().closeInventory();
-                        return;
+                    String previousVote = skyPlayer.getString("voted_chest_type");
+                    if (previousVote != null && !previousVote.isEmpty()) {
+                        if (previousVote.equalsIgnoreCase(chestType.getName())) {
+                            this.getPlayer().closeInventory();
+                            return;
+                        }
+
+                        int previousCount = arena.getInt("vote_chest_" + previousVote);
+                        if (previousCount > 0) {
+                            arena.addData("vote_chest_" + previousVote, previousCount - 1);
+                        }
                     }
 
                     skyPlayer.addData("voted_chest", true);
+                    skyPlayer.addData("voted_chest_type", chestType.getName());
                     skyPlayer.addData("voted_chest_" + chestType.getName(), true);
+
                     arena.addData("vote_chest_" + chestType.getName(), arena.getInt("vote_chest_" + chestType.getName()) + 1);
                     this.getPlayer().sendMessage(String.format(SkyWars.getMessage(Messages.VOTE_CHESTS_SUCCESSFUL), ChatColor.stripColor(chestType.getTitle())));
                     arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_PLAYER_VOTE_CHESTS), this.getPlayer().getName(), chestType.getShortName(), arena.getInt("vote_chest_" + chestType.getName())));

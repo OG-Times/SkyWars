@@ -13,8 +13,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
 public class MenuSettingsBoxes extends Menu {
-   public MenuSettingsBoxes(Player var1) {
-      super(var1, "settingsBoxes", SkyWars.getMessage(Messages.SETTINGS_MENU_BOXES_TITLE), SkyWars.boxes.getInt("menu_rows"));
+   public MenuSettingsBoxes(Player player) {
+      super(player, "settingsBoxes", SkyWars.getMessage(Messages.SETTINGS_MENU_BOXES_TITLE), SkyWars.boxes.getInt("menu_rows"));
    }
 
    public void onOpen(InventoryOpenEvent event) {
