@@ -1,0 +1,36 @@
+# SkyWars database configuration
+# Edit these values to configure your database connection.
+# Do NOT commit real credentials to version control.
+
+# type: "SQLite" or "MySQL"
+type: SQLite
+
+sqlite:
+  # relative to plugin data folder
+  path: plugins/SkyWars/Database.db
+
+mysql:
+  host: localhost
+  port: 3306
+  database: SkyWars
+  user: root
+  password: CHANGEME
+  useLog4Jdbc: false
+  pool:
+    maxPoolSize: 8
+    minimumIdle: 1
+    maxLifetimeMs: 180000
+
+# NATS configuration (messaging between proxy and instances)
+# Example: nats://127.0.0.1:4222
+nats:
+  url: nats://127.0.0.1:4222
+
+tables:
+  data: SkyWars_Data
+  economy: SkyWars_Economy
+  servers: SkyWars_Servers
+
+debug:
+  debug-database: false
+

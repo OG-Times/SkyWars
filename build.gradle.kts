@@ -44,6 +44,11 @@ subprojects {
         archiveClassifier.set("")
         archiveFileName.set("${rootProject.name}-${project.name}-${rootProject.version}.jar")
 
+        relocate("org.jspecify", "${project.group}.shaded.jspecify")
+        relocate("org.bouncycastle", "${project.group}.shaded.bouncycastle")
+        relocate("io.nats", "${project.group}.shaded.nats")
+        relocate("com.google", "${project.group}.shaded.google")
+
         finalizedBy("publishShadowPublicationToMavenLocal")
     }
 
