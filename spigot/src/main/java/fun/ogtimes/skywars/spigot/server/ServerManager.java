@@ -5,11 +5,12 @@ import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 
 public class ServerManager {
-   public static final HashMap<String, Server> servers = new HashMap<>();
+   public static final Map<String, Server> servers = new HashMap<>();
 
    public static void initServers() {
       DatabaseHandler.getDS().getServers();
@@ -17,8 +18,8 @@ public class ServerManager {
          Bukkit.getScheduler().runTaskTimerAsynchronously(SkyWars.getPlugin(), () -> {
             if (!SkyWars.disabling) {
 
-                for (Server var1 : getServers()) {
-                    var1.getData(true);
+                for (Server server : getServers()) {
+                    server.getData(true);
                 }
             }
 
@@ -31,7 +32,7 @@ public class ServerManager {
       return Collections.unmodifiableSet(Sets.newHashSet(servers.values()));
    }
 
-   public static Server getServer(String var0) {
-      return servers.get(var0);
+   public static Server getServer(String server) {
+      return servers.get(server);
    }
 }

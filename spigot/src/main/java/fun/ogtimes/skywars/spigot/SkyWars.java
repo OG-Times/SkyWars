@@ -12,6 +12,7 @@ import fun.ogtimes.skywars.spigot.config.ConfigManager;
 import fun.ogtimes.skywars.spigot.database.DatabaseHandler;
 import fun.ogtimes.skywars.spigot.events.EventsManager;
 import fun.ogtimes.skywars.spigot.events.enums.ArenaLeaveCause;
+import fun.ogtimes.skywars.spigot.instance.InstanceModeHandler;
 import fun.ogtimes.skywars.spigot.kit.KitManager;
 import fun.ogtimes.skywars.spigot.listener.*;
 import fun.ogtimes.skywars.spigot.listener.skywars.ArenaListener;
@@ -57,11 +58,11 @@ public class SkyWars extends JavaPlugin implements Listener {
 
     @Getter
     private static SkyWars plugin;
-    public static final HashMap<UUID, SkyPlayer> skyPlayersUUID;
-    public static final HashMap<String, SkyPlayer> skyPlayers;
+    public static final HashMap<UUID, SkyPlayer> skyPlayersUUID = new HashMap<>();
+    public static final HashMap<String, SkyPlayer> skyPlayers = new HashMap<>();
     @Getter
     public static Location spawn;
-    public static final List<Location> hologram;
+    public static final List<Location> hologram = new ArrayList<>();
 
     public static final String arenas = "games";
     public static final String kits = "kits";
@@ -77,20 +78,13 @@ public class SkyWars extends JavaPlugin implements Listener {
     public static boolean login;
     public static boolean firstJoin;
     public static String prefix = "[SkyWars] ";
-    public static long seconds;
+    public static long seconds = 0L;
 
     public static VariableManager variableManager;
     private static ResourceBundle messageBundle;
     private static ResourceBundle customBundle;
     private static DatabaseHandler databaseHandler;
-
-    static {
-        skyPlayersUUID = new HashMap<>();
-        skyPlayers = new HashMap<>();
-        hologram = new ArrayList<>();
-        prefix = "[SkyWars] ";
-        seconds = 0L;
-    }
+    private static InstanceModeHandler instanceHandler;
 
     private Metrics metrics;
     private BukkitAudiences adventure;
@@ -270,6 +264,12 @@ public class SkyWars extends JavaPlugin implements Listener {
     }
 
     public static boolean getMysql() {
+        try {
+            if (ConfigManager.database != null && ConfigManager.database.isSet("type")) {
+                return ConfigManager.database.getString("type", "SQLite").equalsIgnoreCase("MySQL");
+            }
+        } catch (Exception ignored) {
+        }
         return ConfigManager.main.getString("data.type").equalsIgnoreCase("MySQL");
     }
 
@@ -350,6 +350,7 @@ public class SkyWars extends JavaPlugin implements Listener {
         ConfigManager.abilitiesConfig();
         ConfigManager.shopConfig();
         ConfigManager.signsConfig();
+        ConfigManager.databaseConfig();
 
         variableManager = new VariableManager();
         variableManager.registerVariableReplacer(new VariablesDefault());
@@ -458,6 +459,13 @@ public class SkyWars extends JavaPlugin implements Listener {
                     this, "skywars:sign-update", new BungeeRecieveListener()
             );
             ServerManager.initServers();
+        } else {
+            try {
+                instanceHandler = new InstanceModeHandler(this);
+                instanceHandler.start();
+            } catch (Exception e) {
+                log("Failed to start InstanceModeHandler: " + e.getMessage());
+            }
         }
 
         if (isProxyMode()) {
@@ -570,6 +578,10 @@ public class SkyWars extends JavaPlugin implements Listener {
         if (databaseHandler != null) {
             console(prefix + "&cDisabling all data");
             DatabaseHandler.getDS().close();
+        }
+
+        if (instanceHandler != null) {
+            instanceHandler.stop();
         }
     }
 

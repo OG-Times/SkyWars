@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map.Entry;
 
 public class MySQL extends DataSource {
-    private final int port = SkyWars.getPlugin().getConfig().getInt("data.mysql.port");
-    private final String host = SkyWars.getPlugin().getConfig().getString("data.mysql.server");
-    private final String database = SkyWars.getPlugin().getConfig().getString("data.mysql.db");
-    private final String username = SkyWars.getPlugin().getConfig().getString("data.mysql.user");
-    private final String password = SkyWars.getPlugin().getConfig().getString("data.mysql.password");
+    private final int port = ConfigManager.database.getInt("mysql.port", 3306);
+    private final String host = ConfigManager.database.getString("mysql.host", "localhost");
+    private final String database = ConfigManager.database.getString("mysql.database", "SkyWars");
+    private final String username = ConfigManager.database.getString("mysql.user", "root");
+    private final String password = ConfigManager.database.getString("mysql.password", "");
     private HikariDataSource ds;
 
     @SneakyThrows
@@ -65,7 +65,8 @@ public class MySQL extends DataSource {
     private synchronized void setConnectionArguments() {
         this.ds = new HikariDataSource();
         this.ds.setPoolName("SkyWars MySQL");
-        if (ConfigManager.main.getBoolean("debug-database")) {
+        boolean debugDb = ConfigManager.database.getBoolean("debug.debug-database", ConfigManager.main.getBoolean("debug-database", false));
+        if (debugDb) {
             this.ds.setJdbcUrl("jdbc:log4jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database);
             this.ds.setDriverClassName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
         } else {
@@ -82,10 +83,13 @@ public class MySQL extends DataSource {
         this.ds.addDataSourceProperty("useSSL", "false");
         this.ds.setUsername(this.username);
         this.ds.setPassword(this.password);
-        this.ds.setMaxLifetime(180000L);
+        long maxLifetime = ConfigManager.database.getLong("mysql.pool.maxLifetimeMs", 180000L);
+        int minimumIdle = ConfigManager.database.getInt("mysql.pool.minimumIdle", 1);
+        int maxPool = ConfigManager.database.getInt("mysql.pool.maxPoolSize", SkyWars.isProxyMode() ? 4 : 8);
+        this.ds.setMaxLifetime(maxLifetime);
         this.ds.setIdleTimeout(60000L);
-        this.ds.setMinimumIdle(1);
-        this.ds.setMaximumPoolSize(SkyWars.isProxyMode() ? 4 : 8);
+        this.ds.setMinimumIdle(minimumIdle);
+        this.ds.setMaximumPoolSize(maxPool);
         SkyWars.log("Connection arguments loaded, Hikari ConnectionPool ready!");
     }
 
@@ -360,45 +364,45 @@ public class MySQL extends DataSource {
     }
 
     public void loadServer() {
-        PreparedStatement var1 = null;
-        ResultSet var2 = null;
+        PreparedStatement statement = null;
+        ResultSet result = null;
 
         try {
-            Connection var3 = this.getConnection();
-            Throwable var4 = null;
+            Connection connection = this.getConnection();
+            Throwable throwable = null;
 
             try {
-                var1 = var3.prepareStatement(String.format("SELECT * FROM %s WHERE bungeeid=?", this.TABLE_SERVER));
-                var1.setString(1, SkyServer.getProxyId());
-                var2 = var1.executeQuery();
-                if (!var2.next()) {
-                    var1.close();
-                    var1 = var3.prepareStatement(String.format("INSERT INTO %s (bungeeid) VALUES(?)", this.TABLE_SERVER));
-                    var1.setString(1, SkyServer.getProxyId());
-                    var1.executeUpdate();
+                statement = connection.prepareStatement(String.format("SELECT * FROM %s WHERE bungeeid=?", this.TABLE_SERVER));
+                statement.setString(1, SkyServer.getProxyId());
+                result = statement.executeQuery();
+                if (!result.next()) {
+                    statement.close();
+                    statement = connection.prepareStatement(String.format("INSERT INTO %s (bungeeid) VALUES(?)", this.TABLE_SERVER));
+                    statement.setString(1, SkyServer.getProxyId());
+                    statement.executeUpdate();
                 }
-            } catch (Throwable var22) {
-                var4 = var22;
-                throw var22;
+            } catch (Throwable e) {
+                throwable = e;
+                throw e;
             } finally {
-                if (var3 != null) {
-                    if (var4 != null) {
+                if (connection != null) {
+                    if (throwable != null) {
                         try {
-                            var3.close();
-                        } catch (Throwable var21) {
-                            var4.addSuppressed(var21);
+                            connection.close();
+                        } catch (Throwable ex) {
+                            throwable.addSuppressed(ex);
                         }
                     } else {
-                        var3.close();
+                        connection.close();
                     }
                 }
 
             }
-        } catch (SQLException var24) {
-            var24.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
-            this.close(var2);
-            this.close(var1);
+            this.close(result);
+            this.close(statement);
         }
 
     }
@@ -448,34 +452,34 @@ public class MySQL extends DataSource {
     }
 
     public void setServerData(Arena arena) {
-        PreparedStatement var2 = null;
+        PreparedStatement statement = null;
 
         try {
-            Connection var3 = this.getConnection();
+            Connection connection = this.getConnection();
             Throwable var4 = null;
 
             try {
-                var2 = var3.prepareStatement(String.format("UPDATE %s SET players=?, max_players=?, map=?, loading=?, state=? WHERE bungeeid=?", this.TABLE_SERVER));
-                var2.setInt(1, arena.getAlivePlayers());
-                var2.setInt(2, arena.getMaxPlayers());
-                var2.setString(3, arena.getDisplayName());
-                var2.setInt(4, arena.isLoading() ? 1 : 0);
-                var2.setString(5, arena.getState().toString());
-                var2.setString(6, SkyServer.getProxyId());
-                var2.executeUpdate();
+                statement = connection.prepareStatement(String.format("UPDATE %s SET players=?, max_players=?, map=?, loading=?, state=? WHERE bungeeid=?", this.TABLE_SERVER));
+                statement.setInt(1, arena.getAlivePlayers());
+                statement.setInt(2, arena.getMaxPlayers());
+                statement.setString(3, arena.getDisplayName());
+                statement.setInt(4, arena.isLoading() ? 1 : 0);
+                statement.setString(5, arena.getState().toString());
+                statement.setString(6, SkyServer.getProxyId());
+                statement.executeUpdate();
             } catch (Throwable var22) {
                 var4 = var22;
                 throw var22;
             } finally {
-                if (var3 != null) {
+                if (connection != null) {
                     if (var4 != null) {
                         try {
-                            var3.close();
+                            connection.close();
                         } catch (Throwable var21) {
                             var4.addSuppressed(var21);
                         }
                     } else {
-                        var3.close();
+                        connection.close();
                     }
                 }
 
@@ -483,7 +487,7 @@ public class MySQL extends DataSource {
         } catch (SQLException var24) {
             var24.printStackTrace();
         } finally {
-            this.close(var2);
+            this.close(statement);
         }
 
     }

@@ -243,77 +243,77 @@ public class ArenaListener implements Listener {
     }
 
     @EventHandler
-    public void onArenaTick(ArenaTickEvent var1) {
-        Arena var2 = var1.getArena();
-        SkyServer.setValues(var2);
-        if (var2.getState() == ArenaState.INGAME) {
-            if (checkWinner(var2)) {
+    public void onArenaTick(ArenaTickEvent event) {
+        Arena state = event.getArena();
+        SkyServer.setValues(state);
+        if (state.getState() == ArenaState.INGAME) {
+            if (checkWinner(state)) {
                 return;
             }
 
-            if (!var2.isFallDamage()) {
-                if (var2.getStartCountdown() == -5) {
-                    var2.setFallDamage(true);
+            if (!state.isFallDamage()) {
+                if (state.getStartCountdown() == -5) {
+                    state.setFallDamage(true);
                 }
 
-                var2.setStartCountdown(var2.getStartCountdown() - 1);
+                state.setStartCountdown(state.getStartCountdown() - 1);
             }
 
-            this.countEvents(var2);
-            this.countMaxTime(var2);
+            this.countEvents(state);
+            this.countMaxTime(state);
         }
 
-        if (var2.getState() == ArenaState.WAITING || var2.getState() == ArenaState.STARTING) {
-            int var3 = var2.getStartCountdown();
-            if (this.checkEmpty(var2)) {
+        if (state.getState() == ArenaState.WAITING || state.getState() == ArenaState.STARTING) {
+            int countdown = state.getStartCountdown();
+            if (this.checkEmpty(state)) {
                 return;
             }
 
-            if (var3 == 0) {
-                if (var2.getPlayers().size() < var2.getMinPlayers() && !var2.isForceStart()) {
-                    var2.setStartCountdown(var2.getStartFullCountdown());
-                    var2.broadcast(SkyWars.getMessage(Messages.GAME_START_NOREQUIREDPLAYERS));
+            if (countdown == 0) {
+                if (state.getPlayers().size() < state.getMinPlayers() && !state.isForceStart()) {
+                    state.setStartCountdown(state.getStartFullCountdown());
+                    state.broadcast(SkyWars.getMessage(Messages.GAME_START_NOREQUIREDPLAYERS));
                     return;
                 }
 
-                if (var2.getState() == ArenaState.STARTING) {
-                    var2.start();
+                if (state.getState() == ArenaState.STARTING) {
+                    state.start();
 
-                    for (SkyPlayer var5 : var2.getPlayers()) {
-                        var5.getPlayer().setLevel(0);
+                    for (SkyPlayer skyPlayer : state.getPlayers()) {
+                        skyPlayer.getPlayer().setLevel(0);
                     }
 
                     return;
                 }
             }
 
-            if (var2.getState() == ArenaState.WAITING) {
-                if (var2.getPlayers().size() < var2.getMinPlayers() && !var2.isForceStart()) {
+            if (state.getState() == ArenaState.WAITING) {
+                if (state.getPlayers().size() < state.getMinPlayers() && !state.isForceStart()) {
                     return;
                 }
 
-                if (var2.isForceStart()) {
-                    var2.setStartCountdown(var2.getStartFullCountdown());
-                    var3 = var2.getStartCountdown();
-                } else if (var2.getPlayers().size() >= var2.getMaxPlayers()) {
-                    if (var3 > var2.getStartFullCountdown()) {
-                        var2.setStartCountdown(var2.getStartFullCountdown());
-                        var3 = var2.getStartCountdown();
+                if (state.isForceStart()) {
+                    state.setStartCountdown(state.getStartFullCountdown());
+                    countdown = state.getStartCountdown();
+                } else if (state.getPlayers().size() >= state.getMaxPlayers()) {
+                    if (countdown > state.getStartFullCountdown()) {
+                        state.setStartCountdown(state.getStartFullCountdown());
+                        countdown = state.getStartCountdown();
                     }
 
-                    var2.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_NOWFULL), var3));
+                    state.broadcast(String.format(SkyWars.getMessage(Messages.GAME_START_NOWFULL), countdown));
                 }
 
-                if (var3 <= var2.getStartFullCountdown()) {
-                    var2.setState(ArenaState.STARTING);
+                if (countdown <= state.getStartFullCountdown()) {
+                    state.setState(ArenaState.STARTING);
                 }
             }
 
-            this.countStart(var2);
+            this.countStart(state);
         }
 
-        if (var2.getState() == ArenaState.ENDING) {
-            this.countEnd(var2);
+        if (state.getState() == ArenaState.ENDING) {
+            this.countEnd(state);
         }
 
     }

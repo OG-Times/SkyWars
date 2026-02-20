@@ -168,15 +168,15 @@ public class Arena extends Game {
         this.startTicks();
     }
 
-    public Arena(String var1, boolean var2) {
-        super(var1, var1, 0, true, ArenaState.WAITING);
-        this.disabled = var2;
-        this.createConfig(var1);
+    public Arena(String name, boolean disabled) {
+        super(name, name, 0, true, ArenaState.WAITING);
+        this.disabled = disabled;
+        this.createConfig(name);
         if (this.getWorld() == null) {
             this.loadFirstWorld();
         }
 
-        ArenaManager.games.put(var1, this);
+        ArenaManager.games.put(name, this);
         this.playSignUpdate(SkySignUpdateCause.ALL);
     }
 

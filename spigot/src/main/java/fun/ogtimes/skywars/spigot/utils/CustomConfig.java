@@ -1,66 +1,66 @@
 package fun.ogtimes.skywars.spigot.utils;
 
-import fun.ogtimes.skywars.spigot.SkyWars;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class CustomConfig {
-   SkyWars plugin;
-   private String name;
-   private File file;
-   private FileConfiguration fileConfig;
+    JavaPlugin plugin;
+    private String name;
+    private File file;
+    private FileConfiguration fileConfig;
 
-   public CustomConfig(String var1) {
-      this.name = var1;
-   }
+    public CustomConfig(String name) {
+        this.name = name;
+    }
 
-   public CustomConfig(SkyWars var1) {
-      this.plugin = var1;
-   }
+    public CustomConfig(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
-   public FileConfiguration getCustomConfig(CustomConfig var1) {
-      if (var1.fileConfig == null) {
-         this.reloadCustomConfig(var1);
-      }
+    public FileConfiguration getCustomConfig(CustomConfig config) {
+        if (config.fileConfig == null) {
+            this.reloadCustomConfig(config);
+        }
 
-      return var1.fileConfig;
-   }
+        return config.fileConfig;
+    }
 
-   public void reloadCustomConfig(CustomConfig var1) {
-      if (var1.fileConfig == null) {
-         var1.file = new File(this.plugin.getDataFolder(), var1.name + ".properties");
-      }
+    public void reloadCustomConfig(CustomConfig config) {
+        if (config.fileConfig == null) {
+            config.file = new File(this.plugin.getDataFolder(), config.name + ".properties");
+        }
 
-      var1.fileConfig = YamlConfiguration.loadConfiguration(var1.file);
-      if (var1.fileConfig != null) {
-         YamlConfiguration var2 = YamlConfiguration.loadConfiguration(var1.file);
-         var1.fileConfig.setDefaults(var2);
-      }
+        config.fileConfig = YamlConfiguration.loadConfiguration(config.file);
+        if (config.fileConfig != null) {
+            YamlConfiguration var2 = YamlConfiguration.loadConfiguration(config.file);
+            config.fileConfig.setDefaults(var2);
+        }
 
-   }
+    }
 
-   public void saveCustomConfig(CustomConfig var1) {
-      if (var1.fileConfig != null && var1.file != null) {
-         try {
-            this.getCustomConfig(var1).save(var1.file);
-         } catch (IOException var3) {
-            this.plugin.getLogger().log(Level.SEVERE, "Could not save config to " + var1.file, var3);
-         }
+    public void saveCustomConfig(CustomConfig config) {
+        if (config.fileConfig != null && config.file != null) {
+            try {
+                this.getCustomConfig(config).save(config.file);
+            } catch (IOException ex) {
+                this.plugin.getLogger().log(Level.SEVERE, "Could not save config to " + config.file, ex);
+            }
 
-      }
-   }
+        }
+    }
 
-   public void saveDefaultConfig(CustomConfig var1) {
-      if (var1.file == null) {
-         var1.file = new File(this.plugin.getDataFolder(), var1.name + ".properties");
-      }
+    public void saveDefaultConfig(CustomConfig config) {
+        if (config.file == null) {
+            config.file = new File(this.plugin.getDataFolder(), config.name + ".properties");
+        }
 
-      if (!var1.file.exists()) {
-         this.plugin.saveResource(var1.name + ".properties", false);
-      }
+        if (!config.file.exists()) {
+            this.plugin.saveResource(config.name + ".properties", false);
+        }
 
-   }
+    }
 }

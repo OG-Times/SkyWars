@@ -5,6 +5,7 @@ import fun.ogtimes.skywars.spigot.arena.Arena;
 import fun.ogtimes.skywars.spigot.kit.Kit;
 import fun.ogtimes.skywars.spigot.kit.KitManager;
 import fun.ogtimes.skywars.spigot.player.SkyPlayer;
+import fun.ogtimes.skywars.spigot.config.ConfigManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,9 +16,9 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
 public abstract class DataSource {
-    public final String TABLE_DATA = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.data");
-    public final String TABLE_ECONOMY = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.economy");
-    public final String TABLE_SERVER = SkyWars.getPlugin().getConfig().getString("data.mysql.tablename.servers");
+    public final String TABLE_DATA = ConfigManager.database.getString("tables.data", "SkyWars_Data");
+    public final String TABLE_ECONOMY = ConfigManager.database.getString("tables.economy", "SkyWars_Economy");
+    public final String TABLE_SERVER = ConfigManager.database.getString("tables.servers", "SkyWars_Servers");
 
     protected DataSource() {
     }
