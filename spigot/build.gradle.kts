@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:26.0.2-1")
+    implementation("org.jetbrains:annotations:26.1.0")
     implementation("net.kyori:adventure-api:4.26.1")
     implementation("net.kyori:adventure-platform-bukkit:4.4.1")
 
