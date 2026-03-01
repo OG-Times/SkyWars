@@ -17,8 +17,8 @@ public class ArenaFinishEvent extends Event {
       return handlerList;
    }
 
-    public ArenaFinishEvent(Arena var1, SkyPlayer var2) {
-      this.arena = var1;
-      this.winner = var2;
+    public ArenaFinishEvent(Arena arena, SkyPlayer winner) {
+      this.arena = arena;
+      this.winner = winner;
    }
 }

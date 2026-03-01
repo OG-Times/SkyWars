@@ -342,6 +342,8 @@ public class Arena extends Game {
 
         if (countdown) {
             this.endCountdown = 2;
+        } else {
+            this.endCountdown = this.config.getInt("countdown.end");
         }
 
     }
@@ -350,15 +352,21 @@ public class Arena extends Game {
         if (this.getState() != ArenaState.ENDING) {
             this.clearItems();
             this.broadcast(String.format(SkyWars.getMessage(Messages.GAME_FINISH_BROADCAST_WINNER), winner.getName(), this.name));
-            SkyEconomyManager.addCoins(winner.getPlayer(), SkyWars.getPlugin().getConfig().getInt("reward.win"), true);
+            Player winnerPlayer = winner.getPlayer();
+            if (winnerPlayer != null) {
+                SkyEconomyManager.addCoins(winnerPlayer, SkyWars.getPlugin().getConfig().getInt("reward.win"), true);
+            }
             this.executeWinnerCommands(ConfigManager.main.getBoolean("reward.wincmd.enabled"), winner);
             winner.addWins(1);
-            winner.clearInventory(false);
+            if (winnerPlayer != null) {
+                winner.clearInventory(false);
+            }
 
             this.addTimer(new BukkitRunnable() {
 
                 public void run() {
-                    if (winner.getPlayer() != null && winner.getPlayer().getWorld() != null && winner.getPlayer().getWorld().equals(Arena.this.getWorld())) {
+                    Player fireworkPlayer = winner.getPlayer();
+                    if (fireworkPlayer != null && fireworkPlayer.getWorld() != null && fireworkPlayer.getWorld().equals(Arena.this.getWorld())) {
                         Arena.this.launchFirework(winner);
                     }
 
@@ -367,37 +375,39 @@ public class Arena extends Game {
 
             this.end(false);
 
-            Audience killedAudience = SkyWars.getPlugin().getAdventure().player(winner.getPlayer());
-            Component secondLine = Utils.component(SkyWars.getMessage(Messages.PLAY_AGAIN_2))
-                    .replaceText(TextReplacementConfig.builder()
-                            .match("<again>")
-                            .replacement(Utils.component(SkyWars.getMessage(Messages.AGAIN))
-                                    .clickEvent(ClickEvent.runCommand("/playagain"))
-                            )
-                            .build()
-                    )
-                    .replaceText(TextReplacementConfig.builder()
-                            .match("<leave>")
-                            .replacement(Utils.component(SkyWars.getMessage(Messages.LEAVE))
-                                    .clickEvent(ClickEvent.runCommand("/salir"))
-                            )
-                            .build()
-                    )
-                    .replaceText(TextReplacementConfig.builder()
-                            .match("<rush>")
-                            .replacement(Utils.component(SkyWars.getMessage(Messages.RUSH_MODE))
-                                    .clickEvent(ClickEvent.runCommand("/sw rush"))
-                            )
-                            .build()
-                    );
+            if (winnerPlayer != null) {
+                Audience killedAudience = SkyWars.getPlugin().getAdventure().player(winnerPlayer);
+                Component secondLine = Utils.component(SkyWars.getMessage(Messages.PLAY_AGAIN_2))
+                        .replaceText(TextReplacementConfig.builder()
+                                .match("<again>")
+                                .replacement(Utils.component(SkyWars.getMessage(Messages.AGAIN))
+                                        .clickEvent(ClickEvent.runCommand("/playagain"))
+                                )
+                                .build()
+                        )
+                        .replaceText(TextReplacementConfig.builder()
+                                .match("<leave>")
+                                .replacement(Utils.component(SkyWars.getMessage(Messages.LEAVE))
+                                        .clickEvent(ClickEvent.runCommand("/salir"))
+                                )
+                                .build()
+                        )
+                        .replaceText(TextReplacementConfig.builder()
+                                .match("<rush>")
+                                .replacement(Utils.component(SkyWars.getMessage(Messages.RUSH_MODE))
+                                        .clickEvent(ClickEvent.runCommand("/sw rush"))
+                                )
+                                .build()
+                        );
 
-            winner.sendMessage("        &m----------------------------------");
-            winner.sendMessage(SkyWars.getMessage(Messages.PLAY_AGAIN_1));
-            killedAudience.sendMessage(secondLine);
-            winner.sendMessage("        &m----------------------------------");
+                winner.sendMessage("        &m----------------------------------");
+                winner.sendMessage(SkyWars.getMessage(Messages.PLAY_AGAIN_1));
+                killedAudience.sendMessage(secondLine);
+                winner.sendMessage("        &m----------------------------------");
 
-            if (winner.isRushMode()) {
-                winner.doRushMode();
+                if (winner.isRushMode()) {
+                    winner.doRushMode();
+                }
             }
 
             Bukkit.getPluginManager().callEvent(new ArenaFinishEvent(this, winner));
