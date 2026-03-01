@@ -67,6 +67,10 @@ public class ArenaListener implements Listener {
         SkyPlayer skyPlayer = var1.getPlayer();
         Arena arena = var1.getGame();
 
+        if (arena.getState() == ArenaState.ENDING) {
+            SkyWars.log("Arena.join - " + skyPlayer.getName() + " tried to join while ENDING in " + arena.getName());
+        }
+
         if (arena.getState() == ArenaState.INGAME && skyPlayer.getPlayer().hasPermission("skywars.admin.spectate")) {
             skyPlayer.clearInventory(true);
             skyPlayer.setArena(arena);
@@ -318,23 +322,23 @@ public class ArenaListener implements Listener {
 
     }
 
-    private void countMaxTime(Arena var1) {
-        int var2 = var1.getMaxTimeCountdown();
-        if (var2 % 60 == 0 && var2 <= 300 && var2 > 0) {
-            var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_TIME_LEFT_MINUTES), var2 % 3600 / 60));
+    private void countMaxTime(Arena arena) {
+        int maxTimeCountdown = arena.getMaxTimeCountdown();
+        if (maxTimeCountdown % 60 == 0 && maxTimeCountdown <= 300 && maxTimeCountdown > 0) {
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_TIME_LEFT_MINUTES), maxTimeCountdown % 3600 / 60));
         }
 
-        if ((var2 == 10 || var2 <= 5) && var2 > 0) {
-            var1.broadcast(String.format(SkyWars.getMessage(Messages.GAME_TIME_LEFT_SECONDS), var2));
+        if ((maxTimeCountdown == 10 || maxTimeCountdown <= 5) && maxTimeCountdown > 0) {
+            arena.broadcast(String.format(SkyWars.getMessage(Messages.GAME_TIME_LEFT_SECONDS), maxTimeCountdown));
         }
 
-        if (var2 == 0) {
-            var1.broadcast(SkyWars.getMessage(Messages.GAME_TIME_LIMIT));
-            var1.setState(ArenaState.ENDING);
-            var1.end(true);
+        if (maxTimeCountdown == 0) {
+            arena.broadcast(SkyWars.getMessage(Messages.GAME_TIME_LIMIT));
+            arena.setState(ArenaState.ENDING);
+            arena.end(true);
         }
 
-        var1.setMaxTimeCountdown(var1.getMaxTimeCountdown() - 1);
+        arena.setMaxTimeCountdown(arena.getMaxTimeCountdown() - 1);
     }
 
     private void countStart(Arena arena) {
@@ -387,6 +391,7 @@ public class ArenaListener implements Listener {
         Iterator var3;
         Player var4;
         if (var2 == 0) {
+            SkyWars.log("Arena.countEnd - " + var1.getName() + " endCountdown=0 -> restart/teleport");
             if (SkyWars.isProxyMode()) {
                 var3 = Bukkit.getOnlinePlayers().iterator();
 
@@ -400,6 +405,7 @@ public class ArenaListener implements Listener {
         }
 
         if (var2 == -3 && SkyWars.isProxyMode()) {
+            SkyWars.log("Arena.countEnd - " + var1.getName() + " endCountdown=-3 (proxy autoStart=" + SkyWars.isAutoStart() + ")");
             if (SkyWars.isAutoStart()) {
                 var3 = Bukkit.getOnlinePlayers().iterator();
 

@@ -68,6 +68,34 @@ public class ArenaManager {
 
     }
 
+    public static boolean resetArenaWorld(String arenaName) {
+        File source = new File(SkyWars.maps + File.separator + arenaName);
+        if (!source.isDirectory()) {
+            SkyWars.log("ArenaManager.resetArenaWorld - Source map not found: " + source.getAbsolutePath());
+            return false;
+        }
+
+        World world = Bukkit.getWorld(arenaName);
+        if (world != null) {
+            SkyWars.log("ArenaManager.resetArenaWorld - Unloading world: " + arenaName);
+            Bukkit.unloadWorld(world, false);
+        }
+
+        File target = new File(arenaName);
+        SkyWars.log("ArenaManager.resetArenaWorld - Deleting world folder: " + target.getAbsolutePath());
+        delete(target);
+
+        try {
+            SkyWars.log("ArenaManager.resetArenaWorld - Copying map from " + source.getAbsolutePath() + " to " + target.getAbsolutePath());
+            copyFolder(source, target);
+        } catch (IOException ex) {
+            SkyWars.logError("ArenaManager.resetArenaWorld - Copy failed for " + arenaName + ": " + ex.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
     private static void arenaClone(File var0, String var1) {
         try {
             delete(new File(var0, "uid.dat"));

@@ -212,6 +212,14 @@ public class Arena extends Game {
                 skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_LOADING));
             }
 
+        } else if (this.state == ArenaState.ENDING) {
+            SkyWars.log("Arena.addPlayer - Tried to join while ENDING: " + skyPlayer.getName() + " -> " + this.name);
+            if (SkyWars.isProxyMode()) {
+                skyPlayer.getPlayer().kickPlayer(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
+            } else {
+                skyPlayer.sendMessage(SkyWars.getMessage(Messages.GAME_INGAME_MESSAGE));
+            }
+
         } else {
             if (!skyPlayer.getPlayer().hasPermission("skywars.admin.spectate")) {
                 if (this.state == ArenaState.INGAME) {
@@ -327,6 +335,7 @@ public class Arena extends Game {
     }
 
     public void end(boolean countdown) {
+        SkyWars.log("Arena.end - " + this.name + " -> ENDING (countdownMode=" + countdown + ")");
         this.state = ArenaState.ENDING;
         this.playSignUpdate(SkySignUpdateCause.STATE);
 
@@ -350,6 +359,7 @@ public class Arena extends Game {
 
     public void end(final SkyPlayer winner) {
         if (this.getState() != ArenaState.ENDING) {
+            SkyWars.log("Arena.end - " + this.name + " winner=" + winner.getName());
             this.clearItems();
             this.broadcast(String.format(SkyWars.getMessage(Messages.GAME_FINISH_BROADCAST_WINNER), winner.getName(), this.name));
             Player winnerPlayer = winner.getPlayer();
@@ -714,15 +724,17 @@ public class Arena extends Game {
     }
 
     public void reloadWorld() {
-
+        SkyWars.log("Arena.reloadWorld - " + this.name + " begin (loading=" + this.loading + ")");
         this.loadFirstWorld();
         this.loadSpawnPoints();
         this.loadGlassBoxes();
         this.loading = false;
         this.hardReset = false;
+        SkyWars.log("Arena.reloadWorld - " + this.name + " done (loading=" + this.loading + ")");
     }
 
     public void restart() {
+        SkyWars.log("Arena.restart - " + this.name + " begin");
         Iterator<?> players = this.tickers.iterator();
 
         while(players.hasNext()) {
@@ -777,8 +789,13 @@ public class Arena extends Game {
         this.startFullCountdown = this.config.getInt("countdown.starting_full");
         this.endCountdown = this.config.getInt("countdown.end");
         this.maxTimeCountdown = ConfigManager.main.getInt("maxtime");
+        boolean resetOk = ArenaManager.resetArenaWorld(this.name);
+        if (!resetOk) {
+            SkyWars.logError("Arena.restart - " + this.name + " world reset failed, attempting reload");
+        }
         this.reloadWorld();
         this.playSignUpdate(SkySignUpdateCause.ALL);
+        SkyWars.log("Arena.restart - " + this.name + " done");
     }
 
     public void setForceStart() {
@@ -951,9 +968,11 @@ public class Arena extends Game {
 
     public final World loadFirstWorld() {
         if (this.getWorld() != null) {
+            SkyWars.log("Arena.loadFirstWorld - " + this.name + " already loaded");
             return this.getWorld();
         }
 
+        SkyWars.log("Arena.loadFirstWorld - " + this.name + " creating world");
         WorldCreator creator = new WorldCreator(this.name);
         creator.generateStructures(false);
         creator.generator(SkyWars.getVoidGenerator());
