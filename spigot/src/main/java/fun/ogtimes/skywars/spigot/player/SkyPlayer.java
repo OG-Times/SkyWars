@@ -290,6 +290,10 @@ public class SkyPlayer extends SkyData {
             this.removeData("voted_chest");
         }
 
+        if (this.hasData("voted_chest_type")) {
+            this.removeData("voted_chest_type");
+        }
+
         if (this.hasData("voted_time")) {
             if (this.hasData("voted_time_day")) {
                 this.getArena().addData("vote_time_day", this.getArena().getInt("vote_time_day") - 1);
@@ -307,6 +311,10 @@ public class SkyPlayer extends SkyData {
             }
 
             this.removeData("voted_time");
+        }
+
+        if (this.hasData("voted_time_type")) {
+            this.removeData("voted_time_type");
         }
 
     }

@@ -149,8 +149,8 @@ public class Arena extends Game {
         var3 = var9.length;
 
         for(var4 = 0; var4 < var3; ++var4) {
-            ChestType var11 = var9[var4];
-            this.addData("vote_chest_" + var11.getName(), 0);
+            ChestType chestType = var9[var4];
+            this.addData("vote_chest_" + chestType.getName(), 0);
         }
 
         this.addData("vote_time_day", 0);
