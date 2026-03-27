@@ -36,8 +36,8 @@ subprojects {
 
     dependencies {
         implementation("org.jetbrains:annotations:26.1.0")
-        compileOnly("org.projectlombok:lombok:1.18.42")
-        annotationProcessor("org.projectlombok:lombok:1.18.42")
+        compileOnly("org.projectlombok:lombok:1.18.44")
+        annotationProcessor("org.projectlombok:lombok:1.18.44")
     }
 
     tasks.withType<ShadowJar>().configureEach {
