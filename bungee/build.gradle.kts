@@ -10,5 +10,5 @@ repositories {
 }
 
 dependencies {
-    compileOnly("net.md-5:bungeecord-api:1.21-R0.5-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:26.1-R0.1-SNAPSHOT")
 }
